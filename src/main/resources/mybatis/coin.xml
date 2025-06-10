@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dev.mvc.coin.CoinDAOInter"> <!-- SB가 자동으로 구현하여 연동하는 interface -->
+
+  <insert id="create" parameterType="dev.mvc.coin.CoinVO">
+    INSERT INTO coin(coin_no, coin_name, coin_price, coin_date, coin_info)
+    VALUES(coin_seq.nextval, #{coin_name}, #{coin_price}, SYSDATE, #{coin_price})
+  </insert>
+  
+  <!-- 하나의 CateVO class 객체가 생성됨 -->
+  <select id="read" resultType="dev.mvc.coin.CoinVO" parameterType="Integer">
+    SELECT coin_no, coin_name, coin_price, coin_date, coin_info
+    FROM coin
+    WHERE cateno=#{cateno}
+  </select>
+  
+  <update id="update" parameterType="dev.mvc.coin.CoinVO">
+    UPDATE coin 
+    SET coin_name=#{coin_name}, coin_price=#{coin_price}, coin_date=SYSDATE, coin_info=#{coin_info} 
+    WHERE coin_no=#{coin_no}
+  </update>
+  
+  <delete id="delete" parameterType="Integer">
+    DELETE FROM coin WHERE coin_no=#{coin_no}
+  </delete>  
+      
+</mapper>
+
+
+
+
+
