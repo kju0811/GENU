@@ -32,9 +32,5 @@ out/
 /.nb-gradle/
 
 ### VS Code ###
-<<<<<<< HEAD
 .vscode/
 
-=======
-.vscode/.gradle/
->>>>>>> b674a08a4d9ea0a3dd8d47f0e427d5225b84b328
