@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dev.mvc.calendar.CalendarDAOInter"> <!-- SB가 자동으로 구현하여 연동하는 interface -->
+
+<!--일정 생성-->
+<insert id="create" parameterType="dev.mvc.calender.CalenderVO">
+  INSERT INTO calendar(calendar_no, labeldate, label, title, content, cnt, seqno, regdate, member_no)
+  VALUES (calendar_seq.nextval, #{labeldate}, #{label}, #{title}, #{content}, #{cnt}, #{seqno}, sysdate, #{memberno})
+</insert>
+
+<!--일정 전체 조회-->
+<select id="list_all" resultType="dev.mvc.calender.CalenderVO">
+  SELECT calendar_no, labeldate, label, title, content, cnt, seqno, regdate, member_no
+  FROM calendar
+  ORDER BY calendarno DESC
+</select>
+
+</mapper>

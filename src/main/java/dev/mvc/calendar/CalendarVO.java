@@ -1,4 +1,4 @@
-package dev.mvc.calender;
+package dev.mvc.calendar;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -20,7 +20,7 @@ import lombok.ToString;
  */
 
 @Getter @Setter @ToString
-public class CalenderVO {
+public class CalendarVO {
 
   /* 캘린더 번호 */
   private Integer calendar_no;
