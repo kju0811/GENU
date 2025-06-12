@@ -1,199 +1,157 @@
--- 회원 SQL은 테이블 커맨트까지만 수정했음 참고.
-
--- 테이블 구조
--- member 삭제전에 FK가 선언된 blog 테이블 먼저 삭제합니다.
+-- 기존 테이블 삭제
 DROP TABLE qna;
 DROP TABLE reply;
 DROP TABLE member;
--- 제약 조건과 함께 삭제(제약 조건이 있어도 삭제됨, 권장하지 않음.)
-DROP TABLE member CASCADE CONSTRAINTS; 
- 
+DROP TABLE member CASCADE CONSTRAINTS;
+
+-- member 테이블 생성
 CREATE TABLE member (
-  member_no NUMBER(10) NOT NULL, -- 회원 번호, 레코드를 구분하는 컬럼 
-  member_id         VARCHAR(30)   NOT NULL UNIQUE, -- 이메일(아이디), 중복 안됨, 레코드를 구분 
-  member_pw     VARCHAR(200)   NOT NULL, -- 패스워드, 영숫자 조합, 암호화
-  member_name      VARCHAR(30)   NOT NULL, -- 성명, 한글 10자 저장 가능
-  member_tel            VARCHAR(14)   NOT NULL, -- 전화번호
-  zipcode     VARCHAR(5)        NULL, -- 우편번호, 12345
-  address1    VARCHAR(80)       NULL, -- 주소 1
-  address2    VARCHAR(50)       NULL, -- 주소 2
-  member_date       DATE             NOT NULL, -- 가입일    
-  member_grade        NUMBER(2)     NOT NULL, -- 등급(1~10: 관리자, 11~20: 회원, 40~49: 정지 회원, 99: 탈퇴 회원)
-  member_nick   VARCHAR(45) NOT NULL    UNIQUE,
-  PRIMARY KEY (member_no)               -- 한번 등록된 값은 중복 안됨
+  member_no      NUMBER(10)    NOT NULL,        -- 회원 번호 (PK)
+  member_id      VARCHAR(30)   NOT NULL UNIQUE, -- 이메일(아이디)
+  member_pw      VARCHAR(200)  NOT NULL,        -- 패스워드
+  member_name    VARCHAR(30)   NOT NULL,        -- 성명
+  member_tel     VARCHAR(14)   NOT NULL,        -- 전화번호
+  zipcode        VARCHAR(5)    NULL,            -- 우편번호
+  address1       VARCHAR(80)   NULL,            -- 주소 1
+  address2       VARCHAR(50)   NULL,            -- 주소 2
+  member_date    DATE          NOT NULL,        -- 가입일
+  member_grade   NUMBER(2)     NOT NULL,        -- 회원등급
+  member_nick    VARCHAR(45)   NOT NULL UNIQUE, -- 활동명
+  PRIMARY KEY (member_no)
 );
 
-INSERT INTO member(member_no, member_id, member_pw, member_name, member_tel, zipcode,
-                                address1, address2, member_date, member_grade, member_nick)
-VALUES (member_seq.nextval, 'admin', '1234', '통합 관리자', '000-0000-0000', '12345',
-             '서울시 종로구', '관철동', sysdate, 1, '누렁이');
-             
-INSERT INTO member(member_no, member_id, member_pw, member_name, member_tel, zipcode,
-                                address1, address2, member_date, member_grade, member_nick)
-VALUES (member_seq.nextval, 'admin22', '1234', '통합 관리자', '000-0000-0000', '12345',
-             '서울시 종로구', '관철동', sysdate, 1, '누렁이22');
- 
-COMMENT ON TABLE MEMBER is '회원';
-COMMENT ON COLUMN MEMBER.member_no is '회원번호';
-COMMENT ON COLUMN MEMBER.member_id is '회원아이디';
-COMMENT ON COLUMN MEMBER.member_pw is '회원비번';
-COMMENT ON COLUMN MEMBER.member_name is '회원이름';
-COMMENT ON COLUMN MEMBER.member_tel is '전화번호';
-COMMENT ON COLUMN MEMBER.ZIPCODE is '우편번호';
-COMMENT ON COLUMN MEMBER.ADDRESS1 is '주소1';
-COMMENT ON COLUMN MEMBER.ADDRESS2 is '주소2';
-COMMENT ON COLUMN MEMBER.member_date is '회원가입일';
-COMMENT ON COLUMN MEMBER.member_grade is '회원등급';
-COMMENT ON COLUMN MEMBER.member_nick is '활동명';
+-- 주석(Comment)
+COMMENT ON TABLE member IS '회원';
+COMMENT ON COLUMN member.member_no IS '회원번호';
+COMMENT ON COLUMN member.member_id IS '회원아이디';
+COMMENT ON COLUMN member.member_pw IS '회원비번';
+COMMENT ON COLUMN member.member_name IS '회원이름';
+COMMENT ON COLUMN member.member_tel IS '전화번호';
+COMMENT ON COLUMN member.zipcode IS '우편번호';
+COMMENT ON COLUMN member.address1 IS '주소1';
+COMMENT ON COLUMN member.address2 IS '주소2';
+COMMENT ON COLUMN member.member_date IS '회원가입일';
+COMMENT ON COLUMN member.member_grade IS '회원등급';
+COMMENT ON COLUMN member.member_nick IS '활동명';
 
+-- 시퀀스 생성
 DROP SEQUENCE member_seq;
 
 CREATE SEQUENCE member_seq
-  START WITH 1              -- 시작 번호
-  INCREMENT BY 1          -- 증가값
-  MAXVALUE 9999999999 -- 최대값: 9999999 --> NUMBER(7) 대응
-  CACHE 2                       -- 2번은 메모리에서만 계산
-  NOCYCLE;                     -- 다시 1부터 생성되는 것을 방지
- 
-1. 등록
- 
-1) id 중복 확인(null 값을 가지고 있으면 count에서 제외됨)
-SELECT COUNT(id)
-FROM member
-WHERE id='user1';
+  START WITH 1
+  INCREMENT BY 1
+  MAXVALUE 9999999999
+  CACHE 2
+  NOCYCLE;
 
-SELECT COUNT(id) as cnt
+-- 1. ID 중복 확인
+SELECT COUNT(member_id) AS cnt
 FROM member
-WHERE id='user1';
- 
- cnt
- ---
-   0   ← 중복 되지 않음.
-   
-2) 등록
--- 회원 관리용 계정, Q/A 용 계정
-INSERT INTO member(memberno, id, passwd, mname, tel, zipcode,
-                                address1, address2, mdate, grade)
+WHERE member_id = 'user1';
+
+-- 2. 회원 등록
+INSERT INTO member(member_no, member_id, member_pw, member_name, member_tel, zipcode,
+                   address1, address2, member_date, member_grade, member_nick)
 VALUES (member_seq.nextval, 'admin', '1234', '통합 관리자', '000-0000-0000', '12345',
-             '서울시 종로구', '관철동', sysdate, 1);
-             
-INSERT INTO member(memberno, id, passwd, mname, tel, zipcode,
-                                address1, address2, mdate, grade)
+        '서울시 종로구', '관철동', SYSDATE, 1, 'admin_nick');
+
+INSERT INTO member(member_no, member_id, member_pw, member_name, member_tel, zipcode,
+                   address1, address2, member_date, member_grade, member_nick)
 VALUES (member_seq.nextval, 'qnaadmin', '1234', '질문답변관리자', '000-0000-0000', '12345',
-             '서울시 종로구', '관철동', sysdate, 1);
- 
--- 개인 회원 테스트 계정
-INSERT INTO member(memberno, id, passwd, mname, tel, zipcode, address1, address2, mdate, grade)
-VALUES (member_seq.nextval, 'user1@mail.com', '1234', '왕눈이', '000-0000-0000', '12345', '서울시 종로구', '관철동', sysdate, 15);
- 
-INSERT INTO member(memberno, id, passwd, mname, tel, zipcode, address1, address2, mdate, grade)
-VALUES (member_seq.nextval, 'user2@mail.com', '1234', '아로미', '000-0000-0000', '12345', '서울시 종로구', '관철동', sysdate, 15);
- 
-INSERT INTO member(memberno, id, passwd, mname, tel, zipcode, address1, address2, mdate, grade)
-VALUES (member_seq.nextval, 'user3@mail.com', '1234', '투투투', '000-0000-0000', '12345', '서울시 종로구', '관철동', sysdate, 15);
- 
--- 부서별(그룹별) 공유 회원 기준
-INSERT INTO member(memberno, id, passwd, mname, tel, zipcode, address1, address2, mdate, grade)
-VALUES (member_seq.nextval, 'team1', '1234', '개발팀', '000-0000-0000', '12345', '서울시 종로구', '관철동', sysdate, 15);
- 
-INSERT INTO member(memberno, id, passwd, mname, tel, zipcode, address1, address2, mdate, grade)
-VALUES (member_seq.nextval, 'team2', '1234', '웹퍼블리셔팀', '000-0000-0000', '12345', '서울시 종로구', '관철동', sysdate, 15);
- 
-INSERT INTO member(memberno, id, passwd, mname, tel, zipcode, address1, address2, mdate, grade)
-VALUES (member_seq.nextval, 'team3', '1234', '디자인팀', '000-0000-0000', '12345', '서울시 종로구', '관철동', sysdate, 15);
+        '서울시 종로구', '관철동', SYSDATE, 1, 'qnaadmin_nick');
+
+INSERT INTO member(member_no, member_id, member_pw, member_name, member_tel, zipcode,
+                   address1, address2, member_date, member_grade, member_nick)
+VALUES (member_seq.nextval, 'user1@mail.com', '1234', '왕눈이', '000-0000-0000', '12345',
+        '서울시 종로구', '관철동', SYSDATE, 15, 'user1_nick');
+
+INSERT INTO member(member_no, member_id, member_pw, member_name, member_tel, zipcode,
+                   address1, address2, member_date, member_grade, member_nick)
+VALUES (member_seq.nextval, 'user2@mail.com', '1234', '아로미', '000-0000-0000', '12345',
+        '서울시 종로구', '관철동', SYSDATE, 15, 'user2_nick');
+
+INSERT INTO member(member_no, member_id, member_pw, member_name, member_tel, zipcode,
+                   address1, address2, member_date, member_grade, member_nick)
+VALUES (member_seq.nextval, 'user3@mail.com', '1234', '투투투', '000-0000-0000', '12345',
+        '서울시 종로구', '관철동', SYSDATE, 15, 'user3_nick');
+
+INSERT INTO member(member_no, member_id, member_pw, member_name, member_tel, zipcode,
+                   address1, address2, member_date, member_grade, member_nick)
+VALUES (member_seq.nextval, 'team1', '1234', '개발팀', '000-0000-0000', '12345',
+        '서울시 종로구', '관철동', SYSDATE, 15, 'team1_nick');
+
+INSERT INTO member(member_no, member_id, member_pw, member_name, member_tel, zipcode,
+                   address1, address2, member_date, member_grade, member_nick)
+VALUES (member_seq.nextval, 'team2', '1234', '웹퍼블리셔팀', '000-0000-0000', '12345',
+        '서울시 종로구', '관철동', SYSDATE, 15, 'team2_nick');
+
+INSERT INTO member(member_no, member_id, member_pw, member_name, member_tel, zipcode,
+                   address1, address2, member_date, member_grade, member_nick)
+VALUES (member_seq.nextval, 'team3', '1234', '디자인팀', '000-0000-0000', '12345',
+        '서울시 종로구', '관철동', SYSDATE, 15, 'team3_nick');
 
 COMMIT;
 
- 
-2. 목록
-- 검색을 하지 않는 경우, 전체 목록 출력
- 
-SELECT memberno, id, passwd, mname, tel, zipcode, address1, address2, mdate, grade
+-- 3. 전체 목록 조회
+SELECT member_no, member_id, member_pw, member_name, member_tel, zipcode,
+       address1, address2, member_date, member_grade, member_nick
 FROM member
-ORDER BY grade ASC, id ASC;
-     
-     
-3. 조회
- 
-1) 사원 정보 조회
-SELECT memberno, id, passwd, mname, tel, zipcode, address1, address2, mdate, grade
-FROM member
-WHERE memberno = 1;
+ORDER BY member_grade ASC, member_id ASC;
 
-SELECT memberno, id, passwd, mname, tel, zipcode, address1, address2, mdate, grade
+-- 4. 단일 조회
+SELECT member_no, member_id, member_pw, member_name, member_tel, zipcode,
+       address1, address2, member_date, member_grade, member_nick
 FROM member
-WHERE id = 'user1@gmail.com';
- 
-    
-4. 수정, PK: 변경 못함, UNIQUE: 변경을 권장하지 않음(id)
+WHERE member_no = 1;
+
+SELECT member_no, member_id, member_pw, member_name, member_tel, zipcode,
+       address1, address2, member_date, member_grade, member_nick
+FROM member
+WHERE member_id = 'user1@mail.com';
+
+-- 5. 정보 수정
 UPDATE member 
-SET mname='조인성', tel='111-1111-1111', zipcode='00000',
-    address1='강원도', address2='홍천군', grade=14
-WHERE memberno=12;
+SET member_name = '조인성',
+    member_tel = '111-1111-1111',
+    zipcode = '00000',
+    address1 = '강원도',
+    address2 = '홍천군',
+    member_grade = 14
+WHERE member_no = 12;
 
 COMMIT;
 
- 
-5. 삭제
-1) 모두 삭제
-DELETE FROM member;
- 
-2) 특정 회원 삭제
-DELETE FROM member
-WHERE memberno=12;
+-- 6. 삭제
+DELETE FROM member; -- 전체 삭제
+
+DELETE FROM member -- 특정 회원 삭제
+WHERE member_no = 12;
 
 COMMIT;
 
- 
-6. 로그인
-SELECT COUNT(memberno) as cnt
+-- 7. 로그인
+SELECT COUNT(member_no) AS cnt
 FROM member
-WHERE id='user1@gmail.com' AND passwd='1234';
- cnt
- ---
-   0
-   
-   
-7. 패스워드 변경
-1) 패스워드 검사
-SELECT COUNT(memberno) as cnt
+WHERE member_id = 'user1@mail.com' AND member_pw = '1234';
+
+-- 8. 패스워드 변경
+SELECT COUNT(member_no) AS cnt
 FROM member
-WHERE memberno=1 AND passwd='1234';
- 
-2) 패스워드 수정
+WHERE member_no = 1 AND member_pw = '1234';
+
 UPDATE member
-SET passwd='0000'
-WHERE memberno=1;
+SET member_pw = '0000'
+WHERE member_no = 1;
 
 COMMIT;
 
-
-8. 회원 등급 변경
--- 정지 회원
+-- 9. 회원 등급 변경
 UPDATE member
-SET grade = 30
-WHERE memberno=5;
+SET member_grade = 40
+WHERE member_no = 5;
 
--- 탈퇴 회원
 UPDATE member
-SET grade = 40
-WHERE memberno=9;
-
-commit;
-
-INSERT INTO member(memberno, id, passwd, mname, tel, zipcode,
-                                address1, address2, mdate, grade)
-VALUES (member_seq.nextval, 'admin', 'fS/kjO+fuEKk06Zl7VYMhg==', '통합 관리자', '000-0000-0000', '12345',
-             '서울시 종로구', '관철동', sysdate, 1);
+SET member_grade = 99
+WHERE member_no = 9;
 
 COMMIT;
-
-SELECT memberno, id, passwd, mname, tel, zipcode, address1, address2, mdate, grade
-FROM member
-ORDER BY grade ASC, id ASC;
-
-
-
-
-
-
