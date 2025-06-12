@@ -15,8 +15,10 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /*
@@ -43,10 +45,11 @@ import lombok.Setter;
   "member_no" NUMBER(10)    NOT NULL
 );
   */
-
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity @Getter @Setter
 @Table(name = "news")
-public class NEWS {
+public class News {
   
   // 뉴스 번호 
   @Id
