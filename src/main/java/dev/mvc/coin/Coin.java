@@ -1,9 +1,12 @@
 package dev.mvc.coin;
 
+import java.util.Date;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.SequenceGenerator;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,16 +30,17 @@ public class Coin {
   private Integer coin_price=0;
   
   /** 코인 생성일, sysdate 자동생성 */
-  private String coin_date;
+  private Date coin_date;
   
   /** 코인 정보 */
+  @Lob
   private String coin_info="";
   
   public Coin() {
     
   }
   
-  public Coin(String coin_name, String coin_date, int coin_price, String coin_info) {
+  public Coin(String coin_name, Date coin_date, int coin_price, String coin_info) {
     this.coin_name=coin_name;
     this.coin_date=coin_date;
     this.coin_price=coin_price;
