@@ -1,5 +1,8 @@
 package dev.mvc.member;
 
+import java.util.Date;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,7 +31,7 @@ public class Member {
   private String member_id;
   
   /** 패스워드 */
-  private Integer member_pw;
+  private String member_pw;
   
   /** 성명 */
   private String member_name;
@@ -46,6 +49,7 @@ public class Member {
   private String address2="";
   
   /** 가입일 */
+  @Column(columnDefinition = "DATE")
   private String member_date="";
   
   /** 회원등급 */
