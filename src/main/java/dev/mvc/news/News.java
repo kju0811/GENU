@@ -1,10 +1,6 @@
 package dev.mvc.news;
 
-import java.time.LocalDateTime;
-
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,8 +11,10 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /*
@@ -43,10 +41,11 @@ import lombok.Setter;
   "member_no" NUMBER(10)    NOT NULL
 );
   */
-
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity @Getter @Setter
 @Table(name = "news")
-public class NEWS {
+public class News {
   
   // 뉴스 번호 
   @Id
@@ -81,10 +80,8 @@ public class NEWS {
   private String news_word = "";
   
   // 뉴스 등록일
-  @CreationTimestamp
-  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   @Column(name = "news_rdate", nullable = false, columnDefinition = "DATE")
-  private LocalDateTime news_rdate;
+  private String news_rdate;
   
   // 파일1
   @Column(name = "file1", columnDefinition = "VARCHAR2(100)")

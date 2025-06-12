@@ -20,7 +20,7 @@ import lombok.ToString;
  */
 
 @Getter @Setter @ToString
-public class CalendarVO {
+public class Calendar {
 
   /* 캘린더 번호 */
   private Integer calendar_no;

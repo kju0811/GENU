@@ -1,5 +1,6 @@
 package dev.mvc.coin;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,9 +17,10 @@ public class CoinController {
     return "coin/create";
   }
   
-//  @PostMapping(value="/create")
-//  @ResponseBody
-//  public String create(@RequestBody String json_src) {
-//    
-//  }
+  @PostMapping(value="/create")
+  @ResponseBody
+  public ResponseEntity<Coin> create(@RequestBody Coin coin) {
+    return ResponseEntity.ok().build();
+  }
+  
 }
