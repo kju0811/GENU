@@ -1,6 +1,21 @@
 package dev.mvc.calendar;
 
+import dev.mvc.member.Member;
+import dev.mvc.news.News;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -19,34 +34,53 @@ import lombok.ToString;
 );
  */
 
-@Getter @Setter @ToString
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity @Getter @Setter
+@Table(name = "calendar")
 public class Calendar {
 
   /* 캘린더 번호 */
-  private Integer calendar_no;
-  
-  /* 회원 번호 */
-  private Integer member_no;
+  @Id
+  @NotNull
+  @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="calendar_seq")
+  @SequenceGenerator(name="calendar_seq", sequenceName="CALENDAR_SEQ", allocationSize=1)
+  private Long calendar_no;
   
   /** 출력할 날짜 */
+  @Column(name = "labeldate", nullable = false, columnDefinition = "VARCHAR(10)")
   private String labeldate = "";
   
   /** 출력할 레이블 */
+  @Column(name = "label",nullable = false, columnDefinition = "VARCHAR2(50)")
   private String label = "";
   
   /** 제목 */
+  @Column(name = "title",nullable = false, columnDefinition = "VARCHAR2(100)")
   private String title = "";
   
   /** 글 내용 */
+  @Lob
+  @Column(name = "content",nullable = false, columnDefinition = "CLOB")
   private String content = "";
   
   /** 조회수 */
+  @Column(name = "cnt", nullable = false, columnDefinition = "NUMBER(7)")
   private Integer cnt = 0;
   
   /** 일정 출력 순서 */
+  @Column(name = "seqno", nullable = false, columnDefinition = "NUMBER(5)")
   private Integer seqno;
   
   /** 등록 날짜 */
+  @Column(name = "regdate", nullable = false, columnDefinition = "DATE")
   private String regdate = "";
+  
+  // 회원테이블 외래키
+  @ManyToOne
+  @JoinColumn(name = "member_no",nullable = false, referencedColumnName = "member_no",
+              columnDefinition = "NUMBER(10)")
+  private Member member;
   
 }
