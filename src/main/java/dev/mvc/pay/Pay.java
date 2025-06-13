@@ -9,10 +9,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity @Getter @Setter @ToString
 public class Pay {
   /**
@@ -43,15 +47,5 @@ public class Pay {
   /** 0:+, 1:- */
   @Column(name = "pay_type", nullable = false)
   private int pay_type = 0;
-  
-  public Pay() {
-    
-  }
-  
-  public Pay(Integer pay, String pay_date, int pay_type) {
-    this.pay = pay;
-    this.pay_date = pay_date;
-    this.pay_type = pay_type;
-  }
-  
+      
 }
