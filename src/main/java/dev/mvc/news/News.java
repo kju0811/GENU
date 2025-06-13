@@ -2,12 +2,15 @@ package dev.mvc.news;
 
 import org.hibernate.annotations.ColumnDefault;
 
+import dev.mvc.member.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -60,7 +63,7 @@ public class News {
   
   // 뉴스 내용
   @Lob
-  @Column(name = "news_content", nullable = false, columnDefinition = "LONGTEXT")
+  @Column(name = "news_content", nullable = false, columnDefinition = "CLOB")
   private String news_content = "";
   
   // 뉴스 추천
@@ -130,5 +133,9 @@ public class News {
   private String summary;
   
   // 회원테이블 외래키
+  @ManyToOne
+  @JoinColumn(name = "member_no",nullable = false, referencedColumnName = "member_no",
+              columnDefinition = "NUMBER(10)")
+  private Member member;
   
 }
