@@ -44,8 +44,8 @@ public class Calendar {
   /* 캘린더 번호 */
   @Id
   @NotNull
-  @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="news_seq")
-  @SequenceGenerator(name="news_seq", sequenceName="NEWS_SEQ", allocationSize=1)
+  @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="calendar_seq")
+  @SequenceGenerator(name="calendar_seq", sequenceName="CALENDAR_SEQ", allocationSize=1)
   private Long calendar_no;
   
   /** 출력할 날짜 */
