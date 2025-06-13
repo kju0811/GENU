@@ -1,7 +1,5 @@
 package dev.mvc.coinlog;
 
-import java.util.Date;
-
 import dev.mvc.coin.Coin;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,10 +9,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity @Getter @Setter @ToString
 public class Coinlog {
   /**
@@ -39,12 +41,4 @@ public class Coinlog {
   @JoinColumn(name="coin_no", referencedColumnName = "coin_no", nullable = false)
   private Coin coin;
 
-  public Coinlog() {
-    
-  }
-  
-  public Coinlog(String coinlog_time, int coinlog_price) {
-    this.coinlog_time = coinlog_time;
-    this.coinlog_price = coinlog_price;
-  }
 }
