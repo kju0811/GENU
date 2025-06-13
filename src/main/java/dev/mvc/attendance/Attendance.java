@@ -1,4 +1,6 @@
-package dev.mvc.pay;
+package dev.mvc.attendance;
+
+import java.time.LocalDate;
 
 import dev.mvc.member.Member;
 import jakarta.persistence.Column;
@@ -18,28 +20,22 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity @Getter @Setter @ToString
-public class Pay {
+public class Attendance {
   /**
-   * 금액 식별자, sequence 자동 생성됨.
+   * 출석체크 번호 식별자, sequence 자동 생성됨.
    * @Id: Primary Key
    */
   @Id
-  @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="pay_seq")
-  @SequenceGenerator(name="pay_seq", sequenceName="PAY_SEQ", allocationSize=1)
-  @Column(name = "pay_no", updatable = false)
-  private Long pay_no;
+  @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="attendance_seq")
+  @SequenceGenerator(name="attendance_seq", sequenceName="ATTENDANCE_SEQ", allocationSize=1)
+  @Column(name = "attendance_no", updatable = false)
+  private Long attendance_no;
   
-  /** 자산 */
-  @Column(name = "pay", nullable = false)
-  private Integer pay;
+  @Column(name = "attendance_date", nullable = false)
+  private String attendance_date;
   
-  /** 기록일 */
-  @Column(name = "pay_date", columnDefinition = "DATE", nullable = false)
-  private String pay_date;
-  
-  /** 0:+, 1:- */
-  @Column(name = "pay_type", nullable = false)
-  private int pay_type = 0;
+  @Column(name = "attendance_cnt", nullable = false)
+  private Integer attendance_cnt = 0;
   
   /**
    * member 테이블에 member_no를 참조
@@ -47,5 +43,4 @@ public class Pay {
   @ManyToOne
   @JoinColumn(name="member_no", referencedColumnName = "member_no", nullable = false)
   private Member member;
-      
 }
