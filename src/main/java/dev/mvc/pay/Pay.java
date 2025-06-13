@@ -1,7 +1,7 @@
 package dev.mvc.pay;
 
-import java.util.Date;
-
+import dev.mvc.member.Member;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,19 +22,36 @@ public class Pay {
   @Id
   @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="pay_seq")
   @SequenceGenerator(name="pay_seq", sequenceName="PAY_SEQ", allocationSize=1)
-  private long pay_no;
+  @Column(name = "pay_no", updatable = false)
+  private Long pay_no;
+  
+  /**
+   * member 테이블에 member_no를 참조
+   */
+  @ManyToOne
+  @JoinColumn(name="member_no", referencedColumnName = "member_no", nullable = false)
+  private Member member;
   
   /** 자산 */
+  @Column(name = "pay", nullable = false)
   private Integer pay;
   
   /** 기록일 */
-  private Date pay_date;
+  @Column(name = "pay_date", columnDefinition = "DATE", nullable = false)
+  private String pay_date;
   
   /** 0:+, 1:- */
-  private int pay_type;
+  @Column(name = "pay_type", nullable = false)
+  private int pay_type = 0;
   
-//  @ManyToOne
-//  @JoinColumn(name=member_no)
-//  private Member member;
+  public Pay() {
+    
+  }
+  
+  public Pay(Integer pay, String pay_date, int pay_type) {
+    this.pay = pay;
+    this.pay_date = pay_date;
+    this.pay_type = pay_type;
+  }
   
 }
