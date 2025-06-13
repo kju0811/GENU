@@ -1,6 +1,6 @@
 package dev.mvc.coin;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,10 +9,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.SequenceGenerator;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity @Setter @Getter @ToString
 public class Coin {
   /**
@@ -35,21 +39,11 @@ public class Coin {
   
   /** 코인 생성일, sysdate 자동생성 */
   @Column(name = "coin_date", columnDefinition = "DATE", nullable = false)
-  private String coin_date;
+  private LocalDate coin_date;
   
   /** 코인 정보 */
   @Lob
   @Column(name = "coin_info", nullable = false)
   private String coin_info="";
   
-  public Coin() {
-    
-  }
-  
-  public Coin(String coin_name, String coin_date, int coin_price, String coin_info) {
-    this.coin_name=coin_name;
-    this.coin_date=coin_date;
-    this.coin_price=coin_price;
-    this.coin_info=coin_info;
-  }
 }

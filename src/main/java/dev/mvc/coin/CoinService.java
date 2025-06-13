@@ -1,14 +1,68 @@
 package dev.mvc.coin;
 
+import java.time.LocalDateTime;
+import java.util.Random;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
 public class CoinService {
   @Autowired
   CoinRepository coinRepository;
+  
+  // 변동성
+  private final Random rand = new Random();
     
   public void save(Coin coin) {
     coinRepository.save(coin); 
   }
+  
+  // 시뮬레이션 로직
+  public double calculateFluctuation(int buyVolume, int sellVolume, int newsSentiment) {
+    // (1) 정규분포 기반 기본 변화율
+    double stdDev = 15.0;
+    double baseChange = rand.nextGaussian() * stdDev;
+    
+    // (2) 순매수량 보정
+    int netBuy = buyVolume - sellVolume;
+    
+    // * 20  -> 20% 보정최대 / 클수록 영향이큼  (조정필요)
+    // tanh(x) 크면 결과가 +-1에 거의 수렴 -> 0.01를 곱해
+    double netBuyAdjustment = Math.tanh(netBuy * 0.001) * 20;
+    
+    // (3) 뉴스 감성 보정 (기사 분석 결과: -2 ~ +2) // 조정할수도?
+    double newsAdjustment = newsSentiment * 5.0;
+    
+    // (4) 최종 변화율
+    double change = baseChange + netBuyAdjustment + newsAdjustment;
+    change = Math.max(-50, Math.min(50, change)); // -50% ~ +50% 제한
+
+    // 출력 로그
+    System.out.printf(
+        "기본: %.2f%%, 순매수 보정: %.2f%%, 뉴스 보정: %.2f%% → 최종 변화율: %.2f%%\n",
+        baseChange, netBuyAdjustment, newsAdjustment, change
+    );
+
+    return change;
+  }
+  
+  // (선택) 전체 코인 가격을 주기적으로 업데이트하는 메서드
+  public void updateAllCoinPrices() {
+    // 전체 코인을 조회해서 가격 업데이트
+    for (Coin coin : coinRepository.findAll()) {
+      double fluctuation = calculateFluctuation(0, 0, 0); // 예시 값
+      coin.setCoin_price((int)(coin.getCoin_price() * (1 + fluctuation / 100)));
+      coinRepository.save(coin);
+    }
+  }
+  
+  @Scheduled(cron = "0 0/10 * * * *") // 매 10분마다
+  public void scheduledUpdate() {
+    updateAllCoinPrices();
+    System.out.println("전체 코인 변동 완료" + LocalDateTime.now());
+  }
+  
+  
 }
