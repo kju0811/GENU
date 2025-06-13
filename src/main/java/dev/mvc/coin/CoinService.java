@@ -56,10 +56,11 @@ public class CoinService {
       coin.setCoin_price((int)(coin.getCoin_price() * (1 + fluctuation / 100)));
       coinRepository.save(coin);
     }
+    
   }
   
   // 작업중엔 정지하고 베포 -> 동시에 켜져있으면 같이 실행되서 큰일남
-//  @Scheduled(cron = "0 0/10 * * * *") // 매 10분마다
+//  @Scheduled(cron = "0 0/1 * * * *") // 매 10분마다
 //  public void scheduledUpdate() {
 //    updateAllCoinPrices();
 //    System.out.println("전체 코인 변동 완료" + LocalDateTime.now());

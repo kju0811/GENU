@@ -28,6 +28,11 @@ public class Coinlog {
   @Column(name = "coinlog_no", updatable = false)
   private Long coinlog_no;
   
+  /** 코인의 외래키 */
+  @ManyToOne
+  @JoinColumn(name="coin_no", referencedColumnName = "coin_no", nullable = false)
+  private Coin coin;
+  
   /** 코인기록 시간 */
   @Column(name = "coinlog_time", columnDefinition = "DATE", nullable = false)
   private String coinlog_time;
@@ -36,9 +41,4 @@ public class Coinlog {
   @Column(name = "coinlog_price", nullable = false)
   private Integer coinlog_price;
   
-  /** 코인의 외래키 */
-  @ManyToOne
-  @JoinColumn(name="coin_no", referencedColumnName = "coin_no", nullable = false)
-  private Coin coin;
-
 }
