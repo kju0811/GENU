@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 /*
  CREATE TABLE `newsreply` (
@@ -27,6 +28,7 @@ import lombok.Setter;
 );
  */
 
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity @Getter @Setter

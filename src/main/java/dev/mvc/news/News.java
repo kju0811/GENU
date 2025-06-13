@@ -19,6 +19,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 /*
  CREATE TABLE "news" (
@@ -44,6 +45,8 @@ import lombok.Setter;
   "member_no" NUMBER(10)    NOT NULL
 );
   */
+
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity @Getter @Setter
