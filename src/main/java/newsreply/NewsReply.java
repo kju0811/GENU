@@ -39,7 +39,7 @@ public class NewsReply {
   @Id
   @NotNull
   @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="newsreply_seq")
-  @SequenceGenerator(name="news_seq", sequenceName="NEWSREPLY_SEQ", allocationSize=1)
+  @SequenceGenerator(name="newsreply_seq", sequenceName="NEWSREPLY_SEQ", allocationSize=1)
   private Long newsreply_no;
   
   // 댓글 내용
@@ -56,7 +56,7 @@ public class NewsReply {
               columnDefinition = "NUMBER(10)")
   private Member member;
   
-  // 회원테이블 외래키
+  // 뉴스테이블 외래키
   @ManyToOne
   @JoinColumn(name = "news_no",nullable = false, referencedColumnName = "news_no",
               columnDefinition = "NUMBER(10)")
