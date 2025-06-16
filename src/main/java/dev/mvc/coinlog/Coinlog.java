@@ -1,5 +1,7 @@
 package dev.mvc.coinlog;
 
+import java.time.LocalDateTime;
+
 import dev.mvc.coin.Coin;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,11 +36,15 @@ public class Coinlog {
   private Coin coin;
   
   /** 코인기록 시간 */
-  @Column(name = "coinlog_time", columnDefinition = "DATE", nullable = false)
-  private String coinlog_time;
+  @Column(name = "coinlog_time", nullable = false)
+  private LocalDateTime coinlog_time;
   
   /** 코인기록 가격 */
   @Column(name = "coinlog_price", nullable = false)
   private Integer coinlog_price;
+  
+  /** 코인기록 등락률 */
+  @Column(name = "coinlog_percentage", columnDefinition = "NUMBER(5,2)", nullable = false)
+  private double coinlog_percentage=0.00;
   
 }
