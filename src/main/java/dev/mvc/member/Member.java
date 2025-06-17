@@ -38,7 +38,7 @@ public class Member {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "member_seq")
   @SequenceGenerator(name = "member_seq", sequenceName = "MEMBER_SEQ", allocationSize = 1)
-  @Column(name = "member_no")
+  @Column(name = "member_no", updatable = false)
   private Long member_no;
   
   /** 회원 아이디(이메일) */
