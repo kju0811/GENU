@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -74,6 +75,27 @@ public class CoinController {
     } else {
       return ResponseEntity.notFound().build(); // 찾지 못한 경우 404 반환
     }
+  }
+  
+  /**
+   * 수정
+   * PUT 요청을 처리하여 특정 ID를 가진 Entity 객체를 업데이트
+   * http://localhost:9093/coin/21
+   * @param id
+   * @param entity
+   * @return
+   */
+  @PutMapping(path = "/{coin_id}")
+  public ResponseEntity<Coin> updateEntity(@PathVariable("coin_id") Long id, 
+                                                                @RequestBody Coin coin) {
+    // id를 이용한 레코드 조회 -> existingEntity 객체에 할당 -> {} 실행 값 저장 -> DBMS 저장 -> 상태 코드 200 출력
+    return coinService.find_by_id(id).<ResponseEntity<Coin>>map(existingCoin -> {
+      existingCoin.setCoin_name(coin.getCoin_name());
+      existingCoin.setCoin_info(coin.getCoin_info());
+      
+      coinService.save(existingCoin);
+      return ResponseEntity.ok().build(); // 200 반환
+    }).orElseGet(() -> ResponseEntity.notFound().build()); // 찾지 못한 경우 404 반환
   }
   
 }
