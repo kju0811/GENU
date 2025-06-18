@@ -1,4 +1,4 @@
-package newsreply;
+package dev.mvc.newsreply;
 
 import dev.mvc.member.Member;
 import dev.mvc.news.News;
