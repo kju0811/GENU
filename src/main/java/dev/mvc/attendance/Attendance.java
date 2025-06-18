@@ -1,6 +1,7 @@
 package dev.mvc.attendance;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import dev.mvc.member.Member;
 import jakarta.persistence.Column;
@@ -31,9 +32,11 @@ public class Attendance {
   @Column(name = "attendance_no", updatable = false)
   private Long attendance_no;
   
+  /** 출석체크 기록 */
   @Column(name = "attendance_date", nullable = false)
-  private String attendance_date;
+  private LocalDateTime attendance_date;
   
+  /** 누적 출석 */
   @Column(name = "attendance_cnt", nullable = false)
   private Integer attendance_cnt = 0;
   
