@@ -1,10 +1,84 @@
 package dev.mvc.deal;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping(value = "/deal")
-@Controller
+@RestController
 public class DealController {
-
+  @Autowired
+  DealService dealService;
+  
+  /**
+   * 출석 생성
+   * @param deal
+   * @return
+   */
+  @PostMapping(value="/create")
+  @ResponseBody
+  public ResponseEntity<Deal> create(@RequestBody Deal deal) {
+    dealService.save(deal);
+    return ResponseEntity.ok().build();
+  }
+  
+  /**
+   * 전체 목록
+   * GET 요청을 처리하여 모든 Entity 객체의 리스트를 반환
+   * http://localhost:9093/deal/find_all
+   * @return
+   */
+  @GetMapping(value = "/find_all")
+  public List<Deal> find_all() {
+    return dealService.find_all();
+  }
+  
+  /**
+   * DELETE 요청을 처리하여 특정 ID를 가진 Entity 객체를 삭제
+   * http://localhost:9093/deal/21
+   * @param id
+   * @return
+   */
+  @DeleteMapping(value = "/{deal_id}")
+  public ResponseEntity<Void> deleteEntity(@PathVariable("deal_id") Long id) {
+    if (dealService.find_by_id(id).isPresent()) { // Entity가 존재하면
+      dealService.deleteEntity(id); // 삭제
+      return ResponseEntity.ok().build(); // 성공적으로 삭제된 경우 200 반환
+    } else {
+      return ResponseEntity.notFound().build(); // 찾지 못한 경우 404 반환
+    }
+  }
+  
+  /**
+   * 수정
+   * PUT 요청을 처리하여 특정 ID를 가진 Entity 객체를 업데이트
+   * http://localhost:9093/deal/21
+   * @param id
+   * @param entity
+   * @return
+   */
+  @PutMapping(path = "/{deal_id}")
+  public ResponseEntity<Deal> updateEntity(@PathVariable("deal_id") Long id, 
+                                                                @RequestBody Deal deal) {
+    // id를 이용한 레코드 조회 -> existingEntity 객체에 할당 -> {} 실행 값 저장 -> DBMS 저장 -> 상태 코드 200 출력
+    return dealService.find_by_id(id).<ResponseEntity<Deal>>map(existingDeal -> {
+      existingDeal.setDeal_cnt(deal.getDeal_cnt());
+      existingDeal.setDeal_type(deal.getDeal_type());
+      
+      dealService.save(existingDeal);
+      return ResponseEntity.ok().build(); // 200 반환
+    }).orElseGet(() -> ResponseEntity.notFound().build()); // 찾지 못한 경우 404 반환
+  }
+  
 }

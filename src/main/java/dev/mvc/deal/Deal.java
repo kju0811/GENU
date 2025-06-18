@@ -1,5 +1,7 @@
 package dev.mvc.deal;
 
+import java.time.LocalDateTime;
+
 import dev.mvc.coin.Coin;
 import dev.mvc.member.Member;
 import jakarta.persistence.Column;
@@ -32,15 +34,19 @@ public class Deal {
   @Column(name = "deal_no", updatable = false)
   private Long deal_no;
 
-  @Column(name = "deal_date", columnDefinition = "DATE", nullable = false)
-  private String deal_date;
+  /** 거래 날짜 */
+  @Column(name = "deal_date", nullable = false)
+  private LocalDateTime deal_date;
   
+  /** 거래시 매매 갯수 */
   @Column(name = "deal_cnt", nullable = false)
   private Integer deal_cnt;
   
+  /** 거래 수수료 */
   @Column(name = "deal_fee", nullable = false)
   private Integer deal_fee;
   
+  /** 1: 매수 0: 매도 */
   @Min(0)
   @Max(1)
   @Column(name = "deal_type", nullable = false)
