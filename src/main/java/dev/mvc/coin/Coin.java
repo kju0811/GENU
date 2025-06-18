@@ -1,6 +1,6 @@
 package dev.mvc.coin;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -38,12 +38,16 @@ public class Coin {
   private Integer coin_price=0;
   
   /** 코인 생성일, sysdate 자동생성 */
-  @Column(name = "coin_date", columnDefinition = "DATE", nullable = false)
-  private LocalDate coin_date;
+  @Column(name = "coin_date", nullable = false)
+  private LocalDateTime coin_date;
   
   /** 코인 정보 */
   @Lob
   @Column(name = "coin_info", nullable = false)
   private String coin_info="";
+  
+  /** 코인 등락률 */
+  @Column(name = "coin_percentage", columnDefinition = "NUMBER(5,2)", nullable = false)
+  private double coin_percentage=0.00;
   
 }
