@@ -50,7 +50,7 @@ public class PayService {
       //크레딧에 데이터 삽입
       payRepository.save(pay); //movieId, credit
       
-      System.out.printf("[Credit] 크래딧 지급 - member:{}, pay_pay:{}", member.getMember_no(), pay_pay);
+      System.out.printf("[Credit] 크래딧 지급 - member:{}, pay_pay:{}", member.getMemberNo(), pay_pay);
       // log.info("[Credit] 크래딧 지급 - user:{}, amount:{}", user.getEmail(), money);
   }
 
