@@ -1,4 +1,4 @@
-package dev.mvc.deal;
+package dev.mvc.coinlike;
 
 import java.time.LocalDateTime;
 
@@ -12,8 +12,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,34 +23,25 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity @Getter @Setter @ToString
-public class Deal {
+@Table(  // 유니크 제약조건 추가
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"member_no", "coin_no"})
+    }
+)
+public class Coinlike {
   /**
-   * 거래 식별자, sequence 자동 생성됨.
+   * 코인좋아요 식별자, sequence 자동 생성됨.
    * @Id: Primary Key
    */
   @Id
-  @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="deal_seq")
-  @SequenceGenerator(name="deal_seq", sequenceName="DEAL_SEQ", allocationSize=1)
-  @Column(name = "deal_no", updatable = false)
-  private Long deal_no;
+  @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="coinlike_seq")
+  @SequenceGenerator(name="coinlike_seq", sequenceName="COINLIKE_SEQ", allocationSize=1)
+  @Column(name = "coinlike_no", updatable = false)
+  private Long coinlike_no;
 
   /** 거래 날짜 */
-  @Column(name = "deal_date", nullable = false)
-  private LocalDateTime deal_date;
-  
-  /** 거래시 매매 갯수 */
-  @Column(name = "deal_cnt", nullable = false)
-  private Integer deal_cnt;
-  
-  /** 거래 수수료 */
-  @Column(name = "deal_fee", nullable = false)
-  private Integer deal_fee;
-  
-  /** 1: 매수 0: 매도 */
-  @Min(0)
-  @Max(1)
-  @Column(name = "deal_type", nullable = false)
-  private int deal_type=1;
+  @Column(name = "coinlike_date", nullable = false)
+  private LocalDateTime coinlike_date;
   
   /**
    * member 테이블에 member_no를 참조

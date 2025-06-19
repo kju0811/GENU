@@ -15,13 +15,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.mvc.coin.Coin;
+import dev.mvc.coinlike.CoinlikeRepository;
+import lombok.RequiredArgsConstructor;
 
 @RequestMapping(value = "/attendance")
 @RestController
+@RequiredArgsConstructor
 public class AttendanceController {
-  @Autowired
-  AttendanceService attendanceService;
-  
+  private final AttendanceService attendanceService;
   
   /**
    * 출석 생성
