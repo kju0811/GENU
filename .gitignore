@@ -11,6 +11,7 @@ build/
 .factorypath
 .springBeans
 .sts4-cache
+.LLMKey.java
 bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
