@@ -103,5 +103,7 @@ public class CoinService {
   public List<Coin> find_all() {
     return coinRepository.findAll();  // method/SQL 자동 생성
   }
+  
+  
 
 }
