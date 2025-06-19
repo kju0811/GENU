@@ -6,10 +6,13 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import dev.mvc.coinlike.CoinlikeRepository;
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class DealService {
-  @Autowired
-  DealRepository dealRepository;
+  private final DealRepository dealRepository;
   
   /** Create, INSERT~, UPDATE~ */
   public void save(Deal deal) {

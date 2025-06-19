@@ -15,11 +15,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import dev.mvc.coinlike.CoinlikeRepository;
+import lombok.RequiredArgsConstructor;
+
 @RequestMapping(value = "/deal")
 @RestController
+@RequiredArgsConstructor
 public class DealController {
-  @Autowired
-  DealService dealService;
+  private final DealService dealService;
   
   /**
    * 출석 생성
