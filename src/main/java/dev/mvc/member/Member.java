@@ -39,23 +39,23 @@ public class Member {
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "member_seq")
   @SequenceGenerator(name = "member_seq", sequenceName = "MEMBER_SEQ", allocationSize = 1)
   @Column(name = "member_no", updatable = false)
-  private Long member_no;
+  private Long memberNo;
   
   /** 회원 아이디(이메일) */
   @Column(name = "member_id", nullable = false, length = 30, unique = true)
-  private String member_id;
+  private String memberId;
 
   /** 패스워드 */
   @Column(name = "member_pw", nullable = false, length = 200)
-  private String member_pw;
+  private String memberPw;
   
   /** 성명 */
   @Column(name = "member_name", nullable = false, length = 30)
-  private String member_name;
+  private String memberName;
 
   /** 전화번호 */
   @Column(name = "member_tel", nullable = false, length = 14)
-  private String member_tel = "";
+  private String memberTel = "";
 
   /** 우편번호 */
   @Column(name = "zipcode", length = 5)
@@ -71,13 +71,13 @@ public class Member {
 
   /** 가입일 */
   @Column(name = "member_date", nullable = false, length = 20)
-  private String member_date = "";
+  private String memberDate = "";
 
   /** 회원등급 */
   @Column(name = "member_grade", nullable = false)
-  private Integer member_grade = 0;
+  private Integer memberGrade = 0;
 
   /** 활동명 */
   @Column(name = "member_nick", nullable = false, length = 45, unique = true)
-  private String member_nick = "";
+  private String memberNick = "";
 }
