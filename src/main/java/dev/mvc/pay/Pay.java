@@ -1,5 +1,9 @@
 package dev.mvc.pay;
 
+import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import dev.mvc.member.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,11 +14,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity @Getter @Setter @ToString
@@ -30,12 +36,8 @@ public class Pay {
   private Long pay_no;
   
   /** 자산 */
-  @Column(name = "pay", nullable = false)
-  private Integer pay;
-  
-  /** 기록일 */
-  @Column(name = "pay_date", columnDefinition = "DATE", nullable = false)
-  private String pay_date;
+  @Column(name = "pay_pay", nullable = false)
+  private Integer pay_pay;
   
   /** 0:+, 1:- */
   @Column(name = "pay_type", nullable = false)
