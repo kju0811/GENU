@@ -15,12 +15,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.mvc.deal.Deal;
+import lombok.RequiredArgsConstructor;
 
 @RequestMapping(value = "/coinlike")
 @RestController
+@RequiredArgsConstructor
 public class CoinlikeController {
-  @Autowired
-  CoinlikeService coinlikeService;
+  private final CoinlikeService coinlikeService;
   
   /**
    * 코인좋아요 생성

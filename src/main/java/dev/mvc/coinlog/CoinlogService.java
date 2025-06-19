@@ -7,11 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import dev.mvc.coin.Coin;
+import dev.mvc.coinlike.CoinlikeRepository;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class CoinlogService {
-  @Autowired
-  CoinlogRepository coinlogRepository;
+  private final CoinlogRepository coinlogRepository;
   
   /** 코인기록 저장, Create, INSERT~, UPDATE~ */
   public void save(Coinlog coinlog) {

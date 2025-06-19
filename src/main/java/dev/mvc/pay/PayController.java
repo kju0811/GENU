@@ -17,13 +17,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.mvc.coin.Coin;
+import dev.mvc.coinlike.CoinlikeRepository;
 import dev.mvc.member.Member;
+import lombok.RequiredArgsConstructor;
 
 @RequestMapping(value = "/pay")
 @RestController
+@RequiredArgsConstructor
 public class PayController {
-  @Autowired
-  PayService payService;
+  private final PayService payService;
   
   /**
    * 돈 생성
