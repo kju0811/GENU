@@ -12,13 +12,17 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import dev.mvc.coin.Coin;
+import dev.mvc.coinlike.CoinlikeRepository;
+import lombok.RequiredArgsConstructor;
 
 @RequestMapping(value = "/coinlog")
+@RestController
+@RequiredArgsConstructor
 public class CoinlogController {
-  @Autowired
-  CoinlogService coinlogService;
+  private final CoinlogService coinlogService;
   
   /**
    * 코인기록 생성
