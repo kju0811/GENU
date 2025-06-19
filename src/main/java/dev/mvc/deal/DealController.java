@@ -1,4 +1,4 @@
-package dev.mvc.pay;
+package dev.mvc.deal;
 
 import java.util.List;
 
@@ -12,55 +12,51 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import dev.mvc.coin.Coin;
 import dev.mvc.coinlike.CoinlikeRepository;
-import dev.mvc.member.Member;
 import lombok.RequiredArgsConstructor;
 
-@RequestMapping(value = "/pay")
+@RequestMapping(value = "/deal")
 @RestController
 @RequiredArgsConstructor
-public class PayController {
-  private final PayService payService;
+public class DealController {
+  private final DealService dealService;
   
   /**
-   * 돈 생성
-   * @param pay
+   * 출석 생성
+   * @param deal
    * @return
    */
   @PostMapping(value="/create")
   @ResponseBody
-  public ResponseEntity<Pay> create(@RequestBody Pay pay) {
-   payService.save(pay);
-//    payService.additional(member, pay_pay);
+  public ResponseEntity<Deal> create(@RequestBody Deal deal) {
+    dealService.save(deal);
     return ResponseEntity.ok().build();
   }
   
   /**
    * 전체 목록
    * GET 요청을 처리하여 모든 Entity 객체의 리스트를 반환
-   * http://localhost:9093/pay/find_all
+   * http://localhost:9093/deal/find_all
    * @return
    */
   @GetMapping(value = "/find_all")
-  public List<Pay> find_all() {
-    return payService.find_all();
+  public List<Deal> find_all() {
+    return dealService.find_all();
   }
   
   /**
    * DELETE 요청을 처리하여 특정 ID를 가진 Entity 객체를 삭제
-   * http://localhost:9093/pay/21
+   * http://localhost:9093/deal/21
    * @param id
    * @return
    */
-  @DeleteMapping(value = "/{pay_id}")
-  public ResponseEntity<Void> deleteEntity(@PathVariable("pay_id") Long id) {
-    if (payService.find_by_id(id).isPresent()) { // Entity가 존재하면
-      payService.deleteEntity(id); // 삭제
+  @DeleteMapping(value = "/{deal_id}")
+  public ResponseEntity<Void> deleteEntity(@PathVariable("deal_id") Long id) {
+    if (dealService.find_by_id(id).isPresent()) { // Entity가 존재하면
+      dealService.deleteEntity(id); // 삭제
       return ResponseEntity.ok().build(); // 성공적으로 삭제된 경우 200 반환
     } else {
       return ResponseEntity.notFound().build(); // 찾지 못한 경우 404 반환
@@ -70,20 +66,20 @@ public class PayController {
   /**
    * 수정
    * PUT 요청을 처리하여 특정 ID를 가진 Entity 객체를 업데이트
-   * http://localhost:9093/pay/21
+   * http://localhost:9093/deal/21
    * @param id
    * @param entity
    * @return
    */
-  @PutMapping(path = "/{pay_id}")
-  public ResponseEntity<Pay> updateEntity(@PathVariable("pay_id") Long id, 
-                                                                @RequestBody Pay pay) {
+  @PutMapping(path = "/{deal_id}")
+  public ResponseEntity<Deal> updateEntity(@PathVariable("deal_id") Long id, 
+                                                                @RequestBody Deal deal) {
     // id를 이용한 레코드 조회 -> existingEntity 객체에 할당 -> {} 실행 값 저장 -> DBMS 저장 -> 상태 코드 200 출력
-    return payService.find_by_id(id).<ResponseEntity<Pay>>map(existingPay -> {
-      existingPay.setPay_pay(pay.getPay_pay());
-      existingPay.setPay_type(pay.getPay_type());
-
-      payService.save(existingPay);
+    return dealService.find_by_id(id).<ResponseEntity<Deal>>map(existingDeal -> {
+      existingDeal.setDeal_cnt(deal.getDeal_cnt());
+      existingDeal.setDeal_type(deal.getDeal_type());
+      
+      dealService.save(existingDeal);
       return ResponseEntity.ok().build(); // 200 반환
     }).orElseGet(() -> ResponseEntity.notFound().build()); // 찾지 못한 경우 404 반환
   }

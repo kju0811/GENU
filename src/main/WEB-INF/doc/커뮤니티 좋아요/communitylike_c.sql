@@ -7,10 +7,10 @@ DROP TABLE communitylike CASCADE CONSTRAINTS;
 CREATE TABLE communitylike (
 	communitylike_no	NUMBER(10)	NOT NULL    PRIMARY KEY,
     member_no	NUMBER(10)	NOT NULL, -- FK
-	coin_no	    NUMBER(10)	NOT NULL, -- FK
+	community_no	    NUMBER(10)	NOT NULL, -- FK
 	communitylike_date	DATE	NOT NULL,
     FOREIGN KEY (member_no) REFERENCES member (member_no),
-    FOREIGN KEY (coin_no) REFERENCES coin (coin_no)
+    FOREIGN KEY (community_no) REFERENCES community (community_no)
 );
 
 COMMENT ON TABLE communitylike is '커뮤니티좋아요';
