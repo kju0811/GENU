@@ -6,10 +6,12 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class CoinlikeService {
-  @Autowired
-  CoinlikeRepository coinlikeRepository;
+  private final CoinlikeRepository coinlikeRepository;
   
   /** Create, INSERT~, UPDATE~ */
   public void save(Coinlike coinlike) {
