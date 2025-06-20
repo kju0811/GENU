@@ -41,34 +41,34 @@ public class MemberController {
     }
 
     /** 멤버 단건 조회 */
-    @GetMapping("/read/{memberNo}")
-    public ResponseEntity<Member> read(@PathVariable Long memberNo) {
-        Member member = memberService.findByMemberNo(memberNo);
+    @GetMapping("/read/{member_no}")
+    public ResponseEntity<Member> read(@PathVariable Long member_no) {
+        Member member = memberService.findByMember_no(member_no);
         return ResponseEntity.ok(member);
     }
 
     /** 멤버 수정 */
-    @PutMapping("/{memberNo}")
-    public ResponseEntity<Member> update(@PathVariable Long memberNo,
+    @PutMapping("/{member_no}")
+    public ResponseEntity<Member> update(@PathVariable Long member_no,
                                          @RequestBody Member updatedMember) {
-        return memberService.findByMemberNoOptional(memberNo).map(existingMember -> {
-            existingMember.setMemberName(updatedMember.getMemberName());
-            existingMember.setMemberPw(updatedMember.getMemberPw()); // 추후 별도 API로 분리 가능
-            existingMember.setMemberTel(updatedMember.getMemberTel());
+        return memberService.findByMemberNoOptional(member_no).map(existingMember -> {
+            existingMember.setMember_name(updatedMember.getMember_name());
+            existingMember.setMember_pw(updatedMember.getMember_pw()); // 추후 별도 API로 분리 가능
+            existingMember.setMember_tel(updatedMember.getMember_tel());
             existingMember.setZipcode(updatedMember.getZipcode());
             existingMember.setAddress1(updatedMember.getAddress1());
             existingMember.setAddress2(updatedMember.getAddress2());
-            existingMember.setMemberNick(updatedMember.getMemberNick());
+            existingMember.setMember_nick(updatedMember.getMember_nick());
 
             return ResponseEntity.ok(memberService.save(existingMember));
         }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /** 멤버 삭제 */
-    @DeleteMapping("/{memberNo}")
-    public ResponseEntity<Void> delete(@PathVariable Long memberNo) {
-        if (memberService.findByMemberNoOptional(memberNo).isPresent()) {
-            memberService.deleteEntity(memberNo);
+    @DeleteMapping("/{member_no}")
+    public ResponseEntity<Void> delete(@PathVariable Long member_no) {
+        if (memberService.findByMemberNoOptional(member_no).isPresent()) {
+            memberService.deleteEntity(member_no);
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.notFound().build();
