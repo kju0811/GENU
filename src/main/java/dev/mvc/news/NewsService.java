@@ -44,4 +44,26 @@ public class NewsService {
     return response;
   }
   
+  public String summary(NewsRequestDTO dto) {
+    JSONObject src = new JSONObject(dto); // String -> JSON
+    
+    String url = "http://localhost:8000/summary";
+    
+ // HTTP 헤더 설정 (JSON)
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+
+    // 요청 바디에 담을 데이터
+    Map<String, Object> body = new HashMap<>();
+    body.put("result", src.get("result"));
+    
+    // HttpEntity로 헤더 + 바디 묶기
+    HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+    // POST 요청 보내고, 결과를 String으로 받기
+    String response = restTemplate.postForObject(url, requestEntity, String.class);
+    System.out.println("-> response: " + response);
+    
+    return response;
+  }
 }
