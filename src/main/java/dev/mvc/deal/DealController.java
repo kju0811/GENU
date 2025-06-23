@@ -50,11 +50,11 @@ public class DealController {
   /**
    * DELETE 요청을 처리하여 특정 ID를 가진 Entity 객체를 삭제
    * http://localhost:9093/deal/21
-   * @param id
+   * @param deal_no
    * @return
    */
-  @DeleteMapping(value = "/{deal_id}")
-  public ResponseEntity<Void> deleteEntity(@PathVariable("deal_id") Long id) {
+  @DeleteMapping(value = "/{deal_no}")
+  public ResponseEntity<Void> deleteEntity(@PathVariable("deal_no") Long id) {
     if (dealService.find_by_id(id).isPresent()) { // Entity가 존재하면
       dealService.deleteEntity(id); // 삭제
       return ResponseEntity.ok().build(); // 성공적으로 삭제된 경우 200 반환
@@ -67,12 +67,12 @@ public class DealController {
    * 수정
    * PUT 요청을 처리하여 특정 ID를 가진 Entity 객체를 업데이트
    * http://localhost:9093/deal/21
-   * @param id
+   * @param deal_no
    * @param entity
    * @return
    */
-  @PutMapping(path = "/{deal_id}")
-  public ResponseEntity<Deal> updateEntity(@PathVariable("deal_id") Long id, 
+  @PutMapping(path = "/{deal_no}")
+  public ResponseEntity<Deal> updateEntity(@PathVariable("deal_no") Long id, 
                                                                 @RequestBody Deal deal) {
     // id를 이용한 레코드 조회 -> existingEntity 객체에 할당 -> {} 실행 값 저장 -> DBMS 저장 -> 상태 코드 200 출력
     return dealService.find_by_id(id).<ResponseEntity<Deal>>map(existingDeal -> {

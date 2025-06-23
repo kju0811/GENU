@@ -51,8 +51,8 @@ public class FluctuationController {
    * @param id
    * @return
    */
-  @DeleteMapping(value = "/{fluctuation_id}")
-  public ResponseEntity<Void> deleteEntity(@PathVariable("fluctuation_id") Long id) {
+  @DeleteMapping(value = "/{fluctuation_no}")
+  public ResponseEntity<Void> deleteEntity(@PathVariable("fluctuation_no") Long id) {
     if (fluctuationService.find_by_id(id).isPresent()) { // Entity가 존재하면
       fluctuationService.deleteEntity(id); // 삭제
       return ResponseEntity.ok().build(); // 성공적으로 삭제된 경우 200 반환
@@ -69,8 +69,8 @@ public class FluctuationController {
    * @param entity
    * @return
    */
-  @PutMapping(path = "/{fluctuation_id}")
-  public ResponseEntity<Fluctuation> updateEntity(@PathVariable("fluctuation_id") Long id, 
+  @PutMapping(path = "/{fluctuation_no}")
+  public ResponseEntity<Fluctuation> updateEntity(@PathVariable("fluctuation_no") Long id, 
                                                                 @RequestBody Fluctuation fluctuation) {
     // id를 이용한 레코드 조회 -> existingEntity 객체에 할당 -> {} 실행 값 저장 -> DBMS 저장 -> 상태 코드 200 출력
     return fluctuationService.find_by_id(id).<ResponseEntity<Fluctuation>>map(existingFluctuation -> {
