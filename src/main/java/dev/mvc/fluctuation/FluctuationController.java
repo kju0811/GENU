@@ -81,4 +81,15 @@ public class FluctuationController {
     }).orElseGet(() -> ResponseEntity.notFound().build()); // 찾지 못한 경우 404 반환
   }
 
+  /**
+   * 날짜에 포함하는 레코드 목록
+   * GET 요청을 처리하여 모든 Entity 객체의 리스트를 반환
+   * http://localhost:9093/fluctuation/숫자
+   * @return
+   */
+  @GetMapping(value = "/{coin_no}")
+  public List<Long> findByRdatePeriod(@PathVariable("coin_no") Long coin_no) {
+    return fluctuationService.findByRdatePeriod(coin_no);
+  }
+  
 }

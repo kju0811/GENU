@@ -1,5 +1,7 @@
 package dev.mvc.fluctuation;
 
+import java.time.LocalDateTime;
+
 import dev.mvc.coin.Coin;
 import dev.mvc.news.News;
 import jakarta.persistence.Column;
@@ -30,6 +32,10 @@ public class Fluctuation {
   @SequenceGenerator(name="fluctuation_seq", sequenceName="FLUCTUATION_SEQ", allocationSize=1)
   @Column(name = "fluctuation_no", updatable = false)
   private Long fluctuation_no;
+  
+  /** 코인변동 생성일, sysdate 자동생성 */
+  @Column(name = "fluctuation_date", nullable = false)
+  private LocalDateTime fluctuation_date;
   
   /**
    * news 테이블에 news_no를 참조
