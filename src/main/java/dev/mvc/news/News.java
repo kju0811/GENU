@@ -122,10 +122,6 @@ public class News {
   @ColumnDefault("'Y'")
   private String visible = "Y";
   
-  // 등급 번호
-  @Column(name = "grade_no", nullable = false, columnDefinition = "NUMBER(7)")
-  private Integer grade_no = 0;
-  
   // 호재악재 판별
   @Column(name = "emotion", nullable = false, columnDefinition = "NUMBER(1)")
   @ColumnDefault("0")
