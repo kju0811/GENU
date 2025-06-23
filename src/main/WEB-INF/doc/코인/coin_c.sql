@@ -14,8 +14,8 @@ CREATE TABLE coin (
 
 -- 추가
 ALTER TABLE coin DROP COLUMN coin_percentage;
-ALTER TABLE COIN ADD COIN_PERCENTAGE NUMBER(5, 2) DEFAULT 0;
-ALTER TABLE COIN MODIFY COIN_PERCENTAGE NOT NULL;
+ALTER TABLE COIN ADD coin_cate VARCHAR(30);
+ALTER TABLE COIN MODIFY coin_cate NOT NULL;
 
 COMMENT ON TABLE coin is '코인';
 COMMENT ON COLUMN coin.coin_no is '코인번호';
@@ -48,3 +48,8 @@ DELETE FROM coin
 WHERE coin_no=1;
 
 commit;
+
+SELECT f.news_no
+FROM fluctuation f
+JOIN coin c ON f.coin_no = c.coin_no
+WHERE f.fluctuation_date BETWEEN SYSDATE - 3 AND SYSDATE;
