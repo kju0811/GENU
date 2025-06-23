@@ -109,13 +109,13 @@ public class CoinService {
     
   }
   
-  /**  작업중엔 정지하고 베포 -> 동시에 켜져있으면 같이 실행되서 큰일남 */
-  @Transactional
-  @Scheduled(cron = "0 0/2 * * * *") // 매 10분마다
-  public void scheduledUpdate() {
-    updateAllCoinPrices();
-    System.out.println("전체 코인 변동 완료" + LocalDateTime.now());
-  }
+//  /**  작업중엔 정지하고 베포 -> 동시에 켜져있으면 같이 실행되서 큰일남 */
+//  @Transactional
+//  @Scheduled(cron = "0 0/2 * * * *") // 매 10분마다
+//  public void scheduledUpdate() {
+//    updateAllCoinPrices();
+//    System.out.println("전체 코인 변동 완료" + LocalDateTime.now());
+//  }
   
   /** 코인 id에 해당하는 정보 반환 */
   public Optional<Coin> find_by_id(Long id) {
