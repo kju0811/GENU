@@ -1,13 +1,23 @@
-// src/App.jsx
 import React from "react";
+import {Routes, Route } from "react-router-dom";
+// import Navbar from "./components/Navbar";
+// import Footer from "./components/Footer";
+import Home from "./pages/Home";
+import News from "./ai/News";
+//import NotFound from "./pages/NotFound";
 
 function App() {
   return (
-    <div style={{ padding: "2rem", textAlign: "center" }}>
-      <h1>GENU</h1>
-      <p>React + Vite 프로젝트가 정상 작동 중입니다.</p>
-    </div>
-  );
+    <>
+      {/* <Navbar /> */}
+      <Routes>
+        <Route path="/" element={<Home />} /> {/* <Link to="/"> */}
+        <Route path="/ai/news" element={<News />} />
+        {/* <Route path="*" element={<NotFound />} /> */}
+      </Routes>
+      {/* <Footer /> */}
+    </>
+  );  
 }
 
 export default App;
