@@ -24,18 +24,18 @@ public class MemberService {
   }
   
   /** 회원 번호로 회원 단건 조회 (없으면 예외 발생) */
-  public Member findByMemberNo(Long memberNo) {
-    return memberRepository.findById(memberNo)
-            .orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다. 번호: " + memberNo));
+  public Member findByMember_no(Long member_no) {
+    return memberRepository.findById(member_no)
+            .orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다. 번호: " + member_no));
   }
   
   /** 회원 번호로 회원 단건 조회 (Optional 반환) */
-  public Optional<Member> findByMemberNoOptional(Long memberNo) {
-    return memberRepository.findById(memberNo);
+  public Optional<Member> findByMemberNoOptional(Long member_no) {
+    return memberRepository.findById(member_no);
   }
   
   /** 회원 삭제 */
-  public void deleteEntity(Long memberNo) {
-      memberRepository.deleteById(memberNo);
+  public void deleteEntity(Long member_no) {
+      memberRepository.deleteById(member_no);
   }
 }

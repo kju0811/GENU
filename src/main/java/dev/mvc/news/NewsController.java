@@ -35,30 +35,10 @@ public class NewsController {
     return newsService.create(requestDTO);
   }
   
-//  @PostMapping(value="/summary")
-//  @ResponseBody
-//  public String summary_Proc(@RequestBody String json_src) {
-//    JSONObject src = new JSONObject(json_src); // String -> JSON
-//    
-//    String url = "http://localhost:8000/summary";
-//    
-// // HTTP 헤더 설정 (JSON)
-//    HttpHeaders headers = new HttpHeaders();
-//    headers.setContentType(MediaType.APPLICATION_JSON);
-//
-//    // 요청 바디에 담을 데이터
-//    Map<String, Object> body = new HashMap<>();
-//    body.put("SpringBoot_FastAPI_KEY", new LLMKey().getSpringBoot_FastAPI_KEY());
-//    body.put("result", src.get("result"));
-//    
-//    // HttpEntity로 헤더 + 바디 묶기
-//    HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-//
-//    // POST 요청 보내고, 결과를 String으로 받기
-//    String response = restTemplate.postForObject(url, requestEntity, String.class);
-//    System.out.println("-> response: " + response);
-//    
-//    return response;  
-//  }
+  @PostMapping(value="/summary")
+  @ResponseBody
+  public String summary_Proc(@RequestBody NewsRequestDTO requestDTO) {  
+    return newsService.summary(requestDTO);  
+  }
   
 }
