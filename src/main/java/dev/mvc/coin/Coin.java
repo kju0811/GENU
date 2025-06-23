@@ -41,6 +41,10 @@ public class Coin {
   @Column(name = "coin_date", nullable = false)
   private LocalDateTime coin_date;
   
+  /** 코인 카테고리 */
+  @Column(name = "coin_cate", nullable = false)
+  private String coin_cate="";
+  
   /** 코인 정보 */
   @Lob
   @Column(name = "coin_info", nullable = false)

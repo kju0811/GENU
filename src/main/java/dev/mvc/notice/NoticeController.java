@@ -52,8 +52,8 @@ public class NoticeController {
    * @param id
    * @return
    */
-  @DeleteMapping(value = "/{notice_id}")
-  public ResponseEntity<Void> deleteEntity(@PathVariable("notice_id") Long id) {
+  @DeleteMapping(value = "/{notice_no}")
+  public ResponseEntity<Void> deleteEntity(@PathVariable("notice_no") Long id) {
     if (noticeService.find_by_id(id).isPresent()) { // Entity가 존재하면
       noticeService.deleteEntity(id); // 삭제
       return ResponseEntity.ok().build(); // 성공적으로 삭제된 경우 200 반환
@@ -70,8 +70,8 @@ public class NoticeController {
    * @param entity
    * @return
    */
-  @PutMapping(path = "/{notice_id}")
-  public ResponseEntity<Notice> updateEntity(@PathVariable("notice_id") Long id, 
+  @PutMapping(path = "/{notice_no}")
+  public ResponseEntity<Notice> updateEntity(@PathVariable("notice_no") Long id, 
                                                                 @RequestBody Notice notice) {
     // id를 이용한 레코드 조회 -> existingEntity 객체에 할당 -> {} 실행 값 저장 -> DBMS 저장 -> 상태 코드 200 출력
     return noticeService.find_by_id(id).<ResponseEntity<Notice>>map(existingNotice -> {
