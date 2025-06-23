@@ -7,4 +7,5 @@ import lombok.Setter;
 @Setter
 public class NewsRequestDTO {
     private String reading;
+    private String result;
 }
