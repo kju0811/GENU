@@ -10,11 +10,14 @@ import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import dev.mvc.coinlog.Coinlog;
 import dev.mvc.coinlog.CoinlogRepository;
 import dev.mvc.fluctuation.Fluctuation;
+import dev.mvc.fluctuation.FluctuationDTO;
 import dev.mvc.fluctuation.FluctuationRepository;
+import dev.mvc.fluctuation.FluctuationService;
 import dev.mvc.news.News;
 import dev.mvc.news.NewsRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +27,9 @@ import lombok.RequiredArgsConstructor;
 public class CoinService {
   private final CoinRepository coinRepository;
   private final CoinlogRepository coinlogRepository;
-  private final FluctuationRepository fluctuationRepository;
+//  private final FluctuationRepository fluctuationRepository;
   private final NewsRepository newsRepository;
+  private final FluctuationService fluctuationService;
   
   /** 날짜 저장을 위한 임시 코드 */
   SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -69,16 +73,18 @@ public class CoinService {
   }
   
   /** (선택) 전체 코인 가격을 주기적으로 업데이트하는 메서드 */
+  @Transactional
   public void updateAllCoinPrices() {
     // 전체 코인을 조회해서 가격 업데이트
     for (Coin coin : coinRepository.findAll()) {
       int cnt = 0;
-      List<Long> fluDTO = fluctuationRepository.findByRdatePeriod(coin.getCoin_no());
-//      System.out.println(fluDTO);
+      List<FluctuationDTO> fluDTO = fluctuationService.findByRdatePeriod(coin.getCoin_no());
+//      System.out.println("1번 : "+fluDTO);
       
-      for (Long dto : fluDTO) {
-        News news = newsRepository.getReferenceById(dto);
-//        System.out.println("news -> "+ news);
+      for (FluctuationDTO dto : fluDTO) {
+//        News news = newsRepository.getReferenceById(dto.getNews().getNews_no());
+        News news = newsRepository.getReferenceById(dto.getNews_no());
+//        System.out.println("2번 news -> "+ news);
         
         if (news.getEmotion() == 1) {
           cnt++;
@@ -87,7 +93,7 @@ public class CoinService {
         }
       }
       
-//      System.out.println("cnt ->"+ cnt);
+      System.out.println("3번 cnt ->"+ cnt);
       double fluctuation = calculateFluctuation(0, 0, cnt); // 예시 값
       coin.setCoin_price((int)(coin.getCoin_price() * (1 + fluctuation / 100)));
       coin.setCoin_percentage(fluctuation);
@@ -103,12 +109,13 @@ public class CoinService {
     
   }
   
-//  /**  작업중엔 정지하고 베포 -> 동시에 켜져있으면 같이 실행되서 큰일남 */
-//  @Scheduled(cron = "0 0/5 * * * *") // 매 10분마다
-//  public void scheduledUpdate() {
-//    updateAllCoinPrices();
-//    System.out.println("전체 코인 변동 완료" + LocalDateTime.now());
-//  }
+  /**  작업중엔 정지하고 베포 -> 동시에 켜져있으면 같이 실행되서 큰일남 */
+  @Transactional
+  @Scheduled(cron = "0 0/2 * * * *") // 매 10분마다
+  public void scheduledUpdate() {
+    updateAllCoinPrices();
+    System.out.println("전체 코인 변동 완료" + LocalDateTime.now());
+  }
   
   /** 코인 id에 해당하는 정보 반환 */
   public Optional<Coin> find_by_id(Long id) {

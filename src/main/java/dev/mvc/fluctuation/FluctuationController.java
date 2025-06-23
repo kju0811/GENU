@@ -88,7 +88,7 @@ public class FluctuationController {
    * @return
    */
   @GetMapping(value = "/{coin_no}")
-  public List<Long> findByRdatePeriod(@PathVariable("coin_no") Long coin_no) {
+  public List<FluctuationDTO> findByRdatePeriod(@PathVariable("coin_no") Long coin_no) {
     return fluctuationService.findByRdatePeriod(coin_no);
   }
   
