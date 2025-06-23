@@ -2,6 +2,7 @@ package dev.mvc.fluctuation;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
@@ -31,8 +32,26 @@ public class FluctuationService {
     return fluctuationRepository.findAll();  // method/SQL 자동 생성
   }
   
+//  /** 날짜에 해당하는 레코드 출력 */
+//  public List<FluctuationDTO> findByRdatePeriod(Long coin_no) {
+//    List<Fluctuation> Fluctuations = fluctuationRepository.findByRdatePeriod(coin_no);
+//    System.out.println(Fluctuations);
+//    return fluctuationMapper.toFluctuationDTO(Fluctuations);
+//  }
+  
+//  /** 날짜에 해당하는 레코드 출력 */
+//  public List<FluctuationNews_no> findByRdatePeriod(Long coin_no) {
+//    return fluctuationRepository.findByRdatePeriod(coin_no);  // method/SQL 자동 생성
+//  }
+  
   /** 날짜에 해당하는 레코드 출력 */
-  public List<Long> findByRdatePeriod(Long coin_no) {
-    return fluctuationRepository.findByRdatePeriod(coin_no);  // method/SQL 자동 생성
+  public List<FluctuationDTO> findByRdatePeriod(Long coin_no) {
+    List<Fluctuation> list = fluctuationRepository.findByRdatePeriod(coin_no);
+    // 엔티티 -> DTO
+    List<FluctuationDTO> result = list.stream()
+        .map(f -> new FluctuationDTO(f.getFluctuation_no(), f.getNews().getNews_no()))
+        .collect(Collectors.toList());
+    return result; 
   }
+  
 }
