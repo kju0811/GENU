@@ -11,7 +11,9 @@ build/
 .factorypath
 .springBeans
 .sts4-cache
-.LLMKey.java
+.oracle.py
+.Oracle.ipynb
+.apitool.py
 bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
