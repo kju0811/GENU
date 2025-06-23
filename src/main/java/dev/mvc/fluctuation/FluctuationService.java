@@ -30,4 +30,9 @@ public class FluctuationService {
   public List<Fluctuation> find_all() {
     return fluctuationRepository.findAll();  // method/SQL 자동 생성
   }
+  
+  /** 날짜에 해당하는 레코드 출력 */
+  public List<Long> findByRdatePeriod(Long coin_no) {
+    return fluctuationRepository.findByRdatePeriod(coin_no);  // method/SQL 자동 생성
+  }
 }
