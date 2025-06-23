@@ -64,11 +64,11 @@ public class CoinController {
   /**
    * DELETE 요청을 처리하여 특정 ID를 가진 Entity 객체를 삭제
    * http://localhost:9093/coin/21
-   * @param id
+   * @param coin_no
    * @return
    */
-  @DeleteMapping(value = "/{coin_id}")
-  public ResponseEntity<Void> deleteEntity(@PathVariable("coin_id") Long id) {
+  @DeleteMapping(value = "/{coin_no}")
+  public ResponseEntity<Void> deleteEntity(@PathVariable("coin_no") Long id) {
     if (coinService.find_by_id(id).isPresent()) { // Entity가 존재하면
       coinService.deleteEntity(id); // 삭제
       return ResponseEntity.ok().build(); // 성공적으로 삭제된 경우 200 반환
@@ -81,12 +81,12 @@ public class CoinController {
    * 수정
    * PUT 요청을 처리하여 특정 ID를 가진 Entity 객체를 업데이트
    * http://localhost:9093/coin/21
-   * @param id
+   * @param coin_no
    * @param entity
    * @return
    */
-  @PutMapping(path = "/{coin_id}")
-  public ResponseEntity<Coin> updateEntity(@PathVariable("coin_id") Long id, 
+  @PutMapping(path = "/{coin_no}")
+  public ResponseEntity<Coin> updateEntity(@PathVariable("coin_no") Long id, 
                                                                 @RequestBody Coin coin) {
     // id를 이용한 레코드 조회 -> existingEntity 객체에 할당 -> {} 실행 값 저장 -> DBMS 저장 -> 상태 코드 200 출력
     return coinService.find_by_id(id).<ResponseEntity<Coin>>map(existingCoin -> {
