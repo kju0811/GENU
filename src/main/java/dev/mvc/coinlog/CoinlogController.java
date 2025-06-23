@@ -53,8 +53,8 @@ public class CoinlogController {
    * @param id
    * @return
    */
-  @DeleteMapping(value = "/{coinlog_id}")
-  public ResponseEntity<Void> deleteEntity(@PathVariable("coinlog_id") Long id) {
+  @DeleteMapping(value = "/{coinlog_no}")
+  public ResponseEntity<Void> deleteEntity(@PathVariable("coinlog_no") Long id) {
     if (coinlogService.find_by_id(id).isPresent()) { // Entity가 존재하면
       coinlogService.deleteEntity(id); // 삭제
       return ResponseEntity.ok().build(); // 성공적으로 삭제된 경우 200 반환
