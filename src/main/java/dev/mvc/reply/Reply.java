@@ -13,17 +13,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import dev.mvc.coin.Coin;
+import dev.mvc.community.Community;
 import dev.mvc.member.Member;
 
 //CREATE TABLE reply (
 //    reply_no  NUMBER(10)  NOT NULL    PRIMARY KEY,
 //      member_no NUMBER(10)  NOT NULL,   -- FK
-//    coin_no NUMBER(10)  NOT NULL,       -- FK
+//    community_no NUMBER(10)  NOT NULL,       -- FK
 //    reply_content VARCHAR(600)  NOT NULL,
 //    reply_date  DATE  NOT NULL,
 //      FOREIGN KEY (member_no) REFERENCES member (member_no),
-//      FOREIGN KEY (coin_no) REFERENCES coin (coin_no)
+//      FOREIGN KEY (community_no) REFERENCES community (community_no)
 //  );
 
 @NoArgsConstructor
@@ -51,9 +51,9 @@ public class Reply {
   @JoinColumn(name = "member_no", nullable = false)
   private Member member;
 
-  /** 코인번호 외래키 */
+  /** 커뮤니티번호 외래키 */
   @ManyToOne
-  @JoinColumn(name = "coin_no", nullable = false)
-  private Coin coin;
+  @JoinColumn(name = "community_no", nullable = false)
+  private Community community;
 
 }
