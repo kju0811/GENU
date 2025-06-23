@@ -50,11 +50,11 @@ public class AttendanceController {
   /**
    * DELETE 요청을 처리하여 특정 ID를 가진 Entity 객체를 삭제
    * http://localhost:9093/attendance/21
-   * @param id
+   * @param attendance_no
    * @return
    */
-  @DeleteMapping(value = "/{attendance_id}")
-  public ResponseEntity<Void> deleteEntity(@PathVariable("attendance_id") Long id) {
+  @DeleteMapping(value = "/{attendance_no}")
+  public ResponseEntity<Void> deleteEntity(@PathVariable("attendance_no") Long id) {
     if (attendanceService.find_by_id(id).isPresent()) { // Entity가 존재하면
       attendanceService.deleteEntity(id); // 삭제
       return ResponseEntity.ok().build(); // 성공적으로 삭제된 경우 200 반환
@@ -67,12 +67,12 @@ public class AttendanceController {
    * 수정
    * PUT 요청을 처리하여 특정 ID를 가진 Entity 객체를 업데이트
    * http://localhost:9093/coin/21
-   * @param id
+   * @param attendance_no
    * @param entity
    * @return
    */
-  @PutMapping(path = "/{attendance_id}")
-  public ResponseEntity<Attendance> updateEntity(@PathVariable("attendance_id") Long id, 
+  @PutMapping(path = "/{attendance_no}")
+  public ResponseEntity<Attendance> updateEntity(@PathVariable("attendance_no") Long id, 
                                                                 @RequestBody Attendance attendance) {
     // id를 이용한 레코드 조회 -> existingEntity 객체에 할당 -> {} 실행 값 저장 -> DBMS 저장 -> 상태 코드 200 출력
     return attendanceService.find_by_id(id).<ResponseEntity<Attendance>>map(existingAttendance -> {

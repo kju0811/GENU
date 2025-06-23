@@ -54,11 +54,11 @@ public class PayController {
   /**
    * DELETE 요청을 처리하여 특정 ID를 가진 Entity 객체를 삭제
    * http://localhost:9093/pay/21
-   * @param id
+   * @param pay_no
    * @return
    */
-  @DeleteMapping(value = "/{pay_id}")
-  public ResponseEntity<Void> deleteEntity(@PathVariable("pay_id") Long id) {
+  @DeleteMapping(value = "/{pay_no}")
+  public ResponseEntity<Void> deleteEntity(@PathVariable("pay_no") Long id) {
     if (payService.find_by_id(id).isPresent()) { // Entity가 존재하면
       payService.deleteEntity(id); // 삭제
       return ResponseEntity.ok().build(); // 성공적으로 삭제된 경우 200 반환
@@ -71,12 +71,12 @@ public class PayController {
    * 수정
    * PUT 요청을 처리하여 특정 ID를 가진 Entity 객체를 업데이트
    * http://localhost:9093/pay/21
-   * @param id
+   * @param pay_no
    * @param entity
    * @return
    */
-  @PutMapping(path = "/{pay_id}")
-  public ResponseEntity<Pay> updateEntity(@PathVariable("pay_id") Long id, 
+  @PutMapping(path = "/{pay_no}")
+  public ResponseEntity<Pay> updateEntity(@PathVariable("pay_no") Long id, 
                                                                 @RequestBody Pay pay) {
     // id를 이용한 레코드 조회 -> existingEntity 객체에 할당 -> {} 실행 값 저장 -> DBMS 저장 -> 상태 코드 200 출력
     return payService.find_by_id(id).<ResponseEntity<Pay>>map(existingPay -> {
