@@ -13,14 +13,19 @@ import org.springframework.stereotype.Service;
 
 import dev.mvc.coinlog.Coinlog;
 import dev.mvc.coinlog.CoinlogRepository;
+import dev.mvc.fluctuation.Fluctuation;
+import dev.mvc.fluctuation.FluctuationRepository;
+import dev.mvc.news.News;
+import dev.mvc.news.NewsRepository;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class CoinService {
-  @Autowired
-  CoinRepository coinRepository;
-  
-  @Autowired
-  CoinlogRepository coinlogRepository;
+  private final CoinRepository coinRepository;
+  private final CoinlogRepository coinlogRepository;
+  private final FluctuationRepository fluctuationRepository;
+  private final NewsRepository newsRepository;
   
   /** 날짜 저장을 위한 임시 코드 */
   SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -67,7 +72,23 @@ public class CoinService {
   public void updateAllCoinPrices() {
     // 전체 코인을 조회해서 가격 업데이트
     for (Coin coin : coinRepository.findAll()) {
-      double fluctuation = calculateFluctuation(0, 0, 0); // 예시 값
+      int cnt = 0;
+      List<Long> fluDTO = fluctuationRepository.findByRdatePeriod(coin.getCoin_no());
+//      System.out.println(fluDTO);
+      
+      for (Long dto : fluDTO) {
+        News news = newsRepository.getReferenceById(dto);
+//        System.out.println("news -> "+ news);
+        
+        if (news.getEmotion() == 1) {
+          cnt++;
+        } else if (news.getEmotion() == 0) {
+          cnt--;
+        }
+      }
+      
+//      System.out.println("cnt ->"+ cnt);
+      double fluctuation = calculateFluctuation(0, 0, cnt); // 예시 값
       coin.setCoin_price((int)(coin.getCoin_price() * (1 + fluctuation / 100)));
       coin.setCoin_percentage(fluctuation);
       coinRepository.save(coin);
