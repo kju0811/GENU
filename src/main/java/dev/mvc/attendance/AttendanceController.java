@@ -83,5 +83,14 @@ public class AttendanceController {
     }).orElseGet(() -> ResponseEntity.notFound().build()); // 찾지 못한 경우 404 반환
   }
   
+  /**
+   * 로그인할 때 호출
+   * @param member_no
+   */
+  @PostMapping(value = "/{member_no}")
+  public void checkToDate(@PathVariable("member_no") Long member_no) {
+    attendanceService.checkToDate(member_no);
+  }
+  
   
 }
