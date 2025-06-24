@@ -4,6 +4,8 @@ import {Routes, Route } from "react-router-dom";
 // import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import News from "./ai/News";
+import NewsFind from "./ai/NewsFind";
+import NewsRead from "./ai/NewsRead";
 //import NotFound from "./pages/NotFound";
 
 function App() {
@@ -13,6 +15,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} /> {/* <Link to="/"> */}
         <Route path="/ai/news" element={<News />} />
+        <Route path="/ai/newsfind" element={<NewsFind/>} />
+        <Route path="/ai/read/:news_no" element={<NewsRead/>} />
         {/* <Route path="*" element={<NotFound />} /> */}
       </Routes>
       {/* <Footer /> */}

@@ -3,6 +3,7 @@ package dev.mvc.news;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.json.JSONObject;
@@ -19,10 +20,12 @@ public class NewsService {
   
   private final RestTemplate restTemplate;
   
-  public NewsService(RestTemplate restTemplate) {
+  @Autowired
+  private final NewsRepository repository;
+  
+  public NewsService(RestTemplate restTemplate, NewsRepository repository) {
     this.restTemplate = restTemplate;
-    System.out.println("-> this.restTemplate hashCode: " + this.restTemplate.hashCode());
-    System.out.println("-> OpenAICont created.");  
+    this.repository = repository; 
   }
   
   public String create(NewsRequestDTO dto) {
@@ -65,5 +68,9 @@ public class NewsService {
     System.out.println("-> response: " + response);
     
     return response;
+  }
+  
+  public List<News> read () {
+    return repository.findAll();
   }
 }
