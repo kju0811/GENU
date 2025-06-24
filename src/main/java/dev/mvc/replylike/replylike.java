@@ -30,7 +30,7 @@ import dev.mvc.member.Member;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity @Setter @Getter @ToString
-public class replylike {
+public class Replylike {
   
   /** 댓글 좋아요 번호 (PK) */
   @Id
