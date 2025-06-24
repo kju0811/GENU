@@ -83,7 +83,8 @@ public class CoinService {
       
       for (FluctuationDTO dto : fluDTO) {
 //        News news = newsRepository.getReferenceById(dto.getNews().getNews_no());
-        News news = newsRepository.getReferenceById(dto.getNews_no());
+        News news = newsRepository.getReferenceById(dto.getNews_no());  // << 레포지토리 -> 서비스로 교체해야함
+//        News news = newsServic.
 //        System.out.println("2번 news -> "+ news);
         
         if (news.getEmotion() == 1) {

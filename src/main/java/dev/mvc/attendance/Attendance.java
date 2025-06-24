@@ -34,7 +34,7 @@ public class Attendance {
   
   /** 출석체크 기록 */
   @Column(name = "attendance_date", nullable = false)
-  private LocalDateTime attendance_date;
+  private LocalDate attendance_date;
   
   /** 누적 출석 */
   @Column(name = "attendance_cnt", nullable = false)
