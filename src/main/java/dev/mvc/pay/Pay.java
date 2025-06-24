@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import dev.mvc.deal.Deal;
 import dev.mvc.member.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -49,5 +50,12 @@ public class Pay {
   @ManyToOne
   @JoinColumn(name="member_no", referencedColumnName = "member_no", nullable = false)
   private Member member;
-      
+  
+  /**
+   * deal 테이블에 deal_no를 참조
+   */
+  @ManyToOne
+  @JoinColumn(name="deal_no", referencedColumnName = "deal_no", nullable = false)
+  private Deal deal;
+  
 }
