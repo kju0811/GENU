@@ -29,17 +29,17 @@ public class CommunityController {
 
     /** 커뮤니티 글 단건 조회 */
     @GetMapping("/read/{community_no}")
-    public ResponseEntity<Community> read(@PathVariable("community_no") Long community_no) {
-        return communityService.findByCommunityNoOptional(community_no)
+    public ResponseEntity<Community> read(@PathVariable("community_no") Long id) {
+        return communityService.findByCommunityNoOptional(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     /** 커뮤니티 글 수정 */
     @PutMapping("/{community_no}")
-    public ResponseEntity<Community> update(@PathVariable("community_no") Long community_no,
+    public ResponseEntity<Community> update(@PathVariable("community_no") Long id,
                                             @RequestBody Community updated) {
-        return communityService.findByCommunityNoOptional(community_no).map(existing -> {
+        return communityService.findByCommunityNoOptional(id).map(existing -> {
             existing.setCommunity_title(updated.getCommunity_title());
             existing.setCommunity_content(updated.getCommunity_content());
             existing.setCommunity_cnt(updated.getCommunity_cnt()); // 추후 삭제예정
@@ -53,9 +53,9 @@ public class CommunityController {
 
     /** 커뮤니티 글 삭제 */
     @DeleteMapping("/{community_no}")
-    public ResponseEntity<Void> delete(@PathVariable("community_no") Long community_no) {
-        if (communityService.findByCommunityNoOptional(community_no).isPresent()) {
-            communityService.deleteById(community_no);
+    public ResponseEntity<Void> delete(@PathVariable("community_no") Long id) {
+        if (communityService.findByCommunityNoOptional(id).isPresent()) {
+            communityService.deleteById(id);
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.notFound().build();
