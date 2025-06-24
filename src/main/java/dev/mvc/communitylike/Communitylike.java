@@ -9,6 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,7 +29,7 @@ import dev.mvc.member.Member;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity @Setter @Getter @ToString
+@Entity @Setter @Getter @ToString @Builder
 public class Communitylike {
   
   /** 커뮤니티 좋아요 번호 (PK) */
