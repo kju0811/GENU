@@ -28,17 +28,17 @@ public class ReplyController {
 
     /** 댓글 단건 조회 */
     @GetMapping("/read/{reply_no}")
-    public ResponseEntity<Reply> read(@PathVariable("reply_no") Long reply_no) {
-        return replyService.findByReplyNoOptional(reply_no)
+    public ResponseEntity<Reply> read(@PathVariable("reply_no") Long id) {
+        return replyService.findByReplyNoOptional(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     /** 댓글 수정 */
     @PutMapping("/{reply_no}")
-    public ResponseEntity<Reply> update(@PathVariable("reply_no") Long reply_no,
+    public ResponseEntity<Reply> update(@PathVariable("reply_no") Long id,
                                         @RequestBody Reply updated) {
-        return replyService.findByReplyNoOptional(reply_no).map(existing -> {
+        return replyService.findByReplyNoOptional(id).map(existing -> {
             existing.setReply_content(updated.getReply_content());
             existing.setReply_date(updated.getReply_date());
             existing.setMember(updated.getMember());
@@ -50,9 +50,9 @@ public class ReplyController {
 
     /** 댓글 삭제 */
     @DeleteMapping("/{reply_no}")
-    public ResponseEntity<Void> delete(@PathVariable("reply_no") Long reply_no) {
-        if (replyService.findByReplyNoOptional(reply_no).isPresent()) {
-            replyService.deleteById(reply_no);
+    public ResponseEntity<Void> delete(@PathVariable("reply_no") Long id) {
+        if (replyService.findByReplyNoOptional(id).isPresent()) {
+            replyService.deleteById(id);
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.notFound().build();
