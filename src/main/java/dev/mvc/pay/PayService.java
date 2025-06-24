@@ -36,6 +36,11 @@ public class PayService {
     payRepository.deleteById(id);
   }
   
+  /** member_no에 해당하는 pay */
+  public int getMemberPay(Long member_no) {
+    return payRepository.findTotalPayMember_no(member_no);
+  }
+  
   /**
    * 처음 돈을 지급하기 위한 메소드
    *
