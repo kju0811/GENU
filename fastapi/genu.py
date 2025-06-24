@@ -2,6 +2,7 @@ import os
 import time
 import json
 from json import JSONDecodeError 
+import re
 
 from fastapi import FastAPI, Request, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
@@ -46,7 +47,7 @@ async def news(request:Request):
     format_instructions = output_parser.get_format_instructions()
     prompt = PromptTemplate.from_template(
         "{system}\n"
-        "{reading}에 맞는 경제 뉴스를 생성해줘, 내용은 1000자이상 1200이하 사이에서 생성해줘, 호재는 1로 악재를 0으로 판별해줘,그리고 뉴스내용을 매번 새롭고 다르게 작성해줘"
+        "{reading}에 맞는 경제 뉴스를 생성해줘, 내용은 1000자이상 1200이하 사이에서 생성해줘, 호재는 1로 악재를 0으로 판별해줘"
         "{format_instructions}"
     )
 
@@ -62,10 +63,10 @@ async def news(request:Request):
     
     news_data = result.get("res")
     title, content= news_data.split("/ 내용:")
-    contentpart, emotion = content.split("/ 분석:")
+    contentpart, emotion = re.split(r"\s*/\s*분석:", content)
     
     title = title.replace("제목:", "").strip()
-    content = content.strip()
+    content = contentpart.strip()
     emotion = emotion.strip() 
     
     oracle.newsinsert(
