@@ -55,7 +55,7 @@ public class Pay {
    * deal 테이블에 deal_no를 참조
    */
   @ManyToOne
-  @JoinColumn(name="deal_no", referencedColumnName = "deal_no", nullable = false)
+  @JoinColumn(name="deal_no", referencedColumnName = "deal_no")
   private Deal deal;
   
 }
