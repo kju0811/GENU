@@ -37,7 +37,9 @@ app.add_middleware(
 async def news(request:Request):
     print("-> news 함수")
     data = await request.json()
-    reading = data.get("reading")
+    option1 = data.get("option1")
+    option2 = data.get("option2")
+    option3 = data.get("option3")
     
     # 2) 출력 스키마 & 출력 파서 설정
     response_schemas = [
@@ -47,13 +49,15 @@ async def news(request:Request):
     format_instructions = output_parser.get_format_instructions()
     prompt = PromptTemplate.from_template(
         "{system}\n"
-        "{reading}에 맞는 경제 뉴스를 생성해줘, 내용은 1000자이상 1200이하 사이에서 생성해줘, 호재는 1로 악재를 0으로 판별해줘"
+        "{option1}과 카테고리 {option2}, 그리고 추가 사항 {option3}조건에 맞는 경제 뉴스를 생성해줘, 내용은 1000자이상 1200이하 사이에서 생성해줘, 호재는 1로 악재를 0으로 판별해줘"
         "{format_instructions}"
     )
 
     inputs = {
         "system": "경제뉴스를 생성하는 시스템이야",
-        "reading" : reading,
+        "option1" : option1,
+        "option2" : option2,
+        "option3" : option3,
         "format_instructions": format_instructions
     }
     pipeline = prompt | llm | output_parser
