@@ -47,6 +47,17 @@ public class AttendanceController {
     return attendanceService.find_all();
   }
   
+//  /**
+//   * find_by_id 요청을 처리하여 특정 ID를 가진 Entity 객체를 삭제
+//   * http://localhost:9093/attendance/21
+//   * @param coin_no
+//   * @return
+//   */
+//  @GetMapping(value = "/{member_no}")
+//  public ResponseEntity<Attendance> find_by_id(@PathVariable("member_no") Long id) {
+//    return attendanceService.find_by_id(id).map(result -> ResponseEntity.ok(result)).orElseGet(() -> ResponseEntity.notFound().build());
+//  }
+  
   /**
    * DELETE 요청을 처리하여 특정 ID를 가진 Entity 객체를 삭제
    * http://localhost:9093/attendance/21
@@ -91,6 +102,7 @@ public class AttendanceController {
   public void checkToDate(@PathVariable("member_no") Long member_no) {
     attendanceService.checkToDate(member_no);
   }
+  
   
   
 }

@@ -8,6 +8,11 @@ import NewsFind from "./ai/NewsFind";
 import NewsRead from "./ai/NewsRead";
 //import NotFound from "./pages/NotFound";
 
+import CoinRead from "./components/CoinRead";
+// import Attendance from "./components/Attendance";
+import CoinList from "./components/CoinList";
+import CoinCreate from "./components/CoinCreate";
+
 function App() {
   return (
     <>
@@ -17,6 +22,10 @@ function App() {
         <Route path="/ai/news" element={<News />} />
         <Route path="/ai/newsfind" element={<NewsFind/>} />
         <Route path="/ai/read/:news_no" element={<NewsRead/>} />
+        <Route path="/coin/:coin_no" element={<CoinRead/>} />
+        {/* <Route path="/attendance/:attendance_no" element={<Attendance/>} /> */}
+        <Route path="/coin/find_all" element={<CoinList/>} />
+        <Route path="/coin/create" element={<CoinCreate/>} />
         {/* <Route path="*" element={<NotFound />} /> */}
       </Routes>
       {/* <Footer /> */}
