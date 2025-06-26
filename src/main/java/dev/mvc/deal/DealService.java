@@ -48,6 +48,12 @@ public class DealService {
     if (total < request.getPrice()) {
         throw new IllegalArgumentException("금액이 부족합니다.");
     }
+    
+    // 현재 코인 가격 보다 높은 금액으로 매수시 최저가로 매수됨
+    if (request.getPrice() > request.getCoin().getCoin_price()) {
+      request.setPrice(request.getCoin().getCoin_price());
+    }
+    
     System.out.printf("코인에 매수 진행 - member:{}, coin:{}, pay:{}", member.getMember_no(), request.getCoin().getCoin_no(), request.getPrice());
     
     //거래에 데이터 삽입
