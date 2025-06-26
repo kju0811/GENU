@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.mvc.coinlike.CoinlikeRepository;
+import dev.mvc.member.Member;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RequestMapping(value = "/deal")
@@ -83,5 +85,15 @@ public class DealController {
       return ResponseEntity.ok().build(); // 200 반환
     }).orElseGet(() -> ResponseEntity.notFound().build()); // 찾지 못한 경우 404 반환
   }
-  
+ 
+  /**
+   * 테스트 // 스프링 시큐리티하면 추가할 예정
+   * @param member_no
+   * @return
+   */
+  @PostMapping(value = "/test")
+  public ResponseEntity<Object> getMemberPay(Member member, @Valid @RequestBody DealDTO.DealPay dto) {
+    dealService.dealPay(member, dto);
+    return ResponseEntity.ok().build();
+  }
 }
