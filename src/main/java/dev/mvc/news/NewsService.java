@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ public class NewsService {
     this.repository = repository; 
   }
   
+  // 뉴스 생성
   public String create(NewsRequestDTO dto) {
     String url = "http://localhost:8000/news";
     
@@ -36,7 +38,9 @@ public class NewsService {
     headers.setContentType(MediaType.APPLICATION_JSON);
     
     Map<String, Object> body = new HashMap<>();
-    body.put("reading", dto.getReading());
+    body.put("option1", dto.getOption1());
+    body.put("option2", dto.getOption2());
+    body.put("option3", dto.getOption3());
     // HttpEntity로 헤더 + 바디 묶기
     HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
@@ -47,6 +51,7 @@ public class NewsService {
     return response;
   }
   
+  // 뉴스 요약
   public String summary(NewsRequestDTO dto) {
     JSONObject src = new JSONObject(dto); // String -> JSON
     
@@ -70,7 +75,13 @@ public class NewsService {
     return response;
   }
   
-  public List<News> read () {
+  // 뉴스 전제 조회
+  public List<News> find () {
     return repository.findAll();
+  }
+  
+  // 특정 뉴스 조회
+  public Optional<News> find_by_id(Long id) {
+      return repository.findById(id);
   }
 }

@@ -15,6 +15,7 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,7 +23,7 @@ import lombok.ToString;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity @Getter @Setter @ToString
+@Entity @Getter @Setter @ToString @Builder
 public class Deal {
   /**
    * 거래 식별자, sequence 자동 생성됨.
@@ -41,6 +42,10 @@ public class Deal {
   /** 거래시 매매 갯수 */
   @Column(name = "deal_cnt", nullable = false)
   private Integer deal_cnt;
+  
+  /** 거래 가격 */
+  @Column(name = "deal_price", nullable = false)
+  private Integer deal_price;
   
   /** 거래 수수료 */
   @Column(name = "deal_fee", nullable = false)

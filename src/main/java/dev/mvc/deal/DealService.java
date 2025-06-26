@@ -7,12 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import dev.mvc.coinlike.CoinlikeRepository;
+import dev.mvc.member.Member;
+import dev.mvc.pay.PayService;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class DealService {
   private final DealRepository dealRepository;
+  private final PayService payService;
   
   /** Create, INSERT~, UPDATE~ */
   public void save(Deal deal) {
@@ -32,6 +35,34 @@ public class DealService {
   /** 모든 레코드 출력 */
   public List<Deal> find_all() {
     return dealRepository.findAll();  // method/SQL 자동 생성
+  }
+  
+  /** 매수 시 실행 */
+  public Deal dealPay(Member member, DealDTO.DealPay request) {
+    //돈 서비스 getMemberPay 호출해서 비교하고
+    int wp = payService.getMemberPay(member.getMember_no());
+    int cnt = request.getCnt();
+    int fee = (int)(wp*cnt*0.05);
+    int total = wp*cnt+fee;
+    
+    if (total < request.getPrice()) {
+        throw new IllegalArgumentException("금액이 부족합니다.");
+    }
+    
+    // 현재 코인 가격 보다 높은 금액으로 매수시 최저가로 매수됨
+    if (request.getPrice() > request.getCoin().getCoin_price()) {
+      request.setPrice(request.getCoin().getCoin_price());
+    }
+    
+    System.out.printf("코인에 매수 진행 - member:{}, coin:{}, pay:{}", member.getMember_no(), request.getCoin().getCoin_no(), request.getPrice());
+    
+    //거래에 데이터 삽입
+    Deal deal = dealRepository.save(request.toEntity());
+    
+    //크레딧 서비스 호출 크레딧 또 빼고
+    payService.buy(member, request.getPrice(), deal);
+    
+    return deal;
   }
   
 }

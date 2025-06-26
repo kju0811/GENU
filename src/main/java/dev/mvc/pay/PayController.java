@@ -88,4 +88,15 @@ public class PayController {
     }).orElseGet(() -> ResponseEntity.notFound().build()); // 찾지 못한 경우 404 반환
   }
   
+  /**
+   * 테스트
+   * @param member_no
+   * @return
+   */
+  @GetMapping(value = "/test/{member_no}")
+  public int getMemberPay(@PathVariable("member_no") Long member_no) {
+    
+    return payService.getMemberPay(member_no);
+  }
+  
 }

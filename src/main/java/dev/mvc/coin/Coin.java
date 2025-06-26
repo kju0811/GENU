@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.SequenceGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -54,4 +55,15 @@ public class Coin {
   @Column(name = "coin_percentage", columnDefinition = "NUMBER(5,2)", nullable = false)
   private double coin_percentage=0.00;
   
+  /** 코인 이미지 */
+  @Column(name = "coin_img")
+  private String coin_img="";
+  
+  /** 시간 자동으로 넣어준다. */
+  @PrePersist
+  public void prePersist() {
+      if (coin_date == null) {
+          coin_date = LocalDateTime.now();
+      }
+  }
 }
