@@ -53,5 +53,4 @@ public class Replylike {
   @JoinColumn(name = "reply_no", nullable = false)
   private Reply reply;
 
-  
 }

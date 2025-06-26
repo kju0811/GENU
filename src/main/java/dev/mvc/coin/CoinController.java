@@ -20,15 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CoinController {
   @Autowired
   CoinService coinService;
-  
-  /**
-   * 코인 생성 폼
-   */
-  @GetMapping(value="/create")
-  public void create() {
-   
-  }
-  
+    
   /**
    * 코인 생성
    * @param coin
@@ -37,8 +29,8 @@ public class CoinController {
   @PostMapping(value="/create")
   @ResponseBody
   public ResponseEntity<Coin> create(@RequestBody Coin coin) {
-    coinService.save(coin);
-    return ResponseEntity.ok().build();
+    Coin savedEntity =  coinService.save(coin);
+    return ResponseEntity.ok(savedEntity);
   }
   
     /**
@@ -59,6 +51,17 @@ public class CoinController {
   @GetMapping(value = "/find_all")
   public List<Coin> find_all() {
     return coinService.find_all();
+  }
+  
+  /**
+   * find_by_id 요청을 처리하여 특정 ID를 가진 Entity 객체를 삭제
+   * http://localhost:9093/coin/21
+   * @param coin_no
+   * @return
+   */
+  @GetMapping(value = "/{coin_no}")
+  public ResponseEntity<Coin> find_by_id(@PathVariable("coin_no") Long id) {
+    return coinService.find_by_id(id).map(result -> ResponseEntity.ok(result)).orElseGet(() -> ResponseEntity.notFound().build());
   }
   
   /**

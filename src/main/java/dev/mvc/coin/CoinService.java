@@ -39,8 +39,8 @@ public class CoinService {
   private final Random rand = new Random();
   
   /** Create, INSERT~, UPDATE~ */
-  public void save(Coin coin) {
-    coinRepository.save(coin); 
+  public Coin save(Coin coin) {
+    return coinRepository.save(coin); 
   }
   
   /** 시뮬레이션 로직 */
