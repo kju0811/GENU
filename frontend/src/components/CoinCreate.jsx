@@ -28,7 +28,7 @@ function CoinCreate() {
   const send = (event) => {
     event.preventDefault(); // submit 기능 삭제
 
-    const coinData = {
+    const coin = {
       coin_name: name,
       coin_cate: cate,
       coin_price: price,
@@ -37,7 +37,7 @@ function CoinCreate() {
     };
 
     const formData = new FormData();
-    formData.append('coin', new Blob([JSON.stringify(coinData)], { type: 'application/json' }));
+    formData.append('coin', new Blob([JSON.stringify(coin)], { type: 'application/json' }));
     if (file) formData.append('file', file);
 
     
@@ -47,21 +47,22 @@ function CoinCreate() {
     body: formData,
   })
   .then(result => result.json())
-  .then(result => {
-    if (result.coin_no > 0 && file) {
-      // 이미지가 있을 경우, coin_no를 포함해 이미지 업로드 요청
-      const uploadFormData = new FormData();
-      uploadFormData.append("file", file);
-      uploadFormData.append("coin_no", result.coin_no);
+  // .then(result => {
+  //   if (result.coin_no > 0 && file) {
+  //     // 이미지가 있을 경우, coin_no를 포함해 이미지 업로드 요청
+  //     const uploadFormData = new FormData();
+  //     uploadFormData.append("file", file);
+  //     uploadFormData.append("coin_name", document.getElementById("coin_name").value);
+  //     //uploadFormData.append("coin_no", result.coin_no);
 
-      return fetch(`http://${getIP()}:9093/home/coin_img_upload`, {
-        method: "POST",
-        body: uploadFormData
-      }).then(() => result); // 이미지 업로드 후 리턴
-    } else {
-      return result;
-    }
-  })
+  //     return fetch(`http://${getIP()}:9093/home/coin_img_upload`, {
+  //       method: "POST",
+  //       body: uploadFormData
+  //     }).then(() => result); // 이미지 업로드 후 리턴
+  //   } else {
+  //     return result;
+  //   }
+  // })
   .then(result => {
     if (result.coin_no > 0) {
       navigator('/coin/find_all');

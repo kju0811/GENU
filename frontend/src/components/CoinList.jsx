@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
 
-import {getIP} from '../components/Tool';
+import { getIP } from "./Tool";
 
 function CoinList() {
   console.log('-> CoinList');
-
   const [data, setData] = useState(null);
 
 
@@ -36,7 +35,7 @@ function CoinList() {
                 <Link to={`/coin/${item.coin_no}`}>
                   {/* <img src={imgUrl} alt={item.coin_name} width="50" height="50" style={{ marginRight: '10px' }} /> */}
                   <img
-                    src={`http://${getIP()}:9093/home/coin-image?coin_name=${item.coin_name}`}
+                    src={`http://${getIP()}:9093/home/storage/${item.coin_img}`}
                     alt="home"
                     style={{ maxWidth: '30%', height: 'auto', marginTop: '16px' }}
                   />
