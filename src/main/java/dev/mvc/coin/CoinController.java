@@ -1,7 +1,13 @@
 package dev.mvc.coin;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,18 +18,32 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import dev.mvc.coinlike.CoinlikeService;
+import dev.mvc.team4.Home;
 import lombok.RequiredArgsConstructor;
 
 @RequestMapping(value = "/coin")
 @RestController
-@RequiredArgsConstructor
 public class CoinController {
+  @Autowired
   private final CoinService coinService;
+  
+  private final Path storageLocation = Paths.get(Home.getUploadDir());
+  
+  public CoinController(CoinService coinService) {
+    this.coinService = coinService;
+    try {
+      Files.createDirectories(storageLocation); // 폴더 없을시 생성
+  } catch (IOException e) {
+      throw new RuntimeException("저장 폴더 생성 실패: " + e.getMessage(), e);
+  }
+  }
     
   /**
    * 코인 생성
@@ -32,9 +52,40 @@ public class CoinController {
    */
   @PostMapping(value="/create")
   @ResponseBody
-  public ResponseEntity<Coin> create(@RequestPart("coin") Coin coin) {
-    Coin savedEntity =  coinService.save(coin);
-    return ResponseEntity.ok(savedEntity);
+  public ResponseEntity<Coin> create(@RequestPart("coin") Coin coin, @RequestParam("file") MultipartFile file) {
+    try {
+      String target = file.getOriginalFilename();
+      String coinImg = "";
+       if (file.getOriginalFilename().endsWith("jpg")) { 
+         coinImg = target;
+       } else if (file.getOriginalFilename().endsWith("jpeg")) {
+         coinImg = target;
+       } else if (file.getOriginalFilename().endsWith("png")) {
+         coinImg = target;
+       }            
+       
+       coin.setCoin_img(coinImg);
+
+       // 절대 경로 객체 생성
+       Path destination = storageLocation.resolve(
+           Paths.get(coinImg)
+       ).normalize().toAbsolutePath();
+       
+       System.out.println("-> destination: " + destination);
+       // -> destination: C:\kd8\deploy\issue_v2jpac\home\storage\home.jpg
+
+       // 디렉터리 경로 위·변조 방지
+       if (!destination.getParent().equals(storageLocation.toAbsolutePath())) {
+           return ResponseEntity.notFound().build();
+       }
+
+       file.transferTo(destination); // 서버에 저장
+
+       Coin savedEntity =  coinService.save(coin);
+       return ResponseEntity.ok(savedEntity);
+   } catch (IOException e) {
+       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // 500
+   }
   }
   
 //  /**
