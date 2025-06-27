@@ -2,11 +2,11 @@ package dev.mvc.coin;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -15,11 +15,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import dev.mvc.coinlike.CoinlikeService;
+import lombok.RequiredArgsConstructor;
+
 @RequestMapping(value = "/coin")
 @RestController
+@RequiredArgsConstructor
 public class CoinController {
-  @Autowired
-  CoinService coinService;
+  private final CoinService coinService;
     
   /**
    * 코인 생성
@@ -32,6 +35,19 @@ public class CoinController {
     Coin savedEntity =  coinService.save(coin);
     return ResponseEntity.ok(savedEntity);
   }
+  
+//  /**
+//   * 코인 생성
+//   * @param coin
+//   * @return
+//   */
+//  @PostMapping(value="/create")
+//  @ResponseBody
+//  public ResponseEntity<Coin> create(@ModelAttribute Coin coin) {
+//    System.out.println("img -> " + coin.getCoin_img());
+//    Coin savedEntity =  coinService.save(coin);
+//    return ResponseEntity.ok(savedEntity);
+//  }
   
     /**
      * 수동으로 변동하기
