@@ -8,7 +8,6 @@ function CoinCreate() {
   const [price, setPrice] = useState('');
   const [cate, setCate] = useState('');
   const [info, setInfo] = useState('');
-  const [file, setFile] = useState(null);
 
   const nameChange = (e) => { setName(e.target.value); }
   const priceChange = (e) => { setPrice(e.target.value); }
@@ -26,54 +25,36 @@ function CoinCreate() {
 
   // submit 처리
   const send = (event) => {
+    // 현재 날짜와 시간을 가져옵니다.
+    const formattedRdate = getNowDate(); // 2024-11-06 16:29:5
+    console.log('-> formattedRdate', formattedRdate);
+
+    fetch(`http://${getIP()}:9093/coin/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        coin_name: name,
+        coin_cate: cate,
+        coin_price: price,
+        coin_info: info,
+        coin_percentage: 0.0,
+      })
+    })
+    .then(result => result.json()) // Spring Boot -> JSON
+    .then(result => {
+      // console.log('->', result);
+      if (result.coin_no > 0) {
+        navigator('/coin/find_all') // navigator Hook을 이용한 주소 이동,redirect
+      } else {
+        alert('코인 등록에 실패했습니다. \n 다시 시도해주세요.');
+      }
+    })
+    .catch(err => console.error(err)) // 통신 에러
+
     event.preventDefault(); // submit 기능 삭제
-
-    const coinData = {
-      coin_name: name,
-      coin_cate: cate,
-      coin_price: price,
-      coin_info: info,
-      coin_percentage: 0.0,
-    };
-
-    const formData = new FormData();
-    formData.append('coin', new Blob([JSON.stringify(coinData)], { type: 'application/json' }));
-    if (file) formData.append('file', file);
-
-    
-  // 먼저 코인 정보를 생성 (텍스트 정보만 POST)
-  fetch(`http://${getIP()}:9093/coin/create`, {
-    method: 'POST',
-    body: formData,
-  })
-  .then(result => result.json())
-  .then(result => {
-    if (result.coin_no > 0 && file) {
-      // 이미지가 있을 경우, coin_no를 포함해 이미지 업로드 요청
-      const uploadFormData = new FormData();
-      uploadFormData.append("file", file);
-      uploadFormData.append("coin_no", result.coin_no);
-
-      return fetch(`http://${getIP()}:9093/home/coin_img_upload`, {
-        method: "POST",
-        body: uploadFormData
-      }).then(() => result); // 이미지 업로드 후 리턴
-    } else {
-      return result;
-    }
-  })
-  .then(result => {
-    if (result.coin_no > 0) {
-      navigator('/coin/find_all');
-    } else {
-      alert('코인 등록에 실패했습니다. \n 다시 시도해주세요.');
-    }
-  })
-  .catch(err => {
-    console.error(err);
-    alert("에러 발생");
-  });
-};
+  }
 
   return (
     <>
@@ -101,11 +82,6 @@ function CoinCreate() {
                     onChange={infoChange} value={info} style={{width: "100%", height: "300px"}} />
         </div>
         {/* 여기에 이미지 추가 */}
-        <div className="mb-3">
-          <label className="form-label">이미지 파일:</label>
-          <input type="file" className="form-control" onChange={(e) => { setFile(e.target.files[0]);}} accept="image/*" />
-        </div>
-
         <div style={{textAlign: 'center'}}>
           <button id='btnSend' type="submit" className="btn btn-primary" style={{marginRight: '10px'}}>등록</button>  
           <button id='btnTest' type="button" className="btn btn-primary" onClick={test}>테스트 내용</button>

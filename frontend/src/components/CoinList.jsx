@@ -34,7 +34,13 @@ function CoinList() {
             <tr key={index}>
               <td style={{textAlign: 'left', height: '30px'}}>
                 <Link to={`/coin/${item.coin_no}`}>
-                  {item.coin_img} | {item.coin_no} | {item.coin_name} | {item.coin_price}누렁 | {item.coin_percentage}%
+                  {/* <img src={imgUrl} alt={item.coin_name} width="50" height="50" style={{ marginRight: '10px' }} /> */}
+                  <img
+                    src={`http://${getIP()}:9093/home/coin-image?coin_name=${item.coin_name}`}
+                    alt="home"
+                    style={{ maxWidth: '30%', height: 'auto', marginTop: '16px' }}
+                  />
+                  {item.coin_no} | {item.coin_name} | {item.coin_price}누렁 | {item.coin_percentage}%
                 </Link>
               </td>
             </tr>)
