@@ -14,12 +14,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import dev.mvc.coinlog.Coinlog;
 import dev.mvc.coinlog.CoinlogRepository;
+import dev.mvc.deal.Deal;
+import dev.mvc.deal.DealService;
 import dev.mvc.fluctuation.Fluctuation;
 import dev.mvc.fluctuation.FluctuationDTO;
 import dev.mvc.fluctuation.FluctuationRepository;
 import dev.mvc.fluctuation.FluctuationService;
 import dev.mvc.news.News;
 import dev.mvc.news.NewsRepository;
+import dev.mvc.pay.Pay;
+import dev.mvc.pay.PayService;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -30,6 +34,8 @@ public class CoinService {
 //  private final FluctuationRepository fluctuationRepository;
   private final NewsRepository newsRepository;
   private final FluctuationService fluctuationService;
+  private final DealService dealService;
+  private final PayService payService;
   
   /** 날짜 저장을 위한 임시 코드 */
   SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -110,12 +116,17 @@ public class CoinService {
     
   }
   
-//  /**  작업중엔 정지하고 베포 -> 동시에 켜져있으면 같이 실행되서 큰일남 */
+  /**  작업중엔 정지하고 베포 -> 동시에 켜져있으면 같이 실행되서 큰일남 */
 //  @Transactional
 //  @Scheduled(cron = "0 0/2 * * * *") // 매 10분마다
 //  public void scheduledUpdate() {
+//    System.out.println("전체 코인 변동 시작" + LocalDateTime.now());
 //    updateAllCoinPrices();
 //    System.out.println("전체 코인 변동 완료" + LocalDateTime.now());
+//    scheduledBuy();
+//    System.out.println("예약 매수 처리 완료" + LocalDateTime.now());
+//    scheduledSell();
+//    System.out.println("예약 매도 처리 완료" + LocalDateTime.now());
 //  }
   
   /** 코인 id에 해당하는 정보 반환 */
@@ -133,6 +144,51 @@ public class CoinService {
     return coinRepository.findAll();  // method/SQL 자동 생성
   }
   
+  /** 변동시 예약 매수 확인 */
+  @Transactional
+  public void scheduledBuy() {
+    for (Coin coin : coinRepository.findAll()) {
+      List<Deal> dealList = dealService.getType3(coin.getCoin_no());
+      if (!dealList.isEmpty()) {
+        for (Deal getd : dealList) {
+          Pay getp = payService.getDeal_noPay(getd.getDeal_no());
+          
+          // 예약금액 >= 변동된 현재가 else 유지
+          if (getd.getDeal_price() >= coin.getCoin_price()) {
+            getd.setDeal_type(1);
+            getp.setPay_type(1);
+            dealService.save(getd);
+            payService.save(getp);
+          }
+        }
+      }
+    System.out.println("예약 매수 처리완료");
+    }
+  }
+  
+  /** 변동시 예약 매도 확인 */
+  @Transactional
+  public void scheduledSell() {
+    for (Coin coin : coinRepository.findAll()) {
+      List<Deal> dealList = dealService.getType4(coin.getCoin_no());
+      
+      if (!dealList.isEmpty()) {
+        for (Deal getd : dealList) {
+          // 예약금액 >= 변동된 현재가 else 유지
+          if (getd.getDeal_price() <= coin.getCoin_price()) {
+            getd.setDeal_type(2);
+            dealService.save(getd);
+            int price = getd.getDeal_price();
+            int cnt = getd.getDeal_cnt();
+            int fee = dealService.feeCheck(price, cnt);
+            int total = price*cnt-fee; // 총 필요금액
+            payService.sell(getd.getMember(), total, getd);
+          }
+        }
+      }
+      System.out.println("예약 매도 처리완료");
+    }
+  }
   
 
 }
