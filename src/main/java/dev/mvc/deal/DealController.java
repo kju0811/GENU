@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import dev.mvc.coin.Coin;
 import dev.mvc.coinlike.CoinlikeRepository;
 import dev.mvc.member.Member;
 import jakarta.validation.Valid;
@@ -91,9 +92,20 @@ public class DealController {
    * @param member_no
    * @return
    */
-  @PostMapping(value = "/test")
-  public ResponseEntity<Object> getMemberPay(Member member, @Valid @RequestBody DealDTO.DealPay dto) {
-    dealService.dealPay(member, dto);
+  @PostMapping(value = "/buydeal")
+  public ResponseEntity<Deal> buydeal(@Valid @RequestBody DealDTO.DealBuyPay dto) {
+    dealService.buydeal(dto);
+    return ResponseEntity.ok().build();
+  }
+  
+  /**
+   * 테스트 // 스프링 시큐리티하면 추가할 예정
+   * @param member_no
+   * @return
+   */
+  @PostMapping(value = "/selldeal")
+  public ResponseEntity<Deal> selldeal(@Valid @RequestBody DealDTO.DealSellPay dto) {
+    dealService.selldeal(dto);
     return ResponseEntity.ok().build();
   }
 }

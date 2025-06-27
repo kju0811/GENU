@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.mvc.coinlike.CoinlikeService;
+import dev.mvc.deal.Deal;
+import dev.mvc.deal.DealDTO;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RequestMapping(value = "/coin")
@@ -117,4 +120,21 @@ public class CoinController {
     }).orElseGet(() -> ResponseEntity.notFound().build()); // 찾지 못한 경우 404 반환
   }
   
+  /**
+   * 변동시 예약 매약 처리
+   */
+  @PostMapping(value = "/scheduledBuy")
+  public void scheduledBuy() {
+    coinService.scheduledBuy();
+    System.out.println("coincont 매수예약-> ok ");
+  }
+  
+  /**
+   * 변동시 예약 매도 처리
+   */
+  @PostMapping(value = "/scheduledSell")
+  public void scheduledSell() {
+    coinService.scheduledSell();
+    System.out.println("coincont 매도예약-> ok ");
+  }
 }
