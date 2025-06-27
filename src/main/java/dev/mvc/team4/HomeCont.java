@@ -42,7 +42,7 @@ public class HomeCont {
     
     /** 파일 업로드 */
     @PostMapping("/home/coin_img_upload")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("coin_no") Long coin_no) {
+    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
         // 기존 storage 폴더 내 파일이 있으면 모두 삭제
         try {
           Files.list(storageLocation)     // 파일 목록 추출
@@ -60,8 +60,7 @@ public class HomeCont {
         }
       
         try {
-            String target = coinService.find_by_id(coin_no).get().getCoin_name();
-//            String target = "";
+           String target = "테스트";
             if (file.getOriginalFilename().endsWith("jpg")) { 
               target = target+".jpg";
             } else if (file.getOriginalFilename().endsWith("jpeg")) {
@@ -102,7 +101,7 @@ public class HomeCont {
                              .filter(Files::isRegularFile)
                              .map(Path::getFileName)
                              .map(Path::toString)
-                             .filter(name -> name.toLowerCase().startsWith(coin_name.toLowerCase() + "."))
+                             //.filter(name -> name.toLowerCase().startsWith(coin_name.toLowerCase() + "."))
                              .findFirst() // 목록중에서 첫번째 파일의 파일명
                              .orElseThrow(() -> new FileNotFoundException("storage 폴더에 이미지 파일이 없습니다."));
 
