@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
-import {getIP} from '../components/Tool';
+import { getIP } from '../components/Tool';
+import axios from 'axios';
 
 function CoinRead() {
   console.log('-> CoinRead');
-  const navigator = useNavigate(); // useNavigate Hook 사용, redirect 기능
+  const navigator = useNavigate();
+  const { coin_no } = useParams();
 
   const [data, setData] = useState(null);
-
-  const {coin_no} = useParams();
+  const [price, setPrice] = useState('');
+  const [cnt, setCnt] = useState('');
 
   useEffect(() => {
     fetch(`http://${getIP()}:9093/coin/${coin_no}`, {
@@ -17,20 +18,51 @@ function CoinRead() {
     })
     .then(result => result.json())
     .then(data => {
-      console.log("date -> ", data)
-      setData(data)
+      console.log("data -> ", data);
+      setData(data);
     })
-    .catch(err => console.error(err))
-  }, [coin_no])
+    .catch(err => console.error(err));
+  }, [coin_no]);
 
-  if (!data) { // 수신 데이터가 없으면 리턴 없음.
-    return <div>Loading...</div>; 
-  }
+  if (!data) return <div>Loading...</div>;
 
   const goBack = () => {
-    navigator(-1); // 이전 페이지로 이동
-  }
+    navigator(-1);
+  };
 
+  const getRequestBody = (type) => ({
+    price: parseInt(price),
+    cnt: parseInt(cnt),
+    type: type,
+    fee: 0,
+    coin: data // 코인 전체 객체
+  });
+
+  const handleBuy = async () => {
+    if (!price || !cnt) return alert("가격과 수량을 입력해주세요.");
+    try {
+      await axios.post(`http://${getIP()}:9093/buydeal`, getRequestBody(1));
+      alert('매수 완료!');
+      setPrice('');
+      setCnt('');
+    } catch (err) {
+      console.error(err);
+      alert('매수 실패!');
+    }
+  };
+
+  const handleSell = async () => {
+    if (!price || !cnt) return alert("가격과 수량을 입력해주세요.");
+    try {
+      await axios.post(`http://${getIP()}:9093/selldeal`, getRequestBody(2));
+      alert('매도 완료!');
+      setPrice('');
+      setCnt('');
+    } catch (err) {
+      console.error(err);
+      alert('매도 실패!');
+    }
+  };
 
   return (
     <>
@@ -40,18 +72,29 @@ function CoinRead() {
       </div>
       <div>
         현재가 : {data.coin_price} 누렁 <br />{data.coin_percentage}%
-        {/* {
-          data.content.split('\n').map((line, index) => (
-            // 특별한 태그를 사용하지 않고 출력 결과 그룹화 설정 필요시 사용, <> 
-            <React.Fragment key={index}>
-              {line}<br />
-            </React.Fragment>
-          ))
-        } (조회수: {data.cnt})<br></br><br></br>
-        <button onClick={goBack} className="btn btn-sm btn-primary"> 목록 </button>  */}
       </div>
+
+      <hr />
+
+      <h5>거래하기</h5>
+      <div>
+        <label>가격: </label>
+        <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} />
+      </div>
+      <div>
+        <label>수량: </label>
+        <input type="number" value={cnt} onChange={(e) => setCnt(e.target.value)} />
+      </div>
+
+      <div style={{ marginTop: '10px' }}>
+        <button onClick={handleBuy} className="btn btn-success" style={{ marginRight: '10px' }}>매수</button>
+        <button onClick={handleSell} className="btn btn-danger">매도</button>
+      </div>
+
+      <br />
+      <button onClick={goBack} className="btn btn-sm btn-primary">목록</button>
     </>
-  )
+  );
 }
 
 export default CoinRead;

@@ -12,6 +12,7 @@ import CoinRead from "./components/CoinRead";
 // import Attendance from "./components/Attendance";
 import CoinList from "./components/CoinList";
 import CoinCreate from "./components/CoinCreate";
+import TradeForm from "./components/TradeForm";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         {/* <Route path="/attendance/:attendance_no" element={<Attendance/>} /> */}
         <Route path="/coin/find_all" element={<CoinList/>} />
         <Route path="/coin/create" element={<CoinCreate/>} />
+        <Route path="/coin/deal" element={<TradeForm/>} />
         {/* <Route path="*" element={<NotFound />} /> */}
       </Routes>
       {/* <Footer /> */}

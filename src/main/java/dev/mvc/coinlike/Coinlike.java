@@ -11,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
@@ -56,4 +57,12 @@ public class Coinlike {
   @ManyToOne
   @JoinColumn(name="coin_no", referencedColumnName = "coin_no", nullable = false)
   private Coin coin;
+  
+  /** 시간 자동으로 넣어준다. */
+  @PrePersist
+  public void prePersist() {
+      if (coinlike_date == null) {
+        coinlike_date = LocalDateTime.now();
+      }
+  }
 }
