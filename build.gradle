@@ -63,6 +63,12 @@ dependencies {
   implementation 'commons-io:commons-io:2.16.1'
   // https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload
   implementation 'commons-fileupload:commons-fileupload:1.5'
+  
+  // SMS
+  // https://mvnrepository.com/artifact/com.squareup.okhttp/okhttp
+  implementation 'com.squareup.okhttp3:okhttp:4.9.3'
+  // https://github.com/google/gson
+  implementation 'com.google.code.gson:gson:2.9.0' 
 }
 
 tasks.named('test') {
