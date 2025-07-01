@@ -22,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 public class NoticeController {
   private final NoticeService noticeService;
   
-  
   /**
    * 알림 생성
    * @param notice
@@ -30,7 +29,7 @@ public class NoticeController {
    */
   @PostMapping(value="/create")
   @ResponseBody
-  public ResponseEntity<Deal> create(@RequestBody Notice notice) {
+  public ResponseEntity<Notice> create(@RequestBody Notice notice) {
     noticeService.save(notice);
     return ResponseEntity.ok().build();
   }
@@ -80,6 +79,28 @@ public class NoticeController {
       noticeService.save(existingNotice);
       return ResponseEntity.ok().build(); // 200 반환
     }).orElseGet(() -> ResponseEntity.notFound().build()); // 찾지 못한 경우 404 반환
+  }
+  
+  /**
+   * 해당 멤버의 알림 반환
+   * @param member_no
+   * @return
+   */
+  @GetMapping(value = "/member/{member_no}")
+  public List<Notice> getMemberNotice(@PathVariable("member_no") Long member_no) {
+    
+    return noticeService.getMemberNotice(member_no);
+  }
+  
+  /**
+   * coin_no에 해당 하고 발송되는 않은 알림 반환
+   * @param coin_no
+   * @return
+   */
+  @GetMapping(value = "/coin/{coin_no}")
+  public List<Notice> getPending(@PathVariable("coin_no") Long coin_no) {
+    
+    return noticeService.getPending(coin_no);
   }
   
 }
