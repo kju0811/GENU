@@ -69,9 +69,10 @@ public class CoinService {
     
     // * 20  -> 20% 보정최대 / 클수록 영향이큼  (조정필요)
     // tanh(x) 크면 결과가 +-1에 거의 수렴 -> 0.01를 곱해
+    // 현재 1당 0.02% 적용중
     double netBuyAdjustment = Math.tanh(netBuy * 0.001) * 20;
     
-    // (3) 뉴스 감성 보정 (기사 분석 결과: -2 ~ +2) // 조정할수도?
+    // (3) 뉴스 감성 보정 (기사 분석 결과: 0 ~ 1) // 조정할수도?
     double newsAdjustment = newsSentiment * 5.0;
     
     // (4) 최종 변화율
@@ -109,8 +110,15 @@ public class CoinService {
         }
       }
       
-      System.out.println("3번 cnt ->"+ cnt);
-      double fluctuation = calculateFluctuation(0, 0, cnt); // 예시 값
+//      System.out.println("3번 cnt ->"+ cnt);
+      
+      // 해당 코인의 체결된 매수, 매도된 코인 개수(deal_cnt)로 변동 추가
+      int buy_cnt = dealService.getTotalType1(coin.getCoin_no());
+      int sell_cnt = dealService.getTotalType2(coin.getCoin_no());
+//      System.out.println("buy_cnt -> "+buy_cnt);
+//      System.out.println("sell_cnt -> "+sell_cnt);
+      
+      double fluctuation = calculateFluctuation(buy_cnt, sell_cnt, cnt); // 예시 값
       coin.setCoin_price((int)(coin.getCoin_price() * (1 + fluctuation / 100)));
       coin.setCoin_percentage(fluctuation);
       coinRepository.save(coin);
