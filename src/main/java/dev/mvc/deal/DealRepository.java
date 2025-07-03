@@ -21,6 +21,16 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
       + "AND (d.deal_type = 2 OR d.deal_type = 4)")
   Integer getSellbyCnt(@Param("member_no") Long member_no, @Param("coin_no") Long coin_no);
   
+  @Query("SELECT COALESCE(SUM(d.deal_cnt), 0) "
+      + "FROM Deal d "
+      + "WHERE d.deal_type = 1 AND d.coin.coin_no = :coin_no")
+  Integer getTotalType1(@Param("coin_no") Long coin_no);
+  
+  @Query("SELECT COALESCE(SUM(d.deal_cnt), 0) "
+      + "FROM Deal d "
+      + "WHERE d.deal_type = 2 AND d.coin.coin_no = :coin_no")
+  Integer getTotalType2(@Param("coin_no") Long coin_no);
+  
   @Query("SELECT d "
       + "FROM Deal d "
       + "WHERE d.deal_type = 3 AND d.coin.coin_no = :coin_no")
