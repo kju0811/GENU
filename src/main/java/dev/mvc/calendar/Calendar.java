@@ -1,5 +1,7 @@
 package dev.mvc.calendar;
 
+import java.time.LocalDateTime;
+
 import dev.mvc.member.Member;
 import dev.mvc.news.News;
 import jakarta.persistence.Column;
@@ -10,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -75,7 +78,14 @@ public class Calendar {
   
   /** 등록 날짜 */
   @Column(name = "regdate", nullable = false, columnDefinition = "DATE")
-  private String regdate = "";
+  private LocalDateTime regdate;
+  
+  @PrePersist
+  public void prepersist() {
+	  if (regdate == null) {
+		  regdate = LocalDateTime.now();
+	  }
+  }
   
   // 회원테이블 외래키
   @ManyToOne
