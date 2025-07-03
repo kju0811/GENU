@@ -105,7 +105,7 @@ public class CoinController {
   @PostMapping(value="/allchange")
   public void allchange() {
     coinService.updateAllCoinPrices();
-    System.out.println("ok");
+    System.out.println("수동 변경 ok");
   }
   
   /**
