@@ -55,10 +55,6 @@ public class Calendar {
   @Column(name = "labeldate", nullable = false, columnDefinition = "VARCHAR(10)")
   private String labeldate = "";
   
-  /** 출력할 레이블 */
-  @Column(name = "label",nullable = false, columnDefinition = "VARCHAR2(50)")
-  private String label = "";
-  
   /** 제목 */
   @Column(name = "title",nullable = false, columnDefinition = "VARCHAR2(100)")
   private String title = "";
@@ -74,7 +70,7 @@ public class Calendar {
   
   /** 일정 출력 순서 */
   @Column(name = "seqno", nullable = false, columnDefinition = "NUMBER(5)")
-  private Integer seqno;
+  private Integer seqno = 0;
   
   /** 등록 날짜 */
   @Column(name = "regdate", nullable = false, columnDefinition = "DATE")
