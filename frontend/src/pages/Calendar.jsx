@@ -120,23 +120,32 @@ function Schedule() {
     }
   };
 
-  useEffect(() => {
-        fetch(`http://${getIP()}:9093/calendar/read`, { // Spring Boot JPA
-      method: 'GET'
-    })
-    .then(result => result.json()) // 응답
-    .then(result => {
-      const calendarEvents = result.map(item => ({
+useEffect(() => {
+  Promise.all([
+    fetch(`http://${getIP()}:9093/calendar/read`).then(res => res.json()),
+    fetch(`http://${getIP()}:9093/news/find`).then(res => res.json())
+  ])
+    .then(([calendarData, newsData]) => {
+      const calendarEvents = calendarData.map(item => ({
         calendarno: item.calendar_no,
         title: item.title,
         body: item.content,
-        start: new Date(item.labeldate), 
+        start: new Date(item.labeldate),
         end: new Date(item.labeldate),
       }));
-      setEvents(calendarEvents);
+
+      const newsEvents = newsData.map(item => ({
+        newsno: item.news_no,
+        title: item.news_title,
+        start: new Date(item.news_rdate),
+        end: new Date(item.news_rdate),
+      }));
+
+      // 일정과 뉴스 둘 다 합치기
+      setEvents([...calendarEvents, ...newsEvents]);
     })
-    .catch(err => console.error(err))
-  }, []); 
+    .catch(error => console.error("데이터 불러오기 오류:", error));
+}, []); 
 
   const handleUpdateEvent = () => {
     if (newEventTitle.trim() !== "") {
@@ -203,6 +212,7 @@ function Schedule() {
     <Link to="/ai/newsfind">기사 보러가기</Link><br />
     <div className="relative" onMouseMove={handleMouseMove}>
       <Calendar
+        popup
         ref={calendarRef}
         localizer={localizer}
         events={events}  
@@ -211,7 +221,7 @@ function Schedule() {
         endAccessor="end"      
         titleAccessor="title"  
         style={{ height: 500, width: 800 }}
-        views={['month','week']}
+        views={['month']}
         selectable
         onSelectSlot={handleSelectSlot}
         onSelectEvent={handleSelectEvent}
