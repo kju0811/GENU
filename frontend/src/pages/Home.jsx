@@ -9,7 +9,8 @@ function Home() {
         <Link to="/ai/news">llm 기사 생성</Link><br />
         <Link to="/ai/newsfind">기사 보러가기</Link><br />
         <Link to="/calendar">캘린더</Link><br />
-        <Link to="/announce">공지사항</Link>
+        <Link to="/announce">공지사항</Link><br />
+        <Link to="/coin/find_all">코인 보러가기</Link>
         </div>
   );
 }

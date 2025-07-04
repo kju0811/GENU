@@ -22,7 +22,8 @@ function CoinList() {
 
   return (
     <>
-<table className='table_center table table-hover'>
+    <Link to="/coin/create">코인 생성</Link>
+    <table className='table_center table table-hover'>
         <tbody>
         {
           // item.issueno, item.title, item.content, item.cnt, item.rdate
@@ -39,7 +40,7 @@ function CoinList() {
                     alt="home"
                     style={{ maxWidth: '30%', height: 'auto', marginTop: '16px' }}
                   />
-                  {item.coin_no} | {item.coin_name} | {item.coin_price}누렁 | {item.coin_percentage}%
+                  {item.coin_no} | {item.coin_name} | {item.coin_price.toLocaleString()}누렁 | {item.coin_percentage}%
                 </Link>
               </td>
             </tr>)

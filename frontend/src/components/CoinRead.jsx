@@ -3,6 +3,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getIP } from '../components/Tool';
 import axios from 'axios';
 
+
+import CandleStickChart from "./CandleStickChart";
+
 function CoinRead() {
   console.log('-> CoinRead');
   const navigator = useNavigate();
@@ -66,9 +69,17 @@ function CoinRead() {
 
   return (
     <>
+      <img
+        src={`http://${getIP()}:9093/home/storage/${data.coin_img}`}
+        alt="home"
+        style={{ maxWidth: '30%', height: 'auto', marginTop: '16px' }}
+      />
       <h4>{data.coin_name}</h4>
       <div>
         정보 : {data.coin_info}
+      </div>
+      <div>
+        카테고리 : {data.coin_cate}
       </div>
       <div>
         현재가 : {data.coin_price} 누렁 <br />{data.coin_percentage}%
@@ -93,6 +104,10 @@ function CoinRead() {
 
       <br />
       <button onClick={goBack} className="btn btn-sm btn-primary">목록</button>
+
+      <div style={{ marginTop: '20px' }}>
+        <CandleStickChart coin_no={data.coin_no} days={30} />
+      </div>
     </>
   );
 }
