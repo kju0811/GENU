@@ -14,6 +14,8 @@ import CoinList from "./components/CoinList";
 import CoinCreate from "./components/CoinCreate";
 import TradeForm from "./components/TradeForm";
 import CandleStickChart from "./components/CandleStickChart";
+import Schedule from "./pages/Calendar";
+
 
 function App() {
   return (
@@ -30,6 +32,7 @@ function App() {
         <Route path="/coin/create" element={<CoinCreate/>} />
         <Route path="/coin/deal" element={<TradeForm/>} />
         <Route path="/coin/chart/:coin_no" element={<CandleStickChart/>} />
+        <Route path="/calendar" element={<Schedule/>} />
         {/* <Route path="*" element={<NotFound />} /> */}
       </Routes>
       {/* <Footer /> */}
