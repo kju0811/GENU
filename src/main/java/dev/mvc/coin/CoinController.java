@@ -50,17 +50,23 @@ public class CoinController {
    */
   @PostMapping(value="/create")
   @ResponseBody
-  public ResponseEntity<Coin> create(@RequestPart("coin") Coin coin, @RequestParam("file") MultipartFile file) {
+  public ResponseEntity<Coin> create(@RequestPart("coin") Coin coin, @RequestPart(value = "file", required = false) MultipartFile file) {
     try {
-      String target = file.getOriginalFilename();
-      String coinImg = "";
-       if (file.getOriginalFilename().endsWith("jpg")) { 
-         coinImg = target;
-       } else if (file.getOriginalFilename().endsWith("jpeg")) {
-         coinImg = target;
-       } else if (file.getOriginalFilename().endsWith("png")) {
-         coinImg = target;
-       }            
+      if (file == null || file.isEmpty()) {
+        Coin savedEntity =  coinService.save(coin);
+        return ResponseEntity.ok(savedEntity);
+      }
+      
+        String target = file.getOriginalFilename();
+        String coinImg = "";
+         if (file.getOriginalFilename().endsWith("jpg")) { 
+           coinImg = target;
+         } else if (file.getOriginalFilename().endsWith("jpeg")) {
+           coinImg = target;
+         } else if (file.getOriginalFilename().endsWith("png")) {
+           coinImg = target;
+         }     
+      
        
        coin.setCoin_img(coinImg);
 
@@ -81,6 +87,7 @@ public class CoinController {
 
        Coin savedEntity =  coinService.save(coin);
        return ResponseEntity.ok(savedEntity);
+      
    } catch (IOException e) {
        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // 500
    }
@@ -148,23 +155,29 @@ public class CoinController {
   
   /**
    * 수정
-   * PUT 요청을 처리하여 특정 ID를 가진 Entity 객체를 업데이트
+   * Post 요청을 처리하여 특정 ID를 가진 Entity 객체를 업데이트
    * http://localhost:9093/coin/21
    * @param coin_no
    * @param entity
    * @return
    */
-  @PutMapping(path = "/{coin_no}")
+  @PostMapping(path = "/update/{coin_no}")
   public ResponseEntity<Coin> updateEntity(@PathVariable("coin_no") Long id, 
-                                                                @RequestBody Coin coin) {
+                                                      @RequestPart("coin") Coin coin, 
+                                                      @RequestPart(value = "file", required = false) MultipartFile file) {
+    System.out.println(coin);
+    System.out.println(file);
     // id를 이용한 레코드 조회 -> existingEntity 객체에 할당 -> {} 실행 값 저장 -> DBMS 저장 -> 상태 코드 200 출력
     return coinService.find_by_id(id).<ResponseEntity<Coin>>map(existingCoin -> {
       existingCoin.setCoin_name(coin.getCoin_name());
       existingCoin.setCoin_info(coin.getCoin_info());
+      existingCoin.setCoin_price(coin.getCoin_price());
+      existingCoin.setCoin_cate(coin.getCoin_cate());
       
-      coinService.save(existingCoin);
+      create(existingCoin, file);
       return ResponseEntity.ok().build(); // 200 반환
     }).orElseGet(() -> ResponseEntity.notFound().build()); // 찾지 못한 경우 404 반환
+
   }
   
   /**

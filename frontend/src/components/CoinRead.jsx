@@ -3,12 +3,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getIP } from '../components/Tool';
 import axios from 'axios';
 
-
+import { Link } from 'react-router-dom';
 import CandleStickChart from "./CandleStickChart";
 
 function CoinRead() {
   console.log('-> CoinRead');
-  const navigator = useNavigate();
+  const navigate = useNavigate();
   const { coin_no } = useParams();
 
   const [data, setData] = useState(null);
@@ -30,7 +30,11 @@ function CoinRead() {
   if (!data) return <div>Loading...</div>;
 
   const goBack = () => {
-    navigator(-1);
+    navigate("/coin/find_all");
+  };
+
+  const update = () => {
+    navigate(`/coin/update/${coin_no}`);
   };
 
   const getRequestBody = (type) => ({
@@ -104,6 +108,7 @@ function CoinRead() {
 
       <br />
       <button onClick={goBack} className="btn btn-sm btn-primary">목록</button>
+      <button onClick={update} className="btn btn-sm btn-primary">코인 수정</button>
 
       <div style={{ marginTop: '20px' }}>
         <CandleStickChart coin_no={data.coin_no} days={30} />
