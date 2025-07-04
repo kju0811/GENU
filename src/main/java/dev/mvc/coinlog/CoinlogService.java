@@ -1,5 +1,6 @@
 package dev.mvc.coinlog;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +34,14 @@ public class CoinlogService {
   /** 모든 레코드 출력 */
   public List<Coinlog> find_all() {
     return coinlogRepository.findAll();  // method/SQL 자동 생성
+  }
+  
+  public List<Object[]> getDailyOhlcData(Long coin_no, int days) {
+    // 최근 30일 데이터
+    LocalDate endDate = LocalDate.now().plusDays(1); // 오늘부터
+    LocalDate startDate = endDate.minusDays(days);
+    List<Object[]> results = coinlogRepository.getDailyOhlcData(coin_no, startDate, endDate);
+    return results;
   }
   
 }
