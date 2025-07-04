@@ -117,7 +117,7 @@ const [option3,setOption3] = useState('');
     <div>
     <span>호/악재: {option1}</span> /&nbsp;
     <span>카테고리: {option2}</span><br />
-    <textarea style={{width:"100%",height:'80%'}} placeholder="추가 사항" value={option3} onChange={(e) => setOption3(e.target.value)} ></textarea>
+    <textarea style={{width:"100%",height:'80%', border:'1px solid gray', borderRadius: '5px'}} placeholder="추가 사항" value={option3} onChange={(e) => setOption3(e.target.value)} ></textarea>
     </div><br />
     
     <div>
@@ -127,7 +127,7 @@ const [option3,setOption3] = useState('');
     
     <span>뉴스 기사</span>
     <div style={{width:'70%', justifyContent: 'center', display: 'flex', height:'23%'}}>
-      <textarea style={{width:'100%', padding: '10px'}} readOnly value={news.res} > </textarea>
+      <textarea style={{width:'100%', padding: '10px', border:'1px solid gray', borderRadius: '5px'}} readOnly value={news.res} > </textarea>
     </div> <br />
 
     <div>
@@ -137,7 +137,7 @@ const [option3,setOption3] = useState('');
 
     <span>요약본</span>
     <div style={{width:'70%', justifyContent: 'center', display: 'flex', height:'23%'}}>
-      <textarea style={{width:'100%', padding: '10px'}} readOnly value={summary.res} ></textarea>
+      <textarea style={{width:'100%', padding: '10px', border:'1px solid gray', borderRadius: '5px'}} readOnly value={summary.res} ></textarea>
     </div>
     </>
     
