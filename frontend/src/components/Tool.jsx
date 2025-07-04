@@ -1,6 +1,6 @@
 const getIP = () => {
   return "localhost";
-  // return "192.168.2.190";
+  // return "192.168.12.158";
 }
 
 const getNowDate = () => {
