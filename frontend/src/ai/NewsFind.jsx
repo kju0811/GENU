@@ -54,7 +54,9 @@ function NewsFind() {
             ? `${item.news_content.slice(0, 70)}...`
             : item.news_content}
           </p>
+          
           <div className="card-actions justify-end">
+            <span style={{marginTop:'15px', marginRight:'5px'}}>{item.news_rdate}</span>
            <Link to={`/ai/read/${item.news_no}`}> <button className="btn btn-primary">뉴스 보러가기</button> </Link>
           </div>
         </div>
