@@ -3,6 +3,7 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { getIP } from '../components/Tool';
+import { Link } from 'react-router-dom';
 import 'moment/locale/ko';
 
 moment.locale('ko');
@@ -12,10 +13,13 @@ function Schedule() {
   const calendarRef = useRef(null);
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
   const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedEvent, setSelectedEvent] = useState(null);
   const [showEventModal, setShowEventModal] = useState(false);
-  const [showUpdateModal, setUpdateventModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [newEventTitle, setNewEventTitle] = useState('');
+  const [updateEventTitle, setUpdateEventTitle] = useState('');
   const [newEventBody, setNewEventBody] = useState('');
+  const [updateEventBody, setUpdateEventBody] = useState('');
   const [events, setEvents] = useState([]);
 
   const formats = {
@@ -64,6 +68,31 @@ function Schedule() {
   };
 
   const handleSelectEvent = (event) => {
+    setSelectedEvent(event);
+    setUpdateEventTitle(event.title || ''); // ← 기존 제목 넣기
+    setUpdateEventBody(event.body || '');   // ← 기존 내용 넣기
+    
+    // 마우스 위치 기반으로 모달 위치 설정
+    const mousePos = window.lastMousePosition || { x: 0, y: 0 };
+    const modalWidth = 320; 
+    const modalHeight = 400; 
+    
+    let left = mousePos.x;
+    let top = mousePos.y;
+    
+    if (left + modalWidth > window.innerWidth) {
+      left = window.innerWidth - modalWidth - 10;
+    }
+    
+    if (top + modalHeight > window.innerHeight) {
+      top = window.innerHeight - modalHeight - 10;
+    }
+    
+    left = Math.max(10, left);
+    top = Math.max(10, top);
+    
+    setModalPosition({ top, left });
+    setShowUpdateModal(true);
   };
 
   const handleAddEvent = () => {
@@ -91,27 +120,99 @@ function Schedule() {
     }
   };
 
-  useEffect(() => {
-        fetch(`http://${getIP()}:9093/calendar/read`, { // Spring Boot JPA
-      method: 'GET'
-    })
-    .then(result => result.json()) // 응답
-    .then(result => {
-      const calendarEvents = result.map(item => ({
+useEffect(() => {
+  Promise.all([
+    fetch(`http://${getIP()}:9093/calendar/read`).then(res => res.json()),
+    fetch(`http://${getIP()}:9093/news/find`).then(res => res.json())
+  ])
+    .then(([calendarData, newsData]) => {
+      const calendarEvents = calendarData.map(item => ({
+        calendarno: item.calendar_no,
         title: item.title,
         body: item.content,
-        start: new Date(item.labeldate),  // 문자열을 Date 객체로 변환
+        start: new Date(item.labeldate),
         end: new Date(item.labeldate),
       }));
-      setEvents(calendarEvents);
-      console.log(result);
+
+      const newsEvents = newsData.map(item => ({
+        newsno: item.news_no,
+        title: item.news_title,
+        start: new Date(item.news_rdate),
+        end: new Date(item.news_rdate),
+      }));
+
+      // 일정과 뉴스 둘 다 합치기
+      setEvents([...calendarEvents, ...newsEvents]);
     })
-    .catch(err => console.error(err))
-  }, []); 
+    .catch(error => console.error("데이터 불러오기 오류:", error));
+}, []); 
+
+  const handleUpdateEvent = () => {
+    if (newEventTitle.trim() !== "") {
+      const updatedEvents = events.map(event => 
+        event === selectedEvent 
+          ? { ...event, title: newEventTitle, body: newEventBody }
+          : event
+      ); 
+
+      const calendarno = selectedEvent?.calendarno;
+      const calendar = {
+        title: newEventTitle,
+        content: newEventBody
+      };
+
+      fetch(`http://${getIP()}:9093/calendar/update/${calendarno}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(calendar),
+      })
+      .then(resonse => {
+        console.log(resonse);
+      })
+      
+      setEvents(updatedEvents);
+      setNewEventTitle('');
+      setNewEventBody('');
+      setShowUpdateModal(false);
+      setSelectedEvent(null);
+    } else {
+      alert("제목을 입력해주세요");
+    }
+  };
+
+  const handleDeleteEvent = () => {
+    if (window.confirm("일정을 삭제하시겠습니까?")) {
+      const updatedEvents = events.filter(event => event !== selectedEvent);
+
+      const calendarno = selectedEvent?.calendarno;
+
+      fetch(`http://${getIP()}:9093/calendar/delete/${calendarno}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(calendarno),
+      })
+      .then(resonse => {
+        console.log(resonse);
+      })
+
+      setEvents(updatedEvents);
+      setShowUpdateModal(false);
+      setSelectedEvent(null);
+      setNewEventTitle('');
+      setNewEventBody('');
+    }
+  };
 
   return (
+    <>
+    <Link to="/ai/newsfind">기사 보러가기</Link><br />
     <div className="relative" onMouseMove={handleMouseMove}>
       <Calendar
+        popup
         ref={calendarRef}
         localizer={localizer}
         events={events}  
@@ -120,7 +221,7 @@ function Schedule() {
         endAccessor="end"      
         titleAccessor="title"  
         style={{ height: 500, width: 800 }}
-        views={['month','week']}
+        views={['month']}
         selectable
         onSelectSlot={handleSelectSlot}
         onSelectEvent={handleSelectEvent}
@@ -186,13 +287,13 @@ function Schedule() {
           <input
             type="text"
             placeholder="제목"
-            value={newEventTitle}
+            value={updateEventTitle}
             onChange={(e) => setNewEventTitle(e.target.value)}
             className="w-full border px-2 py-1 mb-3"
           />
           <textarea
             placeholder='내용'
-            value={newEventBody}
+            value={updateEventBody}
             onChange={(e) => setNewEventBody(e.target.value)}
             style={{height:200}}
             className="w-full border px-2 py-1 mb-3"
@@ -220,6 +321,7 @@ function Schedule() {
         </div>
       )}
     </div>
+    </>
   );
 }
 
