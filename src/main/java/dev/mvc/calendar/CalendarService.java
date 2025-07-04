@@ -1,5 +1,7 @@
 package dev.mvc.calendar;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -12,5 +14,9 @@ public class CalendarService {
 	
 	public Calendar create(Calendar calendar) {
 		return repository.save(calendar);
+	}
+	
+	public List<Calendar> read() {
+		return repository.findAll();
 	}
 }
