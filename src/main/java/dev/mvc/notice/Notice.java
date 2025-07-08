@@ -1,5 +1,7 @@
 package dev.mvc.notice;
 
+import java.time.LocalDateTime;
+
 import dev.mvc.coin.Coin;
 import dev.mvc.member.Member;
 import jakarta.persistence.Column;
@@ -9,6 +11,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.SequenceGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,6 +38,18 @@ public class Notice {
   @Column(name = "notice_price", nullable = false)
   private Integer notice_price;
   
+  /** 원하는 금액이 현재가 이하인지0 이상인지1.  */
+  @Column(name = "notice_type", nullable = false)
+  private int notice_type;
+  
+  /** 생성일 */
+  @Column(name = "notice_date", nullable = false)
+  private LocalDateTime notice_date;
+
+  /** 알림 대기0, 완료1. */
+  @Column(name = "notice_status", nullable = false)
+  private int notice_status = 0;
+  
   /**
    * member 테이블에 member_no를 참조
    */
@@ -47,4 +63,10 @@ public class Notice {
   @ManyToOne
   @JoinColumn(name="coin_no", referencedColumnName = "coin_no", nullable = false)
   private Coin coin;
+  
+  /** 시간 자동 생성 */
+  @PrePersist
+  protected void onCreate() {
+    this.notice_date = LocalDateTime.now();
+  }
 }
