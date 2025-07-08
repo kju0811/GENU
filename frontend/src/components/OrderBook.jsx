@@ -1,28 +1,30 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { getIP } from '../components/Tool';
 
-const orderData = {
-  "1511": 2,
-  "1521": 1,
-  "1531": 1,
-  "1541": 1,
-  "1551": 1,
-  "1561": 1,
-  "1571": 1,
-  "1581": 1,
-  "1591": 1,
-  "1601": 1,
-  "1611": 0,
-  "1621": 1,
-  "1631": 1,
-  "1641": 1,
-  "1651": 1,
-  "1661": 1,
-  "1671": 1,
-  "1681": 1,
-  "1691": 1,
-  "1701": 1,
-  "1711": 1
-};
+// const orderData = {
+//   "1511": 2,
+//   "1521": 1,
+//   "1531": 1,
+//   "1541": 1,
+//   "1551": 1,
+//   "1561": 1,
+//   "1571": 1,
+//   "1581": 1,
+//   "1591": 1,
+//   "1601": 1,
+//   "1611": 0,
+//   "1621": 1,
+//   "1631": 1,
+//   "1641": 1,
+//   "1651": 1,
+//   "1661": 1,
+//   "1671": 1,
+//   "1681": 1,
+//   "1691": 1,
+//   "1701": 1,
+//   "1711": 1
+// };
 
 const CURRENT_PRICE = 1611;
 
@@ -54,11 +56,31 @@ const OrderBook = () => {
     color: '#00796b'
   };
 
+
+  const { coin_no } = useParams();
+  const [data, setData] = useState(null);
+  
+  useEffect(() => {
+    fetch(`http://${getIP()}:9093/coin/orderlist/${coin_no}`, {
+      method: 'GET'
+    })
+    .then(result => result.json())
+    .then(data => {
+      console.log("data -> ", data);
+      setData(data);
+    })
+    .catch(err => console.error(err));
+  }, [coin_no]);
+  
+  if (!data) {
+    return <div style={containerStyle}>Loading...</div>;
+  }
+
   return (
     <div style={containerStyle}>
       <h3 style={{ textAlign: 'center' }}>📈 호가창</h3>
       <div>
-        {Object.entries(orderData).map(([price, amount]) => (
+        {Object.entries(data).reverse().map(([price, amount]) => (
           <div key={price} style={rowStyle(parseInt(price))}>
             <span style={priceStyle}>{price}</span>
             <span style={amountStyle}>{amount}</span>
