@@ -3,8 +3,12 @@ package dev.mvc.coin;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
@@ -18,7 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 import dev.mvc.coinlog.Coinlog;
 import dev.mvc.coinlog.CoinlogRepository;
 import dev.mvc.deal.Deal;
+import dev.mvc.deal.DealDTO;
 import dev.mvc.deal.DealService;
+import dev.mvc.exception.NotFoundException;
 import dev.mvc.fluctuation.Fluctuation;
 import dev.mvc.fluctuation.FluctuationDTO;
 import dev.mvc.fluctuation.FluctuationRepository;
@@ -250,5 +256,100 @@ public class CoinService {
     }
   }
   
+  /**
+   * 틱 사이즈 규칙
+   * @param price
+   * @return
+   */
+  public int getTickSize (int price) {
+    if (100 <= price && price < 1000) return 1;
+    if (1000 <= price && price < 10000) return 10;
+    if (10000 <= price && price < 100000) return 100;
+    if (100000 <= price && price < 1000000) return 500;
+    if (1000000 <= price && price < 10000000) return 1000;
+    if (10000000 <= price) return 5000;
+    return 0;
+  }
+  
+  /** 현재가보다 낮은 유효 주문 */
+  public int handleLowerOrder(int price, int cp, int ts) {
+    int max_range = 8;
+    for (int i = 0; i<=max_range; i++) {
+      if (cp - ts * (i+1) <= price && price < cp - (ts * i)) {
+        return cp - ts * (i+1);
+      }
+    }
+    return 0;
+  }
+  
+  /** 현재가보다 높은 유효 주문 */
+  public int handleUpperOrder(int price, int cp, int ts) {
+    int max_range = 8;
+    for (int i = 0; i<=max_range; i++) {
+      if (cp + ts * i < price && price <= cp + ts * (i + 1)) {
+        return cp + ts * (i + 1);
+      }
+    }
+    return 0;
+  }
+
+  /**
+   * 호가창 서비스
+   * @param coin_no
+   * @return
+   */
+  public Map<Integer, Integer> TickList (Long coin_no) {
+    Coin coin = coinRepository.findById(coin_no).orElseThrow(() -> new NotFoundException("코인 없음"));
+    
+    int cp = coin.getCoin_price(); // 현재가 기준 
+    int ts = getTickSize(cp); // 틱 간격
+    
+    int rangeCnt = 10; // 위아래 10개
+    int minp = cp - ts * rangeCnt;
+    int maxp = cp + ts * rangeCnt;
+    System.out.println("minp -> "+ minp);
+    System.out.println("maxp -> "+ maxp);
+    int cnt = 0;
+
+    Map<Integer, Integer> data = new LinkedHashMap<>(); // LinkedHashMap 넣은 순서대로
+    while (minp <= maxp) { // 미리 초기값 세팅
+      data.put(minp, cnt);
+      minp += ts;
+    }
+    System.out.println("기본 data 값 -> " + data);
+    
+    List<DealDTO.OrderList> olist = dealService.getOrderList(coin_no);
+//  getRangeCnt(olist, cp, ts);
+    System.out.println("olist 값 -> " + olist);
+    
+    minp = cp - ts * rangeCnt; // 값 초기화
+    for (DealDTO.OrderList ol : olist) {
+      int price = ol.getDeal_price();
+      int ol_cnt = ol.getTotal_cnt();
+      int bucketPrice = 0;
+//      System.out.println("minp + ts -> " + (minp + ts));
+      if (price < minp + ts) { // 호가창 최저가 이하
+        int pv = data.get(minp);
+//        System.out.println("pv -> " + pv);
+        data.put(minp, pv + ol_cnt); // 키가 최저가인 값에 이전값+ol_cnt 
+        
+      } else if (minp + ts <= price && price < cp) { // 밑에 주문 값 계산
+        bucketPrice = handleLowerOrder(price, cp, ts);
+        int pv = data.get(bucketPrice);
+        data.put(bucketPrice, pv + ol_cnt);
+        
+      } else if (cp < price && price <= maxp - ts) { // 위에 주문 값 계산   
+        bucketPrice = handleUpperOrder(price, cp, ts);
+        int pv = data.get(bucketPrice);
+        data.put(bucketPrice, pv + ol_cnt);
+        
+      } else if (maxp - ts < price) { // 위에 주문 최대 오버값 계산
+        int pv = data.get(maxp);
+        data.put(maxp, pv + ol_cnt); // 키가 최고가인 값에 이전값+ol_cnt 
+      }
+    }
+    System.out.println("수정후 data 값 -> " + data);
+    return data;
+  }
 
 }
