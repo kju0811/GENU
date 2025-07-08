@@ -2,10 +2,10 @@ package dev.mvc.team4;
 
 import javax.sql.DataSource;
 
-import org.mybatis.spring.annotation.MapperScan;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.mybatis.spring.SqlSessionFactoryBean;
-import org.mybatis.spring.SqlSessionTemplate;
+//import org.mybatis.spring.annotation.MapperScan;
+//import org.apache.ibatis.session.SqlSessionFactory;
+//import org.mybatis.spring.SqlSessionFactoryBean;
+//import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.ApplicationContext;
@@ -18,7 +18,7 @@ import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
 @PropertySource("classpath:/application.properties")  // 설정 파일 위치
-@MapperScan(basePackages= {}) // DAO interface를 찾는 위치
+//@MapperScan(basePackages= {}) // DAO interface를 찾는 위치
 public class DatabaseConfiguration {
     
     @Autowired
@@ -47,8 +47,8 @@ public class DatabaseConfiguration {
 //        return sqlSessionFactoryBean.getObject();
 //    }
     
-    @Bean
-    public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory){
-        return new SqlSessionTemplate(sqlSessionFactory);
-    }
+//    @Bean
+//    public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory){
+//        return new SqlSessionTemplate(sqlSessionFactory);
+//    }
 }
