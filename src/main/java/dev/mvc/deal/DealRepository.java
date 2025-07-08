@@ -40,4 +40,11 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
       + "FROM Deal d "
       + "WHERE d.deal_type = 4 AND d.coin.coin_no = :coin_no")
   List<Deal> getType4(@Param("coin_no") Long coin_no);
+  
+  @Query(value = "SELECT d.deal_price, COALESCE(SUM(d.deal_cnt), 0) AS total_cnt "
+      + "FROM Deal d "
+      + "WHERE d.coin_no = :coin_no AND d.deal_type IN (3, 4) "
+      + "GROUP BY d.deal_price "
+      + "ORDER BY d.deal_price ", nativeQuery = true)
+  List<Object[]> getOrderList(@Param("coin_no") Long coin_no);
 }

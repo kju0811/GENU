@@ -2,6 +2,7 @@ package dev.mvc.deal;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -186,8 +187,23 @@ public class DealService {
   /** 수수료 계산 */
   public int feeCheck(int price, int cnt) {
     int fee = (int)(price*cnt*0.0005);
-    if (fee == 0) {return 1;} 
+    if (fee == 0) return 1;
     return fee;
+  }
+  
+  /** 주문의 가격과 갯수 리스트 반환  */
+  public List<DealDTO.OrderList> getOrderList(Long coin_no){
+    List<Object[]> list = dealRepository.getOrderList(coin_no);
+//    System.out.println("list -> " + list);
+    
+    List<DealDTO.OrderList> result = list.stream()
+        .map(f -> new DealDTO.OrderList(
+        ((Number) f[0]).intValue(), 
+        ((Number) f[1]).intValue()
+        ))
+        .collect(Collectors.toList());
+//    System.out.println("result -> " + result);
+    return result;
   }
   
 }
