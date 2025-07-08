@@ -35,7 +35,8 @@ public class AuthenticationFilter extends OncePerRequestFilter {
       "/announce/read",
       "/calendar/read",
       "/news/find",
-      "/coin/find_all"
+      "/coin/find_all",
+      "/**"
   );
 
   @Override
