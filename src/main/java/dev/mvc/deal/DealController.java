@@ -88,7 +88,7 @@ public class DealController {
   }
  
   /**
-   * 테스트 // 스프링 시큐리티하면 추가할 예정
+   * 매수 주문 // 스프링 시큐리티하면 추가할 예정
    * @param member_no
    * @return
    */
@@ -99,7 +99,7 @@ public class DealController {
   }
   
   /**
-   * 테스트 // 스프링 시큐리티하면 추가할 예정
+   * 매도 주문 // 스프링 시큐리티하면 추가할 예정
    * @param member_no
    * @return
    */
@@ -108,4 +108,15 @@ public class DealController {
     dealService.selldeal(dto);
     return ResponseEntity.ok().build();
   }
+  
+  /**
+   * 주문의 가격과 갯수 리스트 반환
+   * @param coin_no
+   * @return
+   */
+  @GetMapping(value = "/orderlist/{coin_no}")
+  public List<DealDTO.OrderList> orderlist(@PathVariable("coin_no") Long coin_no){
+    return dealService.getOrderList(coin_no);
+  }
+
 }

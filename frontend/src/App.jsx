@@ -15,6 +15,7 @@ import SignUp from "./pages/SignUp";
 // import CoinList from "./pages/CoinList";
 import Schedule from "./pages/Calendar";
 import CoinUpdate from "./components/CoinUpdate";
+import OrderBook from "./components/OrderBook";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
         <Route path="/coin/:coin_no" element={<CoinDetail/>} />
         <Route path="/calendar" element={<Schedule/>} />
         <Route path="/coin/update/:coin_no" element={<CoinUpdate/>} />
+        <Route path="/coin/tickList/:coin_no" element={<OrderBook/>} />
         {/* <Route path="*" element={<NotFound />} /> */}
       </Routes>
       {/* <Footer /> */}
