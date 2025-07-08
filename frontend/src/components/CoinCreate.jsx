@@ -8,9 +8,9 @@ import { getIP, getNowDate } from '../components/Tool';
 export default function CoinCreate() {
   const [step, setStep] = useState(1);
   const [name, setName] = useState('');
-  const [category, setCategory] = useState('');
+  const [cate, setCate] = useState('');
   const [price, setPrice] = useState('');
-  const [imageFile, setImageFile] = useState(null);
+  const [img, setImg] = useState(null);
   const [info, setInfo] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
@@ -21,26 +21,46 @@ export default function CoinCreate() {
   ];
 
   const handleNext = () => {
-    if (name && category && price && imageFile) setStep(2);
-    else alert('모든 기본 정보를 입력하고 이미지를 업로드하세요.');
+    if (name && cate && price && img) {
+      setStep(2);
+    } else {
+      alert('모든 기본 정보를 입력하고 이미지를 업로드하세요.');
+    }
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // 서버가 기대하는 형식: 'coin' JSON 블랍과 'file' multipart
+    const coin = {
+      coin_name: name,
+      coin_cate: cate,
+      coin_price: Number(price),
+      coin_info: info,
+      coin_percentage: 0,
+      created_at: getNowDate()
+    };
+
     const formData = new FormData();
-    formData.append('coin_name', name);
-    formData.append('coin_cate', category);
-    formData.append('coin_price', price);
-    formData.append('coin_img', imageFile);
-    formData.append('coin_info', info);
-    formData.append('coin_percentage', 0);
-    formData.append('created_at', getNowDate());
+    formData.append(
+      'coin',
+      new Blob([JSON.stringify(coin)], { type: 'application/json' })
+    );
+    if (img) {
+      formData.append('file', img);
+    }
 
     try {
-      const res = await fetch(`http://${getIP()}:9093/coin/create`, { method: 'POST', body: formData });
+      const res = await fetch(`http://${getIP()}:9093/coin/create`, {
+        method: 'POST',
+        body: formData
+      });
       const result = await res.json();
-      if (result.coin_no > 0) navigate(`/coin/${result.coin_no}`);
-      else alert('등록 실패. 다시 시도하세요.');
+      if (result.coin_no > 0) {
+        navigate(`/coin/${result.coin_no}`);
+      } else {
+        alert('등록 실패. 다시 시도하세요.');
+      }
     } catch (err) {
       console.error(err);
       alert('서버 오류 발생');
@@ -59,7 +79,7 @@ export default function CoinCreate() {
             <input
               type="text"
               className="mt-1 w-full rounded-md border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 p-3 focus:ring-indigo-500 focus:border-indigo-500"
-              placeholder="제누코인, 오피셜영듀코인"
+              placeholder="예: 제누코인"
               value={name}
               onChange={e => setName(e.target.value)}
               required
@@ -73,7 +93,7 @@ export default function CoinCreate() {
               onClick={() => setDropdownOpen(prev => !prev)}
               className="mt-1 w-full text-left rounded-md border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 p-3 flex justify-between items-center focus:ring-indigo-500 focus:border-indigo-500"
             >
-              <span>{category || '카테고리를 선택하세요'}</span>
+              <span>{cate || '카테고리를 선택하세요'}</span>
               <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"/></svg>
             </button>
             {dropdownOpen && (
@@ -82,7 +102,7 @@ export default function CoinCreate() {
                   <li key={cat}>
                     <button
                       type="button"
-                      onClick={() => { setCategory(cat); setDropdownOpen(false); }}
+                      onClick={() => { setCate(cat); setDropdownOpen(false); }}
                       className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
                     >
                       {cat}
@@ -110,11 +130,11 @@ export default function CoinCreate() {
             <input
               type="file"
               accept="image/*"
-              onChange={e => setImageFile(e.target.files[0])}
+              onChange={e => setImg(e.target.files[0])}
               className="mt-1"
               required
             />
-            {imageFile && <p className="mt-2 text-sm text-green-600">{imageFile.name} 선택됨</p>}
+            {img && <p className="mt-2 text-sm text-green-600">{img.name} 선택됨</p>}
           </div>
 
           <div className="flex justify-end">
