@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -61,6 +62,12 @@ public class CoinlogController {
     } else {
       return ResponseEntity.notFound().build(); // 찾지 못한 경우 404 반환
     }
+  }
+  
+  @GetMapping("/ohlc/{coin_no}")
+  public List<Object[]> getDailyOhlcData(@PathVariable("coin_no") Long coin_no, 
+                                                 @RequestParam(name = "days", defaultValue = "30" ) int days){
+    return coinlogService.getDailyOhlcData(coin_no, days);
   }
   
 

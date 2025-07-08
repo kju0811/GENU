@@ -6,13 +6,7 @@ from sqlalchemy import create_engine  # Pandas -> Oracle
 import numpy as np
 
 def newsinsert(title, content, emotion):
-    
-    # Oracle Connection 
-    try:
-        cx_Oracle.init_oracle_client(lib_dir="/Users/kimjiun/kd/instantclient_23_3")
-    except cx_Oracle.ProgrammingError:
-        # 이미 초기화된 경우 무시
-        pass
+
     conn = cx_Oracle.connect('team4/69017000@1.201.18.85:1521/XE')
     cursor = conn.cursor()
     
@@ -62,11 +56,11 @@ def newsinsert(title, content, emotion):
 def newssummary(summary):
     
     # Oracle Connection 
-    try:
-        cx_Oracle.init_oracle_client(lib_dir="/Users/kimjiun/kd/instantclient_23_3")
-    except cx_Oracle.ProgrammingError:
-        # 이미 초기화된 경우 무시
-        pass
+    # try:
+    #     cx_Oracle.init_oracle_client(lib_dir="/Users/kimjiun/kd/instantclient_23_3")
+    # except cx_Oracle.ProgrammingError:
+    #     # 이미 초기화된 경우 무시
+    #     pass
     conn = cx_Oracle.connect('team4/69017000@1.201.18.85:1521/XE')
     cursor = conn.cursor()
     
