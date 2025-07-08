@@ -43,11 +43,11 @@ public class Member {
   
   /** 회원 아이디(이메일) */
   @Column(name = "member_id", nullable = false, length = 30, unique = true)
-  private String member_id;
+  private String memberId;
 
   /** 패스워드 */
   @Column(name = "member_pw", nullable = false, length = 200)
-  private String member_pw;
+  private String memberPw;
   
   /** 성명 */
   @Column(name = "member_name", nullable = false, length = 30)
@@ -80,4 +80,25 @@ public class Member {
   /** 활동명 */
   @Column(name = "member_nick", nullable = false, length = 45, unique = true)
   private String member_nick = "";
+  
+  public String getRole() {
+    String grade_str = "GUEST";
+    
+    if (member_grade <= 1) {
+      grade_str = "ADMIN"; // 관리자
+    } else if (member_grade <= 10) {
+      grade_str = "USER";    // 회원
+    } else if (member_grade == 20) {
+      grade_str = "STOP";    // 정지 회원
+    } else if (member_grade == 30) {
+      grade_str = "CANCEL"; // 탈퇴 회원
+    } else {
+    	grade_str = "GUEST";
+    }
+    
+    System.out.println("-> Employee.java grade_str:" + grade_str);
+    
+    return grade_str;
+  }
+  
 }
