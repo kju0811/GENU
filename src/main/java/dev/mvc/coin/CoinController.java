@@ -204,8 +204,8 @@ public class CoinController {
    * @param id
    * @return
    */
-  @GetMapping(value = "/tickList/{coin_no}")
-  public Map<Integer, Integer> tickList (@PathVariable("coin_no") Long id){
+  @GetMapping(value = "/orderlist/{coin_no}")
+  public Map<Integer, Integer> orderlist (@PathVariable("coin_no") Long id){
     return coinService.TickList(id);
   }
 }
