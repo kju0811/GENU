@@ -69,7 +69,7 @@ public class SecurityConfig {
                 // 기타 허용 필요 엔드포인트 추가, POST, PUT, DELETE 권한은 통신시에 OPTIONS 권한을 확인함으로 모두 허용
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 // JWT 체크 안함
-                //.requestMatchers("/calendar/*").permitAll()  
+                .requestMatchers("/**").permitAll()  
                 .requestMatchers(HttpMethod.GET, "/announce/*","/calendar/read","/news/find","/coin/find_all").permitAll()
                 .anyRequest().authenticated() // 로그인을 제외한 접근은 모두 인증된 사용자만 접근 가능
             )
