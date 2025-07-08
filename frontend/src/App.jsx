@@ -10,8 +10,12 @@ import NewsRead from "./ai/NewsRead";
 
 import CoinRead from "./components/CoinRead";
 // import Attendance from "./components/Attendance";
-import CoinList from "./components/CoinList";
 import CoinCreate from "./components/CoinCreate";
+import CoinDetail from "./pages/CoinDetail";
+import SignUp from "./pages/SignUp";
+// import CoinList from "./pages/CoinList";
+import Schedule from "./pages/Calendar";
+import CoinUpdate from "./components/CoinUpdate";
 
 function App() {
   return (
@@ -19,13 +23,16 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} /> {/* <Link to="/"> */}
+        <Route path="/SignUp" element={<SignUp />} /> 
         <Route path="/ai/news" element={<News />} />
         <Route path="/ai/newsfind" element={<NewsFind/>} />
         <Route path="/ai/read/:news_no" element={<NewsRead/>} />
-        <Route path="/coin/:coin_no" element={<CoinRead/>} />
         {/* <Route path="/attendance/:attendance_no" element={<Attendance/>} /> */}
-        <Route path="/coin/find_all" element={<CoinList/>} />
         <Route path="/coin/create" element={<CoinCreate/>} />
+        {/* <Route path="/coinlist" element={<CoinList />} /> */}
+        <Route path="/coin/:coin_no" element={<CoinDetail/>} />
+        <Route path="/calendar" element={<Schedule/>} />
+        <Route path="/coin/update/:coin_no" element={<CoinUpdate/>} />
         {/* <Route path="*" element={<NotFound />} /> */}
       </Routes>
       {/* <Footer /> */}

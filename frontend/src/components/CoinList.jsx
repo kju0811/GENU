@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
 
-import {getIP} from '../components/Tool';
+import { getIP } from "./Tool";
 
 function CoinList() {
   console.log('-> CoinList');
-
   const [data, setData] = useState(null);
 
 
@@ -23,7 +22,8 @@ function CoinList() {
 
   return (
     <>
-<table className='table_center table table-hover'>
+    <Link to="/coin/create">코인 생성</Link>
+    <table className='table_center table table-hover'>
         <tbody>
         {
           // item.issueno, item.title, item.content, item.cnt, item.rdate
@@ -34,7 +34,13 @@ function CoinList() {
             <tr key={index}>
               <td style={{textAlign: 'left', height: '30px'}}>
                 <Link to={`/coin/${item.coin_no}`}>
-                  {item.coin_img} | {item.coin_no} | {item.coin_name} | {item.coin_price}누렁 | {item.coin_percentage}%
+                  {/* <img src={imgUrl} alt={item.coin_name} width="50" height="50" style={{ marginRight: '10px' }} /> */}
+                  <img
+                    src={`http://${getIP()}:9093/home/storage/${item.coin_img}`}
+                    alt="home"
+                    style={{ maxWidth: '30%', height: 'auto', marginTop: '16px' }}
+                  />
+                  {item.coin_no} | {item.coin_name} | {item.coin_price.toLocaleString()}누렁 | {item.coin_percentage}%
                 </Link>
               </td>
             </tr>)
