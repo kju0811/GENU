@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -81,4 +82,16 @@ public class CoinlikeController {
       return ResponseEntity.ok().build(); // 200 반환
     }).orElseGet(() -> ResponseEntity.notFound().build()); // 찾지 못한 경우 404 반환
   }
+  
+  /**
+   * 멤버가 좋아요한 코인 출력
+   * GET 요청을 처리하여 모든 Entity 객체의 리스트를 반환
+   * http://localhost:9093/coinlike/findByMeberCoinlike
+   * @return
+   */
+  @GetMapping(value = "/findByMemberCoinlike")
+  public List<Coinlike> findByMemberCoinlike(@RequestParam("member_no") Long member_no) {
+    return coinlikeService.findByMemberCoinlike(member_no);
+  }
+  
 }

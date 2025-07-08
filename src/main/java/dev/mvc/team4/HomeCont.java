@@ -7,15 +7,21 @@ import java.nio.file.*;
 import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import dev.mvc.coin.CoinService;
+import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping("/")
 public class HomeCont {
+  @Autowired
+  CoinService coinService;
 
     // private final Path storageLocation = Paths.get("C:/kd8/deploy/issue_v2jpac/home/storage");
   private final Path storageLocation = Paths.get(Home.getUploadDir());
@@ -35,7 +41,7 @@ public class HomeCont {
     }
     
     /** 파일 업로드 */
-    @PostMapping("/home/home_img_upload")
+    @PostMapping("/home/coin_img_upload")
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
         // 기존 storage 폴더 내 파일이 있으면 모두 삭제
         try {
@@ -54,13 +60,13 @@ public class HomeCont {
         }
       
         try {
-            String target = "";
+           String target = "테스트";
             if (file.getOriginalFilename().endsWith("jpg")) { 
-              target = "home.jpg";
+              target = target+".jpg";
             } else if (file.getOriginalFilename().endsWith("jpeg")) {
-              target = "home.jpeg";
+              target = target+".jpeg";
             } else if (file.getOriginalFilename().endsWith("png")) {
-              target = "home.png";
+              target = target+".png";
             }
           
             // 절대 경로 객체 생성
@@ -86,8 +92,8 @@ public class HomeCont {
     }
     
     // http://localhost:9100/home/home-image 로 요청하면 JPEG 바이트 리턴
-    @GetMapping(value = "/home/home-image", produces = MediaType.IMAGE_PNG_VALUE)
-    public byte[] homeImage() throws IOException {
+    @GetMapping(value = "/home/coin-image", produces = MediaType.IMAGE_PNG_VALUE)
+    public byte[] homeImage(@RequestParam("coin_name") String coin_name) throws IOException {
       Path storageDir = Paths.get(Home.getUploadDir()); // 파일이 저장된 폴더
 
       // 폴더에서 첫 번째(유일한) 파일 이름을 찾아서 변수에 저장
@@ -95,6 +101,7 @@ public class HomeCont {
                              .filter(Files::isRegularFile)
                              .map(Path::getFileName)
                              .map(Path::toString)
+                             //.filter(name -> name.toLowerCase().startsWith(coin_name.toLowerCase() + "."))
                              .findFirst() // 목록중에서 첫번째 파일의 파일명
                              .orElseThrow(() -> new FileNotFoundException("storage 폴더에 이미지 파일이 없습니다."));
 
@@ -105,43 +112,43 @@ public class HomeCont {
       return Files.readAllBytes(imgPath); // 찾은 파일명으로 실제 경로 생성 후 Image 파일 바이트 읽기
     }
 
-    /** 파일 다운로드, {filename:.+}: 파일명 추출 */
-    @GetMapping("/home/home_img_download")
-    public ResponseEntity<Resource> downloadFile() {
-        Path storageDir = Paths.get(Home.getUploadDir()); // 파일이 저장된 폴더
-      
-        try {
-          // 폴더에서 첫 번째(유일한) 파일 이름을 찾아서 변수에 저장
-          String filename = Files.list(storageDir)
-                                 .filter(Files::isRegularFile)
-                                 .map(Path::getFileName)
-                                 .map(Path::toString)
-                                 .findFirst()
-                                 .orElseThrow(() -> new FileNotFoundException("storage 폴더에 이미지 파일이 없습니다."));
-
-          
-            Path filePath = storageLocation.resolve(filename).normalize();
-            Resource resource = new UrlResource(filePath.toUri());
-
-            if (resource.exists() && resource.isReadable()) {
-                String contentType = Files.probeContentType(filePath);
-                if (contentType == null) {
-                    contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
-                }
-                return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(contentType))
-                    .header(HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=\"" + resource.getFilename() + "\"")
-                    .body(resource);
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-        } catch (MalformedURLException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
+//    /** 파일 다운로드, {filename:.+}: 파일명 추출 */
+//    @GetMapping("/home/home_img_download")
+//    public ResponseEntity<Resource> downloadFile() {
+//        Path storageDir = Paths.get(Home.getUploadDir()); // 파일이 저장된 폴더
+//      
+//        try {
+//          // 폴더에서 첫 번째(유일한) 파일 이름을 찾아서 변수에 저장
+//          String filename = Files.list(storageDir)
+//                                 .filter(Files::isRegularFile)
+//                                 .map(Path::getFileName)
+//                                 .map(Path::toString)
+//                                 .findFirst()
+//                                 .orElseThrow(() -> new FileNotFoundException("storage 폴더에 이미지 파일이 없습니다."));
+//
+//          
+//            Path filePath = storageLocation.resolve(filename).normalize();
+//            Resource resource = new UrlResource(filePath.toUri());
+//
+//            if (resource.exists() && resource.isReadable()) {
+//                String contentType = Files.probeContentType(filePath);
+//                if (contentType == null) {
+//                    contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+//                }
+//                return ResponseEntity.ok()
+//                    .contentType(MediaType.parseMediaType(contentType))
+//                    .header(HttpHeaders.CONTENT_DISPOSITION,
+//                            "attachment; filename=\"" + resource.getFilename() + "\"")
+//                    .body(resource);
+//            } else {
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+//            }
+//        } catch (MalformedURLException e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+//        } catch (IOException e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+//        }
+//    }
     
 //    /** 파일 다운로드, {filename:.+}: 파일명 추출 */
 //    @GetMapping("/home_img_download/{filename:.+}")

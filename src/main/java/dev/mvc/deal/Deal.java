@@ -11,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -51,9 +52,7 @@ public class Deal {
   @Column(name = "deal_fee", nullable = false)
   private Integer deal_fee;
   
-  /** 1: 매수 0: 매도 */
-  @Min(0)
-  @Max(1)
+  /** 숫자 수정예정 */
   @Column(name = "deal_type", nullable = false)
   private int deal_type=1;
   
@@ -70,4 +69,12 @@ public class Deal {
   @ManyToOne
   @JoinColumn(name="coin_no", referencedColumnName = "coin_no", nullable = false)
   private Coin coin;
+  
+  /** 시간 자동으로 넣어준다. */
+  @PrePersist
+  public void prePersist() {
+      if (deal_date == null) {
+        deal_date = LocalDateTime.now();
+      }
+  }
 }
