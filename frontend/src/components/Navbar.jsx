@@ -58,15 +58,15 @@ export default function Navbar() {
           기사
         </NavLink>
         <NavLink
-          to="/community"
-          aria-label="커뮤니티"
+          to="/calendar"
+          aria-label="캘린더"
           className={({ isActive }) =>
             `px-3 py-1 rounded-xl font-medium transition ${
               isActive ? 'text-blue-600 border-b-2 border-blue-600' : 'hover:text-blue-600'
             }`
           }
         >
-          커뮤니티
+          캘린더
         </NavLink>
         <NavLink
           to="/portfolio"
