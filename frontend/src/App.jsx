@@ -8,7 +8,6 @@ import NewsFind from "./ai/NewsFind";
 import NewsRead from "./ai/NewsRead";
 //import NotFound from "./pages/NotFound";
 
-import CoinRead from "./components/CoinRead";
 // import Attendance from "./components/Attendance";
 import CoinCreate from "./components/CoinCreate";
 import CoinDetail from "./pages/CoinDetail";
