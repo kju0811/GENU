@@ -7,7 +7,7 @@ import CoinInfo from '../components/CoinInfo';
 import RelatedNews from '../components/RelatedNews';
 import CommunityFeed from '../components/CommunityFeed';
 import OrderForm from '../components/OrderForm';
-import CandleStickChart from '../components/CandleStickChart';
+import ApexChart from '../components/ApexChart';
 
 export default function CoinDetail() {
   console.log('-> CoinDetail:');
@@ -88,8 +88,8 @@ export default function CoinDetail() {
         {activeTab === 'chart' && (
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <h3 className="text-lg font-semibold mb-2">CandleStickChart</h3>
-              <CandleStickChart coin_no={coin_no} />
+              <h3 className="text-lg font-semibold mb-2">ApexChart</h3>
+              <ApexChart coin_no={coin_no} />
             </div>
             <div>
               <h3 className="text-lg font-semibold mb-2">Trade Chart</h3>
