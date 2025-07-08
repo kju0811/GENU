@@ -1,3 +1,6 @@
+# Gradle 캐시 디렉터리 무시
+.gradle/
+
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
