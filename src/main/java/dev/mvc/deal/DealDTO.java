@@ -73,5 +73,14 @@ public class DealDTO {
     }
   }
   
+
+  @Data
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class OrderList {
+      private int deal_price;
+      private int total_cnt;
+  }
+  
   
 }

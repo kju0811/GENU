@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -93,18 +94,18 @@ public class CoinController {
    }
   }
   
-//  /**
-//   * 코인 생성
-//   * @param coin
-//   * @return
-//   */
-//  @PostMapping(value="/create")
-//  @ResponseBody
-//  public ResponseEntity<Coin> create(@ModelAttribute Coin coin) {
-//    System.out.println("img -> " + coin.getCoin_img());
-//    Coin savedEntity =  coinService.save(coin);
-//    return ResponseEntity.ok(savedEntity);
-//  }
+  /**
+   * 코인 생성
+   * @param coin
+   * @return
+   */
+  @PostMapping(value="/createe")
+  @ResponseBody
+  public ResponseEntity<Coin> create(@RequestBody Coin coin) {
+    System.out.println("img -> " + coin.getCoin_img());
+    Coin savedEntity =  coinService.save(coin);
+    return ResponseEntity.ok(savedEntity);
+  }
   
     /**
      * 수동으로 변동하기
@@ -127,7 +128,7 @@ public class CoinController {
   }
   
   /**
-   * find_by_id 요청을 처리하여 특정 ID를 가진 Entity 객체를 삭제
+   * find_by_id 요청을 처리하여 특정 ID를 가진 Entity 객체 반환
    * http://localhost:9093/coin/21
    * @param coin_no
    * @return
@@ -196,5 +197,15 @@ public class CoinController {
   public void scheduledSell() {
     coinService.scheduledSell();
     System.out.println("coincont 매도예약-> ok ");
+  }
+  
+  /**
+   * 호가창
+   * @param id
+   * @return
+   */
+  @GetMapping(value = "/tickList/{coin_no}")
+  public Map<Integer, Integer> tickList (@PathVariable("coin_no") Long id){
+    return coinService.TickList(id);
   }
 }
