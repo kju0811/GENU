@@ -13,7 +13,7 @@ const options = {
   },
 };
 
-function CandleStickChart( { coin_no, days = 30 } ) {
+function CandleStickChart( { coin_no, days = 7 } ) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
