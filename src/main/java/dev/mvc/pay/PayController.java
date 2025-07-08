@@ -89,7 +89,7 @@ public class PayController {
   }
   
   /**
-   * 테스트
+   * 해당 멤버의 금액 가져오기
    * @param member_no
    * @return
    */
