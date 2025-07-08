@@ -32,4 +32,9 @@ public class CoinlikeService {
   public List<Coinlike> find_all() {
     return coinlikeRepository.findAll();  // method/SQL 자동 생성
   }
+  
+  /** 멤버가 좋아요를 누른 코인 출력 */
+  public List<Coinlike> findByMemberCoinlike(Long member_no){
+    return coinlikeRepository.findByMemberCoinlike(member_no);
+  }
 }

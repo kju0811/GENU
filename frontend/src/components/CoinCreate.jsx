@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { getIP, getNowDate } from '../components/Tool';
 
 /**
- * CreateCoinModal 컴포넌트
+ * CreateCoin 컴포넌트
  * - 모달 창으로 CoinCreate 폼을 표시합니다.
  * @param {{ isOpen: boolean, onClose: () => void }} props
  */
-export default function CreateCoinModal({ isOpen, onClose }) {
+export default function CoinCreate({ isOpen, onClose }) {
   const [step, setStep] = useState(1);
   const [name, setName] = useState('');
   const [category, setCategory] = useState('');
@@ -19,13 +19,8 @@ export default function CreateCoinModal({ isOpen, onClose }) {
 
   if (!isOpen) return null;
 
-  // 샘플 카테고리 목록 (항목이 많아질 경우 스크롤 가능)
-  const categories = [
-    'NFT', '밈 코인', 'AI 코인', '플랫폼 코인', '스테이블 코인', '기모링 코인',
-    '게이밍 코인', '의료 코인', '기타 코인'
-  ];
+  const categories = ['DeFi','NFT','Stablecoin','Exchange Token','Utility Token','Gaming','Governance'];
 
-  // 1단계 완료 후 상세 입력으로 이동
   const handleNext = () => {
     if (name && category && price && imageFile) setStep(2);
     else alert('모든 기본 정보를 입력하고 이미지를 업로드하세요.');
@@ -74,10 +69,7 @@ export default function CreateCoinModal({ isOpen, onClose }) {
               {/* 코인 이름 */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">코인 이름</label>
-                <input type="text" 
-                       className="mt-1 w-full rounded-md border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 p-3" 
-                       placeholder="제누코인, 오피셜영듀코인 등..." 
-                       value={name} onChange={e => setName(e.target.value)} required />
+                <input type="text" className="mt-1 w-full rounded-md border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 p-3" placeholder="비트코인" value={name} onChange={e => setName(e.target.value)} required />
               </div>
               {/* 카테고리 드롭다운 */}
               <div className="relative">
