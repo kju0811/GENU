@@ -3,6 +3,8 @@ package dev.mvc.deal;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -47,4 +49,16 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
       + "GROUP BY d.deal_price "
       + "ORDER BY d.deal_price ", nativeQuery = true)
   List<Object[]> getOrderList(@Param("coin_no") Long coin_no);
+  
+  // rdate를 기준으로 내림차순 정렬하여 ISSUE 페이징 목록을 출력하는 메소드
+  @Query("SELECT d FROM Deal d "
+      + "WHERE d.member.member_no = :member_no ORDER BY deal_date DESC")
+  Page<Deal> findDealsByMember(@Param("member_no") Long member_no, Pageable pageable);
+  
+  // 페이징 + 검색 처리를 위해 Pageable 파라미터를 추가합니다.
+  @Query("SELECT d FROM Deal d "
+      + "WHERE d.member.member_no = :member_no AND "
+      + "LOWER(d.coin.coin_name) LIKE LOWER(CONCAT('%', :coin_name, '%'))")
+  Page<Deal> findDealsByMemberSearch(@Param("member_no") Long member_no, @Param("coin_name") String coin_name, Pageable pageable);
+ 
 }
