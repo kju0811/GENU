@@ -352,4 +352,9 @@ public class CoinService {
     return data;
   }
 
+  /** 이름 or 정보로 검색 */
+  public List<Coin> find_by_name_or_info(String keyword) {
+    return coinRepository.searchCoinNameOrInfo(keyword);  // SQL 자동 생성
+  }
+  
 }
