@@ -9,12 +9,17 @@ import java.util.Optional;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.RestTemplate;
+
 
 @Service
 public class NewsService {
@@ -76,10 +81,25 @@ public class NewsService {
   }
   
   // 뉴스 전제 조회
-  public List<News> find () {
-    return repository.findAll();
+  public Page<News> find_all ( int pageNumber, int pageSize) {
+	Pageable pageable = PageRequest.of(
+			pageNumber, pageSize,
+			Sort.by("newsrdate").descending()
+			);
+	  
+    return repository.findAllByOrderByNewsrdateDesc(pageable);
   }
   
+  // 뉴스 전제 조회
+  public Page<News> find (String word, int pageNumber, int pageSize) {
+	Pageable pageable = PageRequest.of(
+			pageNumber, pageSize,
+			Sort.by("newsrdate").descending()
+			);
+	  
+    return repository.findByTitleContainingIgnoreCase(word, pageable);
+  }
+ 
   // 특정 뉴스 조회
   public Optional<News> find_by_id(Long id) {
       return repository.findById(id);

@@ -1,5 +1,7 @@
 package dev.mvc.news;
 
+import java.time.LocalDateTime;
+
 import org.hibernate.annotations.ColumnDefault;
 
 import dev.mvc.member.Member;
@@ -11,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -62,12 +65,12 @@ public class News {
   
   // 뉴스 타이틀
   @Column(name = "news_title",nullable = false, columnDefinition = "VARCHAR2(200)")
-  private String news_title = "";
+  private String title = "";
   
   // 뉴스 내용
   @Lob
   @Column(name = "news_content", nullable = false, columnDefinition = "CLOB")
-  private String news_content = "";
+  private String content = "";
   
   // 뉴스 추천
   @Column(name = "news_like", nullable = false, columnDefinition = "NUMBER(7)")
@@ -87,7 +90,7 @@ public class News {
   
   // 뉴스 등록일
   @Column(name = "news_rdate", nullable = false, columnDefinition = "DATE")
-  private String news_rdate;
+  private LocalDateTime newsrdate;
   
   // 파일1
   @Column(name = "file1", columnDefinition = "VARCHAR2(100)")
@@ -136,5 +139,12 @@ public class News {
   @JoinColumn(name = "member_no",nullable = false, referencedColumnName = "member_no",
               columnDefinition = "NUMBER(10)")
   private Member member;
+  
+  @PrePersist
+  public void prePersist() {
+	  if (newsrdate == null) {
+		  newsrdate = LocalDateTime.now();
+	  }
+  }
   
 }
