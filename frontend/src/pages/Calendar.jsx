@@ -136,9 +136,9 @@ useEffect(() => {
 
       const newsEvents = newsData.map(item => ({
         newsno: item.news_no,
-        title: item.news_title,
-        start: new Date(item.news_rdate),
-        end: new Date(item.news_rdate),
+        title: item.title,
+        start: new Date(item.newsrdate),
+        end: new Date(item.newsrdate),
       }));
 
       // 일정과 뉴스 둘 다 합치기
