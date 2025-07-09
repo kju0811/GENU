@@ -3,6 +3,9 @@ import time
 import json
 from json import JSONDecodeError 
 import re
+import io
+import base64
+from datetime import datetime
 
 from fastapi import FastAPI, Request, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
@@ -16,11 +19,21 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate, PromptTemplate
 from langchain.output_parsers.structured import ResponseSchema, StructuredOutputParser
 from langchain_core.exceptions import OutputParserException
+from langchain_core.chat_history import InMemoryChatMessageHistory  # 메모리에 대화 기록을 저장하는 클래스
+from langchain_core.runnables.history import RunnableWithMessageHistory  # 메시지 기록을 활용해 실행 가능한 래퍼wrapper 클래스
+from langchain_core.chat_history import (
+    BaseChatMessageHistory,  # 기본 대화 기록 클래스
+    InMemoryChatMessageHistory,  # 메모리에 대화 기록을 저장하는 클래스
+)
+from openai import OpenAI
+from fastapi.responses import StreamingResponse
 
 import apitool
 import oracle
+import retriever
 
-llm = ChatOpenAI(model="gpt-4o-mini", temperature=0) # Key는 환경 변수 자동 인식, OPENAI_API_KEY
+llm = retriever.llm
+store = {} # dictionary
 
 app = FastAPI()
 
@@ -32,6 +45,30 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+client = OpenAI()
+
+def makeimg(content,title):
+    imgbot = client.images.generate(
+        model="gpt-image-1",
+        prompt=f"제목이 {title}이고 내용이 {content}인 기사의 이미지를 생성해줘",
+        size="1024x1024",
+        background="transparent",
+        quality="low",
+    )
+
+    image_base64 = imgbot.data[0].b64_json
+    image_bytes = base64.b64decode(image_base64)
+    
+    file1 = datetime.now().strftime("%Y%m%d%H%M%S")
+    
+    oracle.file(
+        file1
+    )
+    
+    #Save the image to a file
+    with open(f"/Users/kimjiun/kd/deploy/team4_v2sbm3c/home/storage/{file1}.jpg", "wb") as f:
+        f.write(image_bytes)
 
 @app.post("/news")
 async def news(request:Request):
@@ -79,6 +116,8 @@ async def news(request:Request):
         emotion
     )
     
+    makeimg(content, title)
+    
     return result
 
 @app.post("/summary")
@@ -119,6 +158,47 @@ async def summary(request:Request):
     print("-> result", summary)
         
     return JSONResponse(content={"res": summary})
+
+@app.post("/chatbot")
+async def get_session_history(request: Request):
+    data = await request.json()
+    message = data.get('message')
+    member = data.get('member_name')
+
+    if member not in store:
+        store[member] = InMemoryChatMessageHistory()
+
+    history: BaseChatMessageHistory = store[member]
+    history.add_message(HumanMessage(content=message))
+
+    # 출력 스키마 & 파서
+    response_schemas = [
+        ResponseSchema(name="res", description="{'대답'}")
+    ]
+    output_parser = StructuredOutputParser.from_response_schemas(response_schemas)
+    format_instructions = output_parser.get_format_instructions()
+
+    # 프롬프트 템플릿
+    prompt = PromptTemplate.from_template(
+        "{system}\n\n"
+        "{history}\n\n"
+        "위 내용을 바탕으로 아래 질문에 답해주세요:\n"
+        "{message}\n\n"
+        "{format_instructions}"
+    )
+
+    inputs = {
+        "system": "투자 가이드 챗봇 시스템",
+        "message": message,
+        "history": "\n".join([msg.content for msg in history.messages]),
+        "format_instructions": format_instructions
+    }
+
+    pipeline = prompt | llm | output_parser
+    result = pipeline.invoke(inputs)
+
+    print("-> result:", result)
+    return result
     
 if __name__ == "__main__":
     # uvicorn.run("resort_auth:app", host="121.78.128.17", port=8000, reload=True) # Gabia 할당 불가

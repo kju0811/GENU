@@ -6,6 +6,12 @@ from sqlalchemy import create_engine  # Pandas -> Oracle
 import numpy as np
 
 def newsinsert(title, content, emotion):
+    
+    try:
+        cx_Oracle.init_oracle_client(lib_dir="/Users/kimjiun/kd/instantclient_23_3")
+    except cx_Oracle.ProgrammingError:
+        # 이미 초기화된 경우 무시
+        pass
 
     conn = cx_Oracle.connect('team4/69017000@1.201.18.85:1521/XE')
     cursor = conn.cursor()
@@ -55,12 +61,12 @@ def newsinsert(title, content, emotion):
     
 def newssummary(summary):
     
-    # Oracle Connection 
-    # try:
-    #     cx_Oracle.init_oracle_client(lib_dir="/Users/kimjiun/kd/instantclient_23_3")
-    # except cx_Oracle.ProgrammingError:
-    #     # 이미 초기화된 경우 무시
-    #     pass
+    #Oracle Connection 
+    try:
+        cx_Oracle.init_oracle_client(lib_dir="/Users/kimjiun/kd/instantclient_23_3")
+    except cx_Oracle.ProgrammingError:
+        # 이미 초기화된 경우 무시
+        pass
     conn = cx_Oracle.connect('team4/69017000@1.201.18.85:1521/XE')
     cursor = conn.cursor()
     
@@ -86,3 +92,35 @@ def newssummary(summary):
     conn.close()
     
     return update
+
+def file (file1):
+        #Oracle Connection 
+    try:
+        cx_Oracle.init_oracle_client(lib_dir="/Users/kimjiun/kd/instantclient_23_3")
+    except cx_Oracle.ProgrammingError:
+        # 이미 초기화된 경우 무시
+        pass
+    conn = cx_Oracle.connect('team4/69017000@1.201.18.85:1521/XE')
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT MAX(news_no) FROM news")
+    news_no = cursor.fetchone()[0]
+    
+    sql='''
+    UPDATE news 
+    SET file1 = :file1
+    WHERE news_no = :news_no
+    '''
+    params = {
+        "file1" : file1,
+        "news_no" : news_no
+    }
+    
+    updatefile = cursor.execute(sql, params)
+    print("updatefile: ", updatefile)
+    conn.commit()
+    
+    cursor.close()
+    conn.close()
+    
+    return updatefile
