@@ -29,8 +29,12 @@ useEffect(() => {
 
  return (
     <>
-    <h2>{data.news_title}</h2><br />
-    <span>{data.news_content}</span><br />
+    <img
+    src={`http://${getIP()}:9093/home/storage/${data.file1}.jpg`}
+    style={{width:'40%',height:'60%'}}
+    ></img>
+    <h2>{data.title}</h2><br />
+    <span>{data.content}</span><br />
     <h2>기사 요약</h2>
     <span>{data.summary}</span>
     </>
