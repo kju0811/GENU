@@ -8,6 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import dev.mvc.coin.Coin;
@@ -206,4 +210,21 @@ public class DealService {
     return result;
   }
   
+  /** 날짜 내림 차순+ 페이징, pageNumber: 0부터 시작 */
+  public Page<Deal> find_deal_by_member(Long member_no, int pageNumber, int pageSize) {
+    Pageable pageable = PageRequest.of(pageNumber, pageSize); // 페이징 객체 생성
+    return dealRepository.findDealsByMember(member_no, pageable);
+  }
+  
+  /** 날짜 내림 차순+ 페이징 */
+  public Page<Deal> find_deal_by_member_search(Long member_no, String coin_name, int pageNumber, int pageSize) {
+    // Pageable pageable = PageRequest.of(pageNumber, pageSize); // 페이징 객체 생성
+    Pageable pageable = PageRequest.of(
+        pageNumber,
+        pageSize,
+        Sort.by("deal_date").descending() // rdate 컬럼 내림 차순 정렬
+    );
+    
+    return dealRepository .findDealsByMemberSearch(member_no, coin_name, pageable);
+  }
 }
