@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 // import Footer from "./components/Footer";
@@ -18,8 +18,18 @@ import CoinUpdate from "./components/CoinUpdate";
 import OrderBook from "./components/OrderBook";
 import MemberList from "./pages/MemberList";
 import DealList from "./components/DealList";
+import Chatbot from "react-chatbot-kit";
+import config from "./ai/config";
+import MessageParser from "./ai/MessageParser";
+import ActionProvider from "./ai/ActionProvider";
+import { useGlobal } from "./components/GlobalContext";
+
+import "react-chatbot-kit/build/main.css";
+import "./style/chat.css";
+import imgsrc from "./images/genu.png";
 
 function App() {
+  const { close,setClose } = useGlobal();
   return (
     <>
       <Navbar />
@@ -40,6 +50,17 @@ function App() {
         <Route path="/deal/dealList/:member_no" element={<DealList/>} />
         {/* <Route path="*" element={<NotFound />} /> */}
       </Routes>
+      {!close ?
+      <Chatbot
+        config={config}
+        messageParser={MessageParser}
+        actionProvider={ActionProvider}
+      /> : 
+      <div onClick={() => setClose(false)} style={{cursor:'pointer'}}>
+      <img src={imgsrc} style={{ width:'6%',height:'10%', position:'fixed',right:'2%',bottom:'3%'}}/>
+      <span style={{ position:'fixed',right:'1%',bottom:'13%'}}>AI 챗봇 NURUNG2입니다</span>
+      </div>
+      }
       {/* <Footer /> */}
     </>
   );  
