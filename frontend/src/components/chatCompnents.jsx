@@ -1,5 +1,6 @@
 import React from "react";
 import { useGlobal } from "./GlobalContext";
+import imgsrc from "../images/send.png"
 
 const chatHeader = () => {
   const { close, setClose } = useGlobal();
@@ -17,4 +18,10 @@ const chatHeader = () => {
   );
 };
 
-export default chatHeader;
+const chatButton = () => {
+    return(
+    <button><img src={imgsrc} alt="send button"/></button>
+    );
+}
+
+export { chatHeader,chatButton };
