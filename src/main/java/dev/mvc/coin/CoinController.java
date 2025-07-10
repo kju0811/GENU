@@ -38,10 +38,10 @@ public class CoinController {
   public CoinController(CoinService coinService) {
     this.coinService = coinService;
     try {
-      Files.createDirectories(storageLocation); // 폴더 없을시 생성
-  } catch (IOException e) {
-      throw new RuntimeException("저장 폴더 생성 실패: " + e.getMessage(), e);
-  }
+        Files.createDirectories(storageLocation); // 폴더 없을시 생성
+    } catch (IOException e) {
+        throw new RuntimeException("저장 폴더 생성 실패: " + e.getMessage(), e);
+    }
   }
     
   /**
