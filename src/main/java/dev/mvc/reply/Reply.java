@@ -13,6 +13,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.time.LocalDateTime;
+
 import dev.mvc.community.Community;
 import dev.mvc.member.Member;
 
@@ -43,8 +46,8 @@ public class Reply {
   private String reply_content;
 
   /** 댓글 작성일 */
-  @Column(name = "reply_date", nullable = false)
-  private String reply_date;
+  @Column(name = "reply_date", nullable = false, columnDefinition = "DATE")
+  private LocalDateTime replyDate;
   
   /** 회원번호 외래키 */
   @ManyToOne
