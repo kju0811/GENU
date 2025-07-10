@@ -1,5 +1,5 @@
 import { createChatBotMessage } from "react-chatbot-kit";
-import { chatHeader,chatButton } from "../components/chatCompnents";
+import { chatHeader,chatButton,botImg } from "../components/chatCompnents";
 import "../style/chat.css";
 
 const config = {
@@ -9,7 +9,8 @@ const config = {
     ),
   ],
   customComponents: {
-    header: chatHeader
+    header: chatHeader,
+    botAvatar: botImg
   },
 };
 
