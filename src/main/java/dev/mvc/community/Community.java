@@ -14,6 +14,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.time.LocalDateTime;
+
 import dev.mvc.coin.Coin;
 import dev.mvc.member.Member;
 
@@ -55,8 +58,8 @@ public class Community {
   private Integer community_cnt = 0;
 
   /** 작성일 */
-  @Column(name = "community_date", nullable = false)
-  private String community_date = "";
+  @Column(name = "community_date", nullable = false, columnDefinition = "DATE")
+  private LocalDateTime communityDate;
   
   /** 회원번호 외래키 */
   @ManyToOne

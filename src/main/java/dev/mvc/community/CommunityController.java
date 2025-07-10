@@ -43,7 +43,7 @@ public class CommunityController {
             existing.setCommunity_title(updated.getCommunity_title());
             existing.setCommunity_content(updated.getCommunity_content());
             existing.setCommunity_cnt(updated.getCommunity_cnt()); // 추후 삭제예정
-            existing.setCommunity_date(updated.getCommunity_date()); // 추후 삭제예정
+            existing.setCommunityDate(updated.getCommunityDate()); // 추후 삭제예정
             existing.setCoin(updated.getCoin());       // 무슨 코인의 커뮤니티인지
             existing.setMember(updated.getMember());   // 작성자도 변경 가능? (보통은 안 하긴 함)
 

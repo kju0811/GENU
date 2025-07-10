@@ -1,5 +1,7 @@
 package dev.mvc.member;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -70,8 +72,8 @@ public class Member {
   private String address2 = "";
 
   /** 가입일 */
-  @Column(name = "member_date", nullable = false, length = 20)
-  private String member_date = "";
+  @Column(name = "member_date", nullable = false, columnDefinition = "DATE")
+  private LocalDateTime memberDate;
 
   /** 회원등급 */
   @Column(name = "member_grade", nullable = false)
@@ -80,6 +82,10 @@ public class Member {
   /** 활동명 */
   @Column(name = "member_nick", nullable = false, length = 45, unique = true)
   private String member_nick = "";
+  
+  /** 멤버 이미지 */
+  @Column(name = "member_img")
+  private String member_img="";
   
   public String getRole() {
     String grade_str = "GUEST";
