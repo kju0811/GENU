@@ -37,7 +37,7 @@ public class Attendance {
   private LocalDate attendance_date;
   
   /** 누적 출석 */
-  @Column(name = "attendance_cnt", nullable = false)
+  @Column(name = "attendance_cnt", nullable = false, columnDefinition = "NUMBER(5)")
   private Integer attendance_cnt = 0;
   
   /**

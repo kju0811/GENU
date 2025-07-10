@@ -59,6 +59,7 @@ public class CoinController {
       }
       
         String target = file.getOriginalFilename();
+        System.out.println("target -> " + target);
         String coinImg = "";
          if (file.getOriginalFilename().endsWith("jpg")) { 
            coinImg = target;
@@ -94,18 +95,18 @@ public class CoinController {
    }
   }
   
-  /**
-   * 코인 생성
-   * @param coin
-   * @return
-   */
-  @PostMapping(value="/createe")
-  @ResponseBody
-  public ResponseEntity<Coin> create(@RequestBody Coin coin) {
-    System.out.println("img -> " + coin.getCoin_img());
-    Coin savedEntity =  coinService.save(coin);
-    return ResponseEntity.ok(savedEntity);
-  }
+//  /**
+//   * 코인 생성
+//   * @param coin
+//   * @return
+//   */
+//  @PostMapping(value="/createe")
+//  @ResponseBody
+//  public ResponseEntity<Coin> create(@RequestBody Coin coin) {
+//    System.out.println("img -> " + coin.getCoin_img());
+//    Coin savedEntity =  coinService.save(coin);
+//    return ResponseEntity.ok(savedEntity);
+//  }
   
     /**
      * 수동으로 변동하기
@@ -207,5 +208,16 @@ public class CoinController {
   @GetMapping(value = "/orderlist/{coin_no}")
   public Map<Integer, Integer> orderlist (@PathVariable("coin_no") Long id){
     return coinService.TickList(id);
+  }
+  
+  /**
+   * name or info로 검색
+   * http://localhost:9093/coin/find_by_name_or_info?keyword=발생
+   * @param 
+   * @return
+   */
+  @GetMapping(path = "/find_by_name_or_info")
+  public List<Coin> find_by_name_or_info(@RequestParam(name="keyword", defaultValue = "") String keyword) {
+    return coinService.find_by_name_or_info(keyword);
   }
 }
