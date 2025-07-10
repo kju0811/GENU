@@ -1,0 +1,18 @@
+.react-chatbot-kit-chat-container {
+  position: fixed !important;
+  right: 30px!important;
+  bottom: 30px!important;
+  width: 25%!important;
+  height: 55%!important;
+  overflow: hidden!important;
+  border-radius: 5px!important;
+  box-shadow: rgb(0 0 0 / 30%) 0px 12px 60px 5px!important;
+}
+
+.myheader{
+    background-color: skyblue;
+    justify-content: center;
+    height: 8%;
+    align-items: center;
+    display: flex;
+}

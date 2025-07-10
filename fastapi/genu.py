@@ -165,6 +165,7 @@ async def get_session_history(request: Request):
     data = await request.json()
     message = data.get('message')
     member = data.get('member_name')
+    print(message)
 
     if member not in store:
         store[member] = InMemoryChatMessageHistory()
@@ -190,8 +191,8 @@ async def get_session_history(request: Request):
     prompt = PromptTemplate.from_template(
         "{system}\n\n"
         "{history}\n\n"
-        "위 내용을 바탕으로 아래 질문에 답해주세요,만약 유사한 답변이 있다면 유사답변으로 똑같이 대답해:\n"
-        "유사 답변: {similar_answer}"
+        "위의 내용은 기억해두고,질문에 답변과 질문의 키워드가 일치하고 답변이 있다면 답변으로 똑같이 대답해 만약 답변이 없다면 자유로운 대화를 해줘,질문자가 사용하는 언어로 대답해줘:\n"
+        "답변: {similar_answer}"
         "질문:{message}\n\n"
         "{format_instructions}"
     )
