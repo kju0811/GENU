@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getIP } from '../components/Tool';
-import OrderBookChart from '../components/OrderBookChart';
-import TradeChart from '../components/TradeChart';
+// import TradeChart from '../components/TradeChart';
+import OrderBook from '../components/OrderBook';
 import CoinInfo from '../components/CoinInfo';
 import RelatedNews from '../components/RelatedNews';
 import CommunityFeed from '../components/CommunityFeed';
@@ -92,8 +92,8 @@ export default function CoinDetail() {
               <ApexChart coin_no={coin_no} />
             </div>
             <div>
-              <h3 className="text-lg font-semibold mb-2">Trade Chart</h3>
-              <TradeChart data={detail.trades} />
+              <h3 className="text-lg font-semibold mb-2">OrderBook</h3>
+              <OrderBook coin_no={coin_no} />
             </div>
             <div>
               <h3 className="text-lg font-semibold mb-2">주문</h3>
@@ -104,7 +104,7 @@ export default function CoinDetail() {
         {activeTab === 'info' && (
           <section>
             <h3 className="text-lg font-semibold mb-2">Coin Information</h3>
-            <CoinInfo data={detail.info} />
+            <CoinInfo coin_no={coin_no} />
           </section>
         )}
         {activeTab === 'news' && (
