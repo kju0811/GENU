@@ -40,7 +40,7 @@ public class ReplyController {
                                         @RequestBody Reply updated) {
         return replyService.findByReplyNoOptional(id).map(existing -> {
             existing.setReply_content(updated.getReply_content());
-            existing.setReply_date(updated.getReply_date());
+            existing.setReplyDate(updated.getReplyDate());
             existing.setMember(updated.getMember());
             existing.setCommunity(updated.getCommunity());
 
@@ -55,7 +55,7 @@ public class ReplyController {
             replyService.deleteById(id);
             return ResponseEntity.ok().build();
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.notFound().build(); 
         }
     }
 }
