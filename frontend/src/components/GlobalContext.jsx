@@ -3,7 +3,7 @@ import { createContext, useContext, useState } from "react";
 const GlobalContext = createContext();
 
 export const GlobalProvider = ({ children }) => {
-  const [close, setClose] = useState(false);
+  const [close, setClose] = useState(true);
 
   return (
     <GlobalContext.Provider value={{ close, setClose }}>
