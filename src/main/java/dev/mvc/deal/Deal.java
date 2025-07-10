@@ -52,8 +52,8 @@ public class Deal {
   @Column(name = "deal_fee", nullable = false)
   private Integer deal_fee;
   
-  /** 숫자 수정예정 */
-  @Column(name = "deal_type", nullable = false)
+  /** 매매 구분 */
+  @Column(name = "deal_type", nullable = false) //, columnDefinition = "NUMBER(1)"
   private int deal_type=1;
   
   /**
