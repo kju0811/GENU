@@ -39,7 +39,7 @@ public class Notice {
   private Integer notice_price;
   
   /** 원하는 금액이 현재가 이하인지0 이상인지1.  */
-  @Column(name = "notice_type", nullable = false)
+  @Column(name = "notice_type", nullable = false, columnDefinition = "NUMBER(1)")
   private int notice_type;
   
   /** 생성일 */
@@ -47,7 +47,7 @@ public class Notice {
   private LocalDateTime notice_date;
 
   /** 알림 대기0, 완료1. */
-  @Column(name = "notice_status", nullable = false)
+  @Column(name = "notice_status", nullable = false, columnDefinition = "NUMBER(1)")
   private int notice_status = 0;
   
   /**
