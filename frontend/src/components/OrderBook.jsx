@@ -2,93 +2,45 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getIP } from '../components/Tool';
 
-// const orderData = {
-//   "1511": 2,
-//   "1521": 1,
-//   "1531": 1,
-//   "1541": 1,
-//   "1551": 1,
-//   "1561": 1,
-//   "1571": 1,
-//   "1581": 1,
-//   "1591": 1,
-//   "1601": 1,
-//   "1611": 0,
-//   "1621": 1,
-//   "1631": 1,
-//   "1641": 1,
-//   "1651": 1,
-//   "1661": 1,
-//   "1671": 1,
-//   "1681": 1,
-//   "1691": 1,
-//   "1701": 1,
-//   "1711": 1
-// };
-
-const CURRENT_PRICE = 1611;
-
-const OrderBook = () => {
-  const containerStyle = {
-    width: '260px',
-    fontFamily: 'Arial, sans-serif',
-    border: '1px solid #ccc',
-    borderRadius: '8px',
-    padding: '10px',
-    background: '#f9f9f9',
-    margin: '20px auto'
-  };
-
-  const rowStyle = (price) => ({
-    display: 'flex',
-    justifyContent: 'space-between',
-    padding: '4px 8px',
-    backgroundColor: price === CURRENT_PRICE ? '#e0f7fa' : 'white',
-    fontWeight: price === CURRENT_PRICE ? 'bold' : 'normal',
-    borderBottom: '1px solid #eee'
-  });
-
-  const priceStyle = {
-    color: '#333'
-  };
-
-  const amountStyle = {
-    color: '#00796b'
-  };
-
-
+/**
+ * OrderBook 컴포넌트
+ * - Tailwind CSS로 스타일 업데이트
+ * - 현재 호가(CURRENT_PRICE) 강조
+ */
+export default function OrderBook() {
   const { coin_no } = useParams();
   const [data, setData] = useState(null);
-  
+
   useEffect(() => {
-    fetch(`http://${getIP()}:9093/coin/orderlist/${coin_no}`, {
-      method: 'GET'
-    })
-    .then(result => result.json())
-    .then(data => {
-      console.log("data -> ", data);
-      setData(data);
-    })
-    .catch(err => console.error(err));
+    fetch(`http://${getIP()}:9093/coin/orderlist/${coin_no}`)
+      .then(res => res.json())
+      .then(json => setData(json))
+      .catch(err => console.error(err));
   }, [coin_no]);
-  
+
   if (!data) {
-    return <div style={containerStyle}>Loading...</div>;
+    return <div className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow text-center">Loading...</div>;
   }
 
+  const prices = Object.entries(data).map(([price, amount]) => ({ price: Number(price), amount }));
+  const CURRENT_PRICE = prices[Math.floor(prices.length/2)]?.price;
+
   return (
-    <div style={containerStyle}>
-      <h3 style={{ textAlign: 'center' }}>📈 호가창</h3>
-      <div>
-        {Object.entries(data).reverse().map(([price, amount]) => (
-          <div key={price} style={rowStyle(parseInt(price))}>
-            <span style={priceStyle}>{price}</span>
-            <span style={amountStyle}>{amount}</span>
+    <div className="w-64 mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+      <h3 className="text-center text-lg font-semibold p-2 border-b dark:border-gray-700">📈 호가창</h3>
+      <div className="divide-y divide-gray-200 dark:divide-gray-700">
+        {prices.reverse().map(({ price, amount }) => (
+          <div
+            key={price}
+            className={`flex justify-between px-4 py-2 transition-colors ${
+              price === CURRENT_PRICE ? 'bg-blue-50 dark:bg-blue-900 font-bold' : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+            }`}
+          >
+            <span className="text-sm  text-gray-800 dark:text-gray-200">{price.toLocaleString()}</span>
+            <span className="text-sm text-green-600 dark:text-green-400">{amount}</span>
           </div>
         ))}
       </div>
     </div>
   );
-};
-
-export default OrderBook;
+}
