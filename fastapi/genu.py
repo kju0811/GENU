@@ -27,6 +27,7 @@ from langchain_core.chat_history import (
 )
 from openai import OpenAI
 from fastapi.responses import StreamingResponse
+from llama_index.core import VectorStoreIndex, SimpleDirectoryReader
 
 import apitool
 import oracle
@@ -51,7 +52,7 @@ client = OpenAI()
 def makeimg(content,title):
     imgbot = client.images.generate(
         model="gpt-image-1",
-        prompt=f"제목이 {title}이고 내용이 {content}인 기사의 이미지를 생성해줘",
+        prompt=f"제목이 {title}이고 내용이 {content}인 기사의 이미지를 생성해줘,글자는 만들지말고 그림만 그려줘",
         size="1024x1024",
         background="transparent",
         quality="low",
@@ -170,6 +171,13 @@ async def get_session_history(request: Request):
 
     history: BaseChatMessageHistory = store[member]
     history.add_message(HumanMessage(content=message))
+    
+    documents = SimpleDirectoryReader('data').load_data()
+    index = VectorStoreIndex.from_documents(documents)
+
+    query_engine = index.as_query_engine()
+    
+    similar_answer = query_engine.query(message)
 
     # 출력 스키마 & 파서
     response_schemas = [
@@ -182,8 +190,9 @@ async def get_session_history(request: Request):
     prompt = PromptTemplate.from_template(
         "{system}\n\n"
         "{history}\n\n"
-        "위 내용을 바탕으로 아래 질문에 답해주세요:\n"
-        "{message}\n\n"
+        "위 내용을 바탕으로 아래 질문에 답해주세요,만약 유사한 답변이 있다면 유사답변으로 똑같이 대답해:\n"
+        "유사 답변: {similar_answer}"
+        "질문:{message}\n\n"
         "{format_instructions}"
     )
 
@@ -191,6 +200,7 @@ async def get_session_history(request: Request):
         "system": "투자 가이드 챗봇 시스템",
         "message": message,
         "history": "\n".join([msg.content for msg in history.messages]),
+        "similar_answer": str(similar_answer),
         "format_instructions": format_instructions
     }
 
