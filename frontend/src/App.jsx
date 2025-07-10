@@ -17,6 +17,7 @@ import Schedule from "./pages/Calendar";
 import CoinUpdate from "./components/CoinUpdate";
 import OrderBook from "./components/OrderBook";
 import MemberList from "./pages/MemberList";
+import DealList from "./components/DealList";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
         <Route path="/coin/update/:coin_no" element={<CoinUpdate/>} />
         <Route path="/coin/tickList/:coin_no" element={<OrderBook/>} />
         <Route path="/member" element={<MemberList />} />
+        <Route path="/deal/dealList/:member_no" element={<DealList/>} />
         {/* <Route path="*" element={<NotFound />} /> */}
       </Routes>
       {/* <Footer /> */}
