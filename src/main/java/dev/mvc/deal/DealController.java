@@ -3,6 +3,7 @@ package dev.mvc.deal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -117,6 +119,43 @@ public class DealController {
   @GetMapping(value = "/orderlist/{coin_no}")
   public List<DealDTO.OrderList> orderlist(@PathVariable("coin_no") Long coin_no){
     return dealService.getOrderList(coin_no);
+  }
+  
+  /**
+   * React가 최신글 100건을 수신받아 React에서 페이징을 처리함.
+   * 기간을 적용한 검색, page: 0~
+   * http://localhost:9093/deal/find_all_by_order_by_rdate_desc_paging?page=0&size=3
+   * @param start_date
+   * @param end_date
+   * @return
+   */
+  @GetMapping(path = "/find_deal_by_member/{member_no}")
+  public List<Deal> find_deal_by_member(@PathVariable(name="member_no") Long member_no,
+                                                   @RequestParam(name="page", defaultValue = "0") Integer page, 
+                                                   @RequestParam(name="size", defaultValue = "1000") Integer size) {
+    Page<Deal> pages = dealService.find_deal_by_member(member_no, page, size);
+    List<Deal> list = pages.getContent(); // 페이징 목록 추출
+    
+    return list;
+  }
+  
+  /**
+   * React가 최신글 100건을 수신받아 React에서 페이징을 처리함.
+   * 기간을 적용한 검색, page: 0~
+   * http://localhost:9093/deal/find_all_by_order_by_rdate_desc_paging?page=0&size=3
+   * @param start_date
+   * @param end_date
+   * @return
+   */
+  @GetMapping(path = "/find_deal_by_member_search/{member_no}")
+  public List<Deal> find_deal_by_member_search(@PathVariable(name="member_no") Long member_no,
+                                                                         @RequestParam(name="word", defaultValue = "") String coin_name,
+                                                                         @RequestParam(name="page", defaultValue = "0") Integer page, 
+                                                                         @RequestParam(name="size", defaultValue = "1000") Integer size) {
+    Page<Deal> pages = dealService.find_deal_by_member_search(member_no, coin_name, page, size);
+    List<Deal> list = pages.getContent(); // 페이징 목록 추출
+    
+    return list;
   }
 
 }
