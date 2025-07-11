@@ -1,7 +1,7 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect,useContext } from 'react';
 
 // 전역 Context 생성
-export const GlobalContext = createContext();
+const GlobalContext = createContext();
 
 export const GlobalProvider = ({ children }) => {
   // 모달 닫힘 상태
@@ -40,3 +40,5 @@ export const GlobalProvider = ({ children }) => {
     </GlobalContext.Provider>
   );
 };
+
+export const useGlobal = () => useContext(GlobalContext);
