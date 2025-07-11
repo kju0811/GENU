@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import dev.mvc.coin.Coin;
 import dev.mvc.coin.CoinService;
@@ -61,6 +62,14 @@ public class DealService {
     return dealRepository.getSellbyCnt(member_no, coin_no);
   }
   
+  /** 멤버가 가지고 있는 총 코인갯수 반환 */
+  public int getTotalCnt(Long member_no, Long coin_no) {
+    int buycnt = getBuybyCnt(member_no, coin_no);
+    int sellcnt = getSellbyCnt(member_no, coin_no);
+    int ownedCnt = buycnt - sellcnt;
+    return ownedCnt;
+  }
+  
   /** 매수 체결된 코인갯수 반환 */
   public Integer getTotalType1(Long coin_no) {
     System.out.println("-> getTotalType1 ok");
@@ -86,6 +95,7 @@ public class DealService {
   }
   
   /** 매수 시 실행 */
+  @Transactional
   public Deal buydeal(DealDTO.DealBuyPay request) {
     //돈 서비스 getMemberPay 호출해서 비교하고
     int wp = payService.getMemberPay(request.getMember().getMember_no()); // 보유 자산
@@ -136,11 +146,10 @@ public class DealService {
   }
   
   /** 매도 시 실행 */
+  @Transactional
   public Deal selldeal(DealDTO.DealSellPay request) {
     // 가지고 있는 코인 갯수
-    int buycnt = getBuybyCnt(request.getMember().getMember_no(), request.getCoin().getCoin_no());
-    int sellcnt = getSellbyCnt(request.getMember().getMember_no(), request.getCoin().getCoin_no());
-    int ownedCnt = buycnt - sellcnt;
+    int ownedCnt = getTotalCnt(request.getMember().getMember_no(), request.getCoin().getCoin_no());
     if (ownedCnt <= 0) {
       throw new IllegalArgumentException("해당 코인을 가지고 있지 않습니다.");
     }
@@ -195,7 +204,7 @@ public class DealService {
     return fee;
   }
   
-  /** 주문의 가격과 갯수 리스트 반환  */
+  /** 호가창 : 주문의 가격과 갯수 리스트 반환  */
   public List<DealDTO.OrderList> getOrderList(Long coin_no){
     List<Object[]> list = dealRepository.getOrderList(coin_no);
 //    System.out.println("list -> " + list);
@@ -226,5 +235,44 @@ public class DealService {
     );
     
     return dealRepository .findDealsByMemberSearch(member_no, coin_name, pageable);
+  }
+  
+  /** 매수 주문 취소시 실행 */
+  @Transactional
+  public void cancelBuyDeal(Long deal_no){
+    // 거래테이블 주문 타입 변경
+    Optional<Deal> deal = dealRepository.findById(deal_no);
+    if (!deal.isEmpty()) {
+      Deal data = deal.get();
+      if (data.getDeal_type() != 3) {
+        throw new IllegalArgumentException("매수 주문 타입이 아닙니다.");
+      }
+
+      data.setDeal_type(5);
+      dealRepository.save(data);
+    } else {
+      throw new IllegalArgumentException("오류가 발생했습니다.");
+    }
+    // 돈테이블 환불 적용
+    Pay pay = payService.getDeal_noPay(deal_no);
+    pay.setPay_type(5);
+    payService.save(pay);
+  }
+  
+  /** 매도 주문 취소시 실행 */
+  @Transactional
+  public void cancelSellDeal(Long deal_no) {
+    // 거래테이블 주문 타입 변경
+    Optional<Deal> deal = dealRepository.findById(deal_no);
+    if (!deal.isEmpty()) {
+      Deal data = deal.get();
+      if (data.getDeal_type() != 4) {
+        throw new IllegalArgumentException("매도 주문 타입이 아닙니다.");
+      }
+      data.setDeal_type(6);
+      dealRepository.save(data);
+    } else {
+        throw new IllegalArgumentException("오류가 발생했습니다.");
+    }
   }
 }
