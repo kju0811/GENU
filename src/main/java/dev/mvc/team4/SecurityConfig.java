@@ -70,7 +70,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 // JWT 체크 안함
                 .requestMatchers("/home/storage/*").permitAll()  
-                .requestMatchers(HttpMethod.GET, "/announce/*","/calendar/read","/news/find","/coin/find_all","/news/find_all","/news/read/*","/member/page","/member/search","/member/create").permitAll()
+                .requestMatchers(HttpMethod.GET, "/announce/*","/calendar/read","/news/find","/coin/find_all",
+                    "/news/find_all","/news/read/*","/member/page","/member/search","/member/create","/member/logout").permitAll()
                 .anyRequest().authenticated() // 로그인을 제외한 접근은 모두 인증된 사용자만 접근 가능
             )
             // UserDetailsService + PasswordEncoder 를 사용하는 AuthenticationProvider 등록
