@@ -1,5 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useGlobal } from '../components/GlobalContext';
+import { getIP } from '../components/Tool';
+
+// 포커스 이동
+function enter_chk(event, nextTag){
+  if(event.keyCode === 13){ // 엔터키
+    document.getElementById(nextTag).focus();
+  }
+}
+
+// name=값; max-age=초; path=/
+function setCookie(name, value, days) {
+  const maxAge = days ? days * 24 * 60 * 60 : ''; 
+  document.cookie = `${name}=${encodeURIComponent(value)};max-age=${maxAge};path=/`; }
+
+// name=…; (여기서 name=이름이 없다면 빈 문자열 반환)
+function getCookie(name) {
+  const match = document.cookie.match(new RegExp('(?:^|; )'+name+'=([^;]*)'));
+  return match ? decodeURIComponent(match[1]) : ''; }
+
+// 쿠키 만료시켜서 삭제
+function deleteCookie(name){ document.cookie = `${name}=;max-age=0;path=/`; }
+
 
 /**
  * Login 컴포넌트 (UI 전용)
@@ -8,10 +31,62 @@ import { Link } from 'react-router-dom';
  * @param {() => void} onClose 모달 닫기 핸들러
  */
 export default function Login({ isOpen, onClose }) {
-  const [email, setEmail] = useState('');
+  const [id, setId] = useState('');
   const [password, setPassword] = useState('');
+  const [saveId, setSaveId] = useState(false);
   const [showPswd, setShowPswd] = useState(false);
-  const [remember, setRemember] = useState(false);
+  const { sw, setSw } = useGlobal();
+
+    // 우선 저장된 아이디 load
+    useEffect(() => {
+      const storedId = getCookie('savedId');
+      if(storedId){ setId(storedId); setSaveId(true); }
+    }, []);
+
+  // 아이디 기억하기
+  const idChange = (e) => { setId(e.target.value); if(saveId){ setCookie('savedId', e.target.value, 7); } };
+  const saveIdChange = (e) => { setSaveId(e.target.checked); e.target.checked ? setCookie('savedId', id, 7) : deleteCookie('savedId'); };
+
+  // async 동기 통신 설정
+  const send = async (event) => {
+    event.preventDefault();
+  
+    try {
+      const res = await fetch(`http://${getIP()}:9093/member/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ memberId: id, memberPw: password }),
+        credentials: 'include',
+      });
+  
+      if (!res.ok) {
+        alert('로그인에 실패했습니다.');
+        return;
+      }
+  
+      // 1) 헤더에서 토큰을 꺼냄
+      const authHeader = res.headers.get('Authorization');
+      if (!authHeader) {
+        alert('서버에서 토큰을 받지 못했습니다.');
+        return;
+      }
+  
+      // 2) “Bearer ” 앞부분을 제외한 실제 토큰만 떼어도 되고, 필요한 형태로 저장하세요.
+      const token = authHeader; // 이미 "Bearer eyJ..." 형태라면 그대로 써도 됩니다.
+      // const token = authHeader.substring(7); // 순수 토큰만 필요하면 이렇게
+  
+      // 3) 로그인 성공 처리
+      sessionStorage.setItem('jwt', token);
+      setSw(true);
+      onClose();
+  
+    } catch (err) {
+      console.error(err);
+      alert('로그인 중 오류가 발생했습니다.');
+    }
+  };
+
+  const test = () => { setId('admin'); setPassword('1234'); };
 
   if (!isOpen) return null;
 
@@ -42,47 +117,53 @@ export default function Login({ isOpen, onClose }) {
           <hr className="flex-1 border-gray-300" />
         </div>
         {/* 이메일 로그인 폼 */}
-        <form className="space-y-4">
-          <div>
+        <form onSubmit={send} className="space-y-4">
+          <div >
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
             <input
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              className="mt-1 w-full rounded-md border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 p-2 focus:ring-indigo-500 focus:border-indigo-500"
+              // type="email"
+              onKeyDown={e=>enter_chk(e,'passwd')} 
+              onChange={idChange} 
+              value={id}
+              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 pr-10"
               placeholder="Enter your email"
+              autoFocus
               required
             />
           </div>
           {/* 비밀번호 입력 + 토글 아이콘 */}
           <div className="relative">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
             <input
+                id="passwd"
                 type={showPswd ? 'text' : 'password'}
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 placeholder="••••••••"
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 pr-10"
                 required
-                minLength={8}
-                maxLength={12}
+                // minLength={8}
+                // maxLength={12}
             />
             <div
-                className="absolute inset-y-0 right-2 flex items-center cursor-pointer text-gray-500 hover:text-gray-700"
+              style={{ userSelect: 'none' }}
+                className="absolute bottom-2 right-2 flex items-center cursor-pointer text-gray-500 hover:text-gray-700"
                 onMouseDown={() => setShowPswd(true)}
                 onMouseUp={() => setShowPswd(false)}
                 onMouseLeave={() => setShowPswd(false)}
             >
                 {/* 기본 이모지 또는 SVG 아이콘 사용 */}
-                {showPswd ? '🙈' : '👁️'}
+                {showPswd ? '🙈' : '🙉'}
             </div>
           </div>
 
           <div className="flex items-center justify-between text-sm">
             <label className="inline-flex items-center">
-              <input type="checkbox" checked={remember} onChange={e => setRemember(e.target.checked)} className="form-checkbox h-4 w-4 text-indigo-600" />
-              <span className="ml-2 text-gray-700 dark:text-gray-300">아이디 기억하기</span> {/* 기능구현 x */}
+              <input type="checkbox" checked={saveId} className="form-checkbox h-4 w-4 text-indigo-600" 
+                     onChange={saveIdChange} />
+              <span className="ml-2 text-gray-700 dark:text-gray-300">아이디 기억하기</span>
             </label>
-            <Link to="/forgot-password" 
+            <Link to="/forgotPassword" 
                   onClick={onClose}
                   className="text-indigo-600 hover:underline">비밀번호를 잊어버리셨나요?</Link>
           </div>
@@ -90,12 +171,18 @@ export default function Login({ isOpen, onClose }) {
             type="submit"
             className="w-full py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition"
           >
-            Sign in
+            로그인
+          </button>
+          <button
+            type="button"
+            className="w-full py-2 bg-pink-600 text-white rounded-md hover:bg-indigo-700 transition"
+            onClick={test}>
+            테스트 관리자
           </button>
         </form>
         {/* 회원가입 링크 */}
         <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
-          New user?{' '}
+          처음이신가요? {' '}
           <Link to="/signup" 
                 onClick={onClose}
                 className="text-indigo-600 hover:underline">회원가입하러가기</Link>
