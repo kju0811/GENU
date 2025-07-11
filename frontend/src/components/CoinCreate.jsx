@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getIP, getNowDate } from '../components/Tool';
+import { Dropdown } from './coinComponents';
 
 /**
  * CoinCreate 페이지 컴포넌트
@@ -98,17 +99,7 @@ export default function CoinCreate() {
             </button>
             {dropdownOpen && (
               <ul className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md shadow-lg max-h-48 overflow-auto">
-                {categories.map(cat => (
-                  <li key={cat}>
-                    <button
-                      type="button"
-                      onClick={() => { setCate(cat); setDropdownOpen(false); }}
-                      className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
-                    >
-                      {cat}
-                    </button>
-                  </li>
-                ))}
+                  <Dropdown/>
               </ul>
             )}
           </div>
