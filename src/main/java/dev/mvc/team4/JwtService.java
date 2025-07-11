@@ -21,10 +21,11 @@ public class JwtService {
     static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     // 서명된 JWT 토큰 생성
-    public String getToken(String memberId, String role) {
+    public String getToken(String memberId, String role, Long member_no) {
         String token = Jwts.builder()
             .setSubject(memberId)
             .claim("role", role)
+            .claim("member_no", member_no)
             .setExpiration(new Date(System.currentTimeMillis() + EXPIRATIONTIME)).signWith(key).compact();
         return token;
     }
