@@ -55,6 +55,7 @@ function App() {
         config={config}
         messageParser={MessageParser}
         actionProvider={ActionProvider}
+        placeholderText = "메세지를 입력해주세요"
       /> : <ChatOpen />
       }
       {/* <Footer /> */}
