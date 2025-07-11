@@ -1,15 +1,16 @@
 import React, { useEffect, useRef, useState, useCallback, memo } from 'react';
 import { Link } from 'react-router-dom';
-import Login from '../components/Login'; // 로그인 모달 컴포넌트
+import Login from '../components/Login';
+import { useGlobal } from '../components/GlobalContext';
+import { getIP } from '../components/Tool';
 
-// 기본 메뉴 항목 배열
+// 기본 메뉴 항목 배열에서 signout 아이템은 action만 담고 to 는 비워둡니다
 const defaultMenu = [
   { id: 'dashboard', label: 'Dashboard', to: '/dashboard' },
   { id: 'analytics', label: 'Analytics', to: '/analytics', badge: 'New' },
-  { id: 'signout', label: 'Sign out', to: '/logout', danger: true }
+  { id: 'signout',   label: '로그아웃',   to: '/member/logout', danger: true },
 ];
 
-// 개별 메뉴 아이템 컴포넌트 (메모화)
 const MenuItem = memo(({ item }) => (
   <Link
     to={item.to}
@@ -32,29 +33,52 @@ export default function ProfileDropdown({
   user = { name: 'James Lee', avatar: 'https://cdn.startupful.io/img/app_logo/no_img.png' },
   menuItems = defaultMenu
 }) {
+  const { sw, setSw } = useGlobal();
   const [isOpen, setIsOpen] = useState(false);
-  const [loginOpen, setLoginOpen] = useState(false); // 로그인 모달 열림 상태
+  const [loginOpen, setLoginOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // 드롭다운 토글
-  const toggleOpen = useCallback(() => setIsOpen(prev => !prev), []);
+  const toggleOpen = useCallback(() => setIsOpen(v => !v), []);
 
-  // 외부 클릭 시 닫기
   useEffect(() => {
-    const handleClickOutside = e => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) setIsOpen(false);
+    const handler = e => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setIsOpen(false);
+      }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('touchstart', handleClickOutside);
+    document.addEventListener('mousedown', handler);
+    document.addEventListener('touchstart', handler);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('touchstart', handleClickOutside);
+      document.removeEventListener('mousedown', handler);
+      document.removeEventListener('touchstart', handler);
     };
   }, []);
 
+  // 로그아웃 처리 함수
+  const handleLogout = async () => {
+    try {
+      const res = await fetch(`http://${getIP()}:9093/member/logout`, {
+        method: 'GET',
+        headers: { 'Authorization': sessionStorage.getItem('jwt') },
+      });
+      const json = await res.json();
+      if (json.logout) {
+        setSw(false);
+        sessionStorage.removeItem('sw');
+        sessionStorage.removeItem('jwt');
+      } else {
+        alert('로그아웃에 실패했습니다. 다시 시도해주세요.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('로그아웃 중 오류가 발생했습니다.');
+    } finally {
+      setIsOpen(false);
+    }
+  };
+
   return (
     <div className="relative inline-block text-left" ref={dropdownRef}>
-      {/* 프로필 버튼 */}
       <button
         onClick={toggleOpen}
         aria-haspopup="true"
@@ -63,31 +87,44 @@ export default function ProfileDropdown({
       >
         <img
           src={user.avatar}
-          alt={`${user.name} profile`}
+          alt={`${user.name} 프로필`}
           className="w-10 h-10 rounded-full object-cover"
         />
         <span className="text-sm font-medium text-gray-900 dark:text-white">{user.name}</span>
       </button>
 
-      {/* 드롭다운 메뉴 */}
       {isOpen && (
         <div className="absolute right-0 mt-3 w-64 z-50 bg-white dark:bg-[#1E2028] rounded-lg shadow-lg p-2 space-y-1">
-          {/* 로그인 모달 트리거 */}
-          <button
-            onClick={() => setLoginOpen(true)}
-            className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-[#2A2C36] rounded-md"
-          >
-            로그인
-          </button>
-          <div className="border-t border-gray-200 dark:border-gray-700" />
-          {/* 기본 메뉴 아이템 렌더링 */}
-          {menuItems.map(item => (
-            <MenuItem key={item.id} item={item} />
-          ))}
+          {!sw && (
+            <button
+              onClick={() => setLoginOpen(true)}
+              className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-[#2A2C36] rounded-md"
+            >
+              로그인
+            </button>
+          )}
+
+          {sw && (
+            <>
+              <div className="border-t border-gray-200 dark:border-gray-700" />
+              {menuItems.map(item =>
+                item.id === 'signout' ? (
+                  <button
+                    key={item.id}
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md"
+                  >
+                    {item.label}
+                  </button>
+                ) : (
+                  <MenuItem key={item.id} item={item} />
+                )
+              )}
+            </>
+          )}
         </div>
       )}
 
-      {/* Login 모달 표시 */}
       <Login isOpen={loginOpen} onClose={() => setLoginOpen(false)} />
     </div>
   );

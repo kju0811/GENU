@@ -2,23 +2,28 @@ import React from "react"
 import { useState,useEffect } from "react";
 import {getIP} from "../components/Tool"
 import { Link } from 'react-router-dom';
+import { Dropdown } from "../components/coinComponents";
+import { useGlobal } from "../components/GlobalContext";
 
 function News() {
 const [news,setNews] = useState('');
 const [summary,setSummary] = useState('');
 const [cloading, setCloading] = useState(false);
 const [sloading, setSLoading] = useState(false);
-const [option1,setOption1] = useState('선택되지 않음');
-const [option2,setOption2] = useState('선택되지 않음');
+const [option1,setOption1] = useState('선택하지 않음');
 const [option3,setOption3] = useState('');
 
+const { option2,setOption2 } = useGlobal();
+
   const NewsCreate = () => {
-    if(option1 != '선택되지 않음') {
+    if(option1 != '선택하지 않음') {
     setCloading(true);
+    const jwt = `${sessionStorage.getItem('jwt')}`;
     fetch(`http://${getIP()}:9093/news/create`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': jwt
       },
       body: JSON.stringify({ option1,option2,option3 }),
     })
@@ -46,6 +51,7 @@ const [option3,setOption3] = useState('');
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': sessionStorage.getItem('jwt')
       },
       body: JSON.stringify({ result }),
     })
@@ -88,36 +94,17 @@ const [option3,setOption3] = useState('');
         </ul>
        </div>
 
+       <span></span>
+
       <div className="dropdown dropdown-start">
         <div tabIndex={0} role="button" className="btn btn-accent">카테고리 생성</div> 
-        <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm" style={{width:'120%'}}>
-            <li>
-            <a onClick={() => setOption2("선택하지 않음")} style={{textAlign: 'center', cursor: 'pointer'}}>선택하지 않음</a>
-            </li>
-
-            <li>
-            <a onClick={() => setOption2("밈코인")} style={{textAlign: 'center', cursor: 'pointer'}}>밈코인</a>
-            </li>
-
-            <li>
-            <a onClick={() => setOption2("ai코인")} style={{textAlign: 'center', cursor: 'pointer'}}>ai코인</a>
-            </li>
-
-            <li>
-            <a onClick={() => setOption2("플랫폼코인")} style={{textAlign: 'center', cursor: 'pointer'}}>플랫폼 코인</a>
-            </li>
-
-            <li>
-            <a onClick={() => setOption2("스테이블코인")} style={{textAlign: 'center', cursor: 'pointer'}}>스테이블 코인</a>
-            </li>
-
-        </ul>
+        <Dropdown showNoneOption={true}/>
        </div>
     </div>
     <div>
     <span>호/악재: {option1}</span> /&nbsp;
     <span>카테고리: {option2}</span><br />
-    <textarea style={{width:"100%",height:'80%', border:'1px solid gray', borderRadius: '5px'}} placeholder="추가 사항" value={option3} onChange={(e) => setOption3(e.target.value)} ></textarea>
+    <textarea style={{width:"100%",height:'80%', border:'1px solid gray', borderRadius: '5px',resize:'none'}} placeholder="추가 사항" value={option3} onChange={(e) => setOption3(e.target.value)} ></textarea>
     </div><br />
     
     <div>
@@ -127,7 +114,7 @@ const [option3,setOption3] = useState('');
     
     <span>뉴스 기사</span>
     <div style={{width:'70%', justifyContent: 'center', display: 'flex', height:'23%'}}>
-      <textarea style={{width:'100%', padding: '10px', border:'1px solid gray', borderRadius: '5px'}} readOnly value={news.res} > </textarea>
+      <textarea style={{width:'100%', padding: '10px', border:'1px solid gray', borderRadius: '5px',resize:'none'}} readOnly value={news.res} > </textarea>
     </div> <br />
 
     <div>
@@ -137,7 +124,7 @@ const [option3,setOption3] = useState('');
 
     <span>요약본</span>
     <div style={{width:'70%', justifyContent: 'center', display: 'flex', height:'23%'}}>
-      <textarea style={{width:'100%', padding: '10px', border:'1px solid gray', borderRadius: '5px'}} readOnly value={summary.res} ></textarea>
+      <textarea style={{width:'100%', padding: '10px', border:'1px solid gray', borderRadius: '5px',resize:'none'}} readOnly value={summary.res} ></textarea>
     </div>
     </>
     
