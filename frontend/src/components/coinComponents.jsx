@@ -1,13 +1,16 @@
 import React from "react";
 import { useGlobal } from "./GlobalContext";
-const Dropdown = () =>{
+const Dropdown = ({ showNoneOption = false }) =>{
     const { setOption2 } = useGlobal();
 
     return(
         <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm" style={{width:'120%'}}>
-            <li>
-            <a onClick={() => setOption2("선택하지 않음")} style={{textAlign: 'center', cursor: 'pointer'}}>선택하지 않음</a>
-            </li>
+
+            {showNoneOption && (
+                <li>
+                    <a onClick={() => setOption2("선택하지 않음")} style={{textAlign: 'center', cursor: 'pointer'}}>선택하지 않음</a>
+                </li>
+            )}
 
             <li>
             <a onClick={() => setOption2('밈 코인')} style={{textAlign: 'center', cursor: 'pointer'}}>밈 코인</a>
