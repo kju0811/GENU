@@ -100,44 +100,6 @@ public class PayService {
       // log.info("[Credit] 크래딧 지급 - user:{}, amount:{}", user.getEmail(), money);
   }
   
-//  /**
-//   * 예약 매수로 차감하기 위한 메소드
-//   *
-//   * @param member
-//   * @param pay_pay
-//   * @param deal
-//   */
-//  public void scheduled(Member member, int pay_pay, Deal deal) {
-//    Pay pay = Pay.builder()
-//              .member(member)
-//              .pay_pay(-pay_pay)
-//              .pay_type(3)
-//              .deal(deal)
-//              .build();
-//      //크레딧에 데이터 삽입
-//      save(pay); //movieId, credit
-//      // log.info("[Credit] 크래딧 차감 - user:{}, amount:{}, fundingId:{}", user.getEmail(), money, funding.getId());
-//  }
-
-  /**
-   * 예약 매수 취소를 위해 다시 지급 하기위한 메소드
-   *
-   * @param member
-   * @param pay_pay
-   * @param deal
-   */
-  public void scheduledcancel(Member member, int pay_pay, Deal deal) {
-    Pay pay = Pay.builder()
-              .member(member)
-              .pay_pay(pay_pay)
-              .pay_type(5)
-              .deal(deal)
-              .build();
-      //크레딧에 데이터 삽입
-      save(pay); //movieId, credit
-      // log.info("[Credit] 환불 크래딧 지급 - user:{}, amount:{}, fundingId:{}", user.getEmail(), money, funding.getId());
-  }
-  
   /** deal id에 해당하는 정보 반환 */
   public Pay getDeal_noPay(Long id) {
     return payRepository.getDeal_noPay(id);
