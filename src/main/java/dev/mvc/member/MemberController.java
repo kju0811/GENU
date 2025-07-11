@@ -139,7 +139,7 @@ public class MemberController {
             .orElseThrow(() -> new IllegalArgumentException("아이디가 존재하지 않습니다.")); // 이거뭐임
         Authentication auth = authenticationManager.authenticate(token);
         // 토큰 생성
-        String jwt = jwtService.getToken(auth.getName(), member.getRole());
+        String jwt = jwtService.getToken(auth.getName(), member.getRole(),member.getMember_no());
         // 토큰을 AUTHORIZATION 헤더로 전송
         return ResponseEntity.ok()
             .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwt)
