@@ -122,7 +122,7 @@ public class MemberController {
         @RequestParam("word") String keyword,
         Pageable pageable
     ) {
-        Page<Member> page = memberService.searchAllFields(keyword, pageable);
+        Page<Member> page = memberService.searchKeyword(keyword, pageable);
         return ResponseEntity.ok(page);
     }
 
@@ -133,27 +133,30 @@ public class MemberController {
             new UsernamePasswordAuthenticationToken(
                 credentials.memberId(),
                 credentials.memberPw()
-            );
+                );
+        
         Member member = memberService.findByMemberId(credentials.memberId())
-            .orElseThrow(() -> new IllegalArgumentException("아이디가 존재하지 않습니다."));
+            .orElseThrow(() -> new IllegalArgumentException("아이디가 존재하지 않습니다.")); // 이거뭐임
         Authentication auth = authenticationManager.authenticate(token);
+        // 토큰 생성
         String jwt = jwtService.getToken(auth.getName(), member.getRole());
-        return ResponseEntity
-            .ok()
+        // 토큰을 AUTHORIZATION 헤더로 전송
+        return ResponseEntity.ok()
             .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwt)
-            .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.AUTHORIZATION)
-            .build();
+            .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.AUTHORIZATION).build();
     }
 
     /** 로그아웃 */
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
+        
         JSONObject json = new JSONObject();
         json.put("logout", true);
         json.put("sw", false);
         json.put("member_no", 0);
         json.put("res", "LOGOUT_OK");
+        
         return json.toString();
     }
 

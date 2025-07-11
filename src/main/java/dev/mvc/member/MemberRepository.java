@@ -20,7 +20,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
            OR LOWER(m.member_name)     LIKE LOWER(CONCAT('%', :word, '%'))
            OR LOWER(m.member_nick)     LIKE LOWER(CONCAT('%', :word, '%'))
     """)
-  Page<Member> searchAllFields( @Param("word") String keyword, Pageable pageable );
+  Page<Member> searchKeyword( @Param("word") String keyword, Pageable pageable );
 
   /**
    * 전체 회원을 가입일 내림차순 페이징 조회
@@ -28,7 +28,10 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
    */
   Page<Member> findAllByOrderByMemberDateDesc(Pageable pageable);
   
+  // MemberId 조회
+	Optional<Member> findByMemberId(String memberid);
 	
-	public Optional<Member> findByMemberId(String memberid);
+	// 로그인
+	Optional<Member> findByMemberIdAndMemberPw(String memberid, String memberPw);
 	
 }

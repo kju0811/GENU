@@ -35,8 +35,8 @@ public class MemberService {
   }
   
   /** 키워드로 전체 필드 검색 후 페이징 결과 반환 */
-  public Page<Member> searchAllFields(String keyword, Pageable pageable) {
-    return memberRepository.searchAllFields(keyword, pageable);
+  public Page<Member> searchKeyword(String keyword, Pageable pageable) {
+    return memberRepository.searchKeyword(keyword, pageable);
   }
   
   /** 회원 번호로 회원 단건 조회 (없으면 예외 발생) */
@@ -45,12 +45,17 @@ public class MemberService {
             .orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다. 번호: " + member_no));
   }
   
-  /** 회원 아이디로 회원 단건 조회 (없으면 예외 발생) */
+  /** MemberId 조회 */
   public Optional<Member> findByMemberId(String memberId) {
     return memberRepository.findByMemberId(memberId);
   }
   
-  /** 회원 번호로 회원 단건 조회 (Optional 반환) */
+  /** 로그인 */
+  public Optional<Member> findByMemberIdAndPw(String memberId, String memberPw) {
+    return memberRepository.findByMemberIdAndMemberPw(memberId, memberPw);
+  }
+  
+  /** 회원 번호 회원 조회 (member_no, Optional 반환) */
   public Optional<Member> findByMemberNoOptional(Long member_no) {
     return memberRepository.findById(member_no);
   }
