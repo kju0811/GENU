@@ -7,6 +7,8 @@ export const GlobalProvider = ({ children }) => {
   // 모달 닫힘 상태
   const [close, setClose] = useState(true);
 
+  const [option2,setOption2] = useState('선택하지 않음');
+
   // sessionStorage에서 sw 값을 가져와 초기화
   const [sw, setSw] = useState(() => sessionStorage.getItem('sw') === 'true');
 
@@ -35,7 +37,7 @@ export const GlobalProvider = ({ children }) => {
   }, [member_no]);
 
   return (
-    <GlobalContext.Provider value={{ sw, setSw, member_no, setMember_no, close, setClose }}>
+    <GlobalContext.Provider value={{ sw, setSw, member_no, setMember_no, close, setClose , option2, setOption2}}>
       {children}
     </GlobalContext.Provider>
   );
