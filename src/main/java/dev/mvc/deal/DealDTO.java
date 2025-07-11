@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class DealDTO {
   
+  /** 매수 주문 DTO */
   @Data
   @AllArgsConstructor
   @NoArgsConstructor
@@ -42,6 +43,7 @@ public class DealDTO {
     }
   }
   
+  /** 매도 주문 DTO */
   @Data
   @AllArgsConstructor
   @NoArgsConstructor
@@ -73,7 +75,7 @@ public class DealDTO {
     }
   }
   
-
+  /** 호가창을 위한 DTO */
   @Data
   @AllArgsConstructor
   @NoArgsConstructor

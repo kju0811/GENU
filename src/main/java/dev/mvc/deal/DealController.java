@@ -30,7 +30,7 @@ public class DealController {
   private final DealService dealService;
   
   /**
-   * 출석 생성
+   * 거래 생성
    * @param deal
    * @return
    */
@@ -112,7 +112,29 @@ public class DealController {
   }
   
   /**
-   * 주문의 가격과 갯수 리스트 반환
+   * 해당 매수 주문을 취소하는 메서드
+   * @param deal_no
+   * @return
+   */
+  @PostMapping(value = "/buydeal/cancel/{deal_no}")
+  public ResponseEntity<Void> cancelBuyDeal(@PathVariable("deal_no") Long deal_no){
+    dealService.cancelBuyDeal(deal_no);
+    return ResponseEntity.ok().build();
+  }
+  
+  /**
+   * 해당 매도 주문을 취소하는 메서드
+   * @param deal_no
+   * @return
+   */
+  @PostMapping(value = "/selldeal/cancel/{deal_no}")
+  public ResponseEntity<Void> cancelSellDeal(@PathVariable("deal_no") Long deal_no){
+    dealService.cancelSellDeal(deal_no);
+    return ResponseEntity.ok().build();
+  }
+  
+  /**
+   * 호가창 : 주문의 가격과 갯수 리스트 반환
    * @param coin_no
    * @return
    */
@@ -156,6 +178,18 @@ public class DealController {
     List<Deal> list = pages.getContent(); // 페이징 목록 추출
     
     return list;
+  }
+  
+  /**
+   * 멤버가 가지고 있는 coin의 갯수 반환
+   * @param member_no
+   * @param coin_no
+   * @return
+   */
+  @GetMapping(value = "/get_total_cnt/{member_no}/{coin_no}")
+  public int getTotalCnt(@PathVariable(name="member_no") Long member_no,
+                              @PathVariable(name="coin_no") Long coin_no) {
+    return dealService.getTotalCnt(member_no, coin_no);
   }
 
 }
