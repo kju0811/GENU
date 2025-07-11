@@ -59,4 +59,34 @@ public class NotificationController {
     }
   }
   
+  /**
+   * 해당 멤버의 안본 알림
+   * http://localhost:9093/notification/find_by_readtype0/*
+   * @return
+   */
+  @GetMapping(value = "/find_by_readtype0/{member_no}")
+  public List<Notification> find_by_readtype0(@PathVariable("member_no") Long id) {
+    return notificationService.find_by_readtype0(id);
+  }
+  
+  /**
+   * 해당 멤버의 알림 내역
+   * http://localhost:9093/notification/find_by_MemberNotification/*
+   * @return
+   */
+  @GetMapping(value = "/find_by_MemberNotification/{member_no}")
+  public List<Notification> find_by_MemberNotification(@PathVariable("member_no") Long id) {
+    return notificationService.find_by_MemberNotification(id);
+  }
+  
+  /**
+   * 알림 클릭 시 상세정보
+   * http://localhost:9093/notification/clickNotification/*
+   * @return
+   */
+  @PostMapping(value = "/clickNotification/{notification_no}")
+  public Notification clickNotification(@PathVariable("notification_no") Long id) {
+    return notificationService.clickNotification(id);
+  }
+  
 }
