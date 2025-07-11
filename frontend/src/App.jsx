@@ -23,10 +23,10 @@ import config from "./ai/config";
 import MessageParser from "./ai/MessageParser";
 import ActionProvider from "./ai/ActionProvider";
 import { useGlobal } from "./components/GlobalContext";
+import { ChatOpen } from "./components/chatCompnents";
 
 import "react-chatbot-kit/build/main.css";
 import "./style/chat.css";
-import imgsrc from "./images/genu.png";
 
 function App() {
   const { close,setClose } = useGlobal();
@@ -55,11 +55,7 @@ function App() {
         config={config}
         messageParser={MessageParser}
         actionProvider={ActionProvider}
-      /> : 
-      <div onClick={() => setClose(false)} style={{cursor:'pointer'}}>
-      <img src={imgsrc} style={{ width:'6%',height:'10%', position:'fixed',right:'2%',bottom:'3%'}}/>
-      <span style={{ position:'fixed',right:'1%',bottom:'13%'}}>AI 챗봇 NURUNG2입니다</span>
-      </div>
+      /> : <ChatOpen />
       }
       {/* <Footer /> */}
     </>
