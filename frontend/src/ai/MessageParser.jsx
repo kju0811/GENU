@@ -8,6 +8,7 @@ class MessageParser {
 
   parse(message) {
     console.log(message);
+    if (message.trim() != "") {
     fetch(`http://${getIP()}:9093/chatbot/talk`, {
       method: 'POST',
       headers: {
@@ -24,6 +25,9 @@ class MessageParser {
         messages: [...prev.messages, botMessage],
       }));
     })
+  } else {
+    const userMessage = this.actionProvider.createClientMessage();
+  }
   }
 }
 
