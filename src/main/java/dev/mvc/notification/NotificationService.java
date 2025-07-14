@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import dev.mvc.notice.Notice;
 import dev.mvc.notice.NoticeRepository;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -55,12 +56,22 @@ public class NotificationService {
       Notification data = notification.get();
       data.setNotification_readtype(1); // 본후로 변경
       notificationRepository.save(data);
-   
       return data;
       
     } else {
       throw new NoSuchElementException("해당 테이터는 비어있습니다.");
     }
+  }
+  
+  /** 알림 생성 */
+  public void notificationCreate(NotificationDTO dto) { // 내용, 생성 위치 저장
+    Notification notification = Notification.builder()
+        .notification_text(dto.getNotification_text())
+        .notification_nametype(dto.getNotification_nametype())
+        .member(dto.getMember())
+        .build();
+    
+    notificationRepository.save(notification);
   }
   
 }
