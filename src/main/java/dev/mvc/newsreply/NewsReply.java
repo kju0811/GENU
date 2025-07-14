@@ -1,5 +1,7 @@
 package dev.mvc.newsreply;
 
+import java.time.LocalDateTime;
+
 import dev.mvc.member.Member;
 import dev.mvc.news.News;
 import jakarta.persistence.Column;
@@ -48,7 +50,7 @@ public class NewsReply {
   
   // 댓글 작성일
   @Column(name = "newsreply_date", nullable = false, columnDefinition = "DATE")
-  private String newsreply_date = "";
+  private LocalDateTime newsreplyDate;
   
   // 회원테이블 외래키
   @ManyToOne
