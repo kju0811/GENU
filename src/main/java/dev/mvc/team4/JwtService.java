@@ -6,6 +6,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import org.springframework.http.HttpHeaders;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +20,9 @@ public class JwtService {
     static final String PREFIX = "Bearer"; // 토큰의 접두사, Bearer 구조
 
     // 비밀키 생성
-    static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+	private static final String SECRET_KEY = "FlRpX30pMqDbiAkmlfArbrmVkDD4RqISskGZmBFax5oGVxzXXWUzTR5JyskiHMIV9M1Oicegkpi46AdvrcX1E6CmTUBc6IFbTPiD";
+
+	private static final Key key= Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
 
     // 서명된 JWT 토큰 생성
     public String getToken(String memberId, String role, Long member_no) {
