@@ -16,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.RestTemplate;
@@ -107,5 +108,9 @@ public class NewsService {
   // 특정 뉴스 조회
   public Optional<News> find_by_id(Long id) {
       return repository.findById(id);
+  }
+  
+  public void deleteEntity(Long id){
+	  repository.deleteById(id);
   }
 }
