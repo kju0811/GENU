@@ -36,10 +36,11 @@ export default function OrderForm({ coin_no }) {
 
   return (
     <form onSubmit={handleSubmit} className="bg-white dark:bg-[#1E2028] rounded-lg p-4 shadow space-y-4">
-      {/* 매수/매도 탭 */}
+      {/* 매수/매도/내역 탭 */}
       <div className="flex space-x-4">
         <button type="button" onClick={() => setSide('buy')} className={`${side==='buy'? 'bg-blue-500 text-white':'bg-gray-100 dark:bg-[#2A2C36] text-gray-500'} flex-1 py-2 rounded`}>매수</button>
         <button type="button" onClick={() => setSide('sell')} className={`${side==='sell'? 'bg-red-500 text-white':'bg-gray-100 dark:bg-[#2A2C36] text-gray-500'} flex-1 py-2 rounded`}>매도</button>
+        <button type="button" onClick={() => setSide('list')} className={`${side==='sell'? 'bg-red-500 text-white':'bg-gray-100 dark:bg-[#2A2C36] text-gray-500'} flex-1 py-2 rounded`}>내역</button>
       </div>
 
       {/* 주문 유형 선택 */}
