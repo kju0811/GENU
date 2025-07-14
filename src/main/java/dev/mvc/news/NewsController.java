@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -32,14 +33,14 @@ public class NewsController {
   
   @PostMapping(value="/create")
   @ResponseBody
-  public String create_Proc(@RequestBody NewsRequestDTO requestDTO) {
-    return newsService.create(requestDTO);
+  public String create_Proc(@RequestBody NewsRequestDTO requestDTO, @RequestHeader("Authorization") String jwt) {
+    return newsService.create(requestDTO,jwt);
   }
   
   @PostMapping(value="/summary")
   @ResponseBody
-  public String summary_Proc(@RequestBody NewsRequestDTO requestDTO) {  
-    return newsService.summary(requestDTO);  
+  public String summary_Proc(@RequestBody NewsRequestDTO requestDTO,@RequestHeader("Authorization") String jwt) {  
+    return newsService.summary(requestDTO,jwt);  
   }
   
   @GetMapping(value="/find_all")

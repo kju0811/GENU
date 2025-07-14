@@ -15,15 +15,16 @@ const [option3,setOption3] = useState('');
 
 const { option2,setOption2 } = useGlobal();
 
+const jwt = sessionStorage.getItem('jwt');
+
   const NewsCreate = () => {
     if(option1 != '선택하지 않음') {
     setCloading(true);
-    const jwt = `${sessionStorage.getItem('jwt')}`;
     fetch(`http://${getIP()}:9093/news/create`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': jwt
+        'Authorization': jwt,
       },
       body: JSON.stringify({ option1,option2,option3 }),
     })
@@ -51,7 +52,7 @@ const { option2,setOption2 } = useGlobal();
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': sessionStorage.getItem('jwt')
+        'Authorization': jwt
       },
       body: JSON.stringify({ result }),
     })
@@ -80,6 +81,7 @@ const { option2,setOption2 } = useGlobal();
     <>
     <Link to="/">메인 메뉴로</Link>
     <Link to="/ai/newsfind">기사 보러가기</Link>
+    <button onClick={() => setNews({ res: '' })}>지우기</button>
 
     <div>
       <div className="dropdown dropdown-start" style={{margin:'5px'}}>
