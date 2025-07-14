@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getIP } from '../components/Tool';
-// import TradeChart from '../components/TradeChart';
 import OrderBook from '../components/OrderBook';
 import CoinInfo from '../components/CoinInfo';
 import RelatedNews from '../components/RelatedNews';
@@ -10,7 +9,6 @@ import OrderForm from '../components/OrderForm';
 import ApexChart from '../components/ApexChart';
 
 export default function CoinDetail() {
-  console.log('-> CoinDetail:');
   const { coin_no } = useParams();
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -34,19 +32,16 @@ export default function CoinDetail() {
   if (loading) return <p>Loading...</p>;
   if (error || !detail) return <p>Error loading coin details.</p>;
 
-  // detail 객체에서 기본 정보 추출
   const { coin_name, coin_price, coin_percentage, coin_img } = detail;
-
   const tabs = [
     { id: 'chart', label: '차트 · 호가' },
-    { id: 'info',  label: '종목 정보'   },
+    { id: 'info',  label: '종목 정보' },
     { id: 'news',  label: '뉴스 · 공시' },
     { id: 'community', label: '커뮤니티' }
   ];
 
   return (
     <div className="container mx-auto p-4">
-      {/* Header: 기본 코인 정보 */}
       <header className="flex items-center space-x-4 mb-6">
         <img
           src={`http://${getIP()}:9093/home/storage/${coin_img}`}
@@ -66,7 +61,6 @@ export default function CoinDetail() {
         </div>
       </header>
 
-      {/* 탭 메뉴 */}
       <nav className="flex space-x-4 border-b mb-4">
         {tabs.map(tab => (
           <button
@@ -83,36 +77,38 @@ export default function CoinDetail() {
         ))}
       </nav>
 
-      {/* 탭 콘텐츠 */}
       <div>
         {activeTab === 'chart' && (
-          <div className="grid grid-cols-3 gap-4">
-            <div>
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="w-full md:w-1/2">
               <h3 className="text-lg font-semibold mb-2">ApexChart</h3>
               <ApexChart coin_no={coin_no} />
             </div>
-            <div>
+            <div className="w-full md:w-1/3">
               <h3 className="text-lg font-semibold mb-2">OrderBook</h3>
               <OrderBook coin_no={coin_no} />
             </div>
-            <div>
+            <div className="w-full md:w-1/5">
               <h3 className="text-lg font-semibold mb-2">주문</h3>
               <OrderForm coin_no={coin_no} />
             </div>
           </div>
         )}
+
         {activeTab === 'info' && (
           <section>
             <h3 className="text-lg font-semibold mb-2">Coin Information</h3>
             <CoinInfo coin_no={coin_no} />
           </section>
         )}
+
         {activeTab === 'news' && (
           <section>
             <h3 className="text-lg font-semibold mb-2">Related News</h3>
             <RelatedNews articles={detail.newsList} />
           </section>
         )}
+
         {activeTab === 'community' && (
           <section>
             <h3 className="text-lg font-semibold mb-2">Community Feed</h3>
