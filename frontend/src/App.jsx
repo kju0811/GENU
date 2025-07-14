@@ -24,6 +24,7 @@ import MessageParser from "./ai/MessageParser";
 import ActionProvider from "./ai/ActionProvider";
 import { useGlobal } from "./components/GlobalContext";
 import { ChatOpen } from "./components/chatCompnents";
+import NotificationLog from "./components/NotificationLog";
 
 import "react-chatbot-kit/build/main.css";
 import "./style/chat.css";
@@ -48,6 +49,7 @@ function App() {
         <Route path="/coin/tickList/:coin_no" element={<OrderBook/>} />
         <Route path="/member" element={<MemberList />} />
         <Route path="/deal/dealList/:member_no" element={<DealList/>} />
+        <Route path="/notification/find_by_MemberNotification/:member_no" element={<NotificationLog/>} />
         {/* <Route path="*" element={<NotFound />} /> */}
       </Routes>
       {!close ?
