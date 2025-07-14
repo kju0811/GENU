@@ -20,17 +20,17 @@ import lombok.RequiredArgsConstructor;
 public class NotificationController {
   private final NotificationService notificationService;
   
-  /**
-   * 알림 생성
-   * @param notice
-   * @return
-   */
-  @PostMapping(value="/create")
-  @ResponseBody
-  public ResponseEntity<Notification> create(@RequestBody Notification notification) {
-    notificationService.save(notification);
-    return ResponseEntity.ok().build();
-  }
+//  /**
+//   * 알림 생성
+//   * @param notice
+//   * @return
+//   */
+//  @PostMapping(value="/create")
+//  @ResponseBody
+//  public ResponseEntity<Notification> create(@RequestBody Notification notification) {
+//    notificationService.save(notification);
+//    return ResponseEntity.ok().build();
+//  }
   
   /**
    * 전체 목록
@@ -87,6 +87,18 @@ public class NotificationController {
   @PostMapping(value = "/clickNotification/{notification_no}")
   public Notification clickNotification(@PathVariable("notification_no") Long id) {
     return notificationService.clickNotification(id);
+  }
+  
+  /**
+   * 알림 생성
+   * @param notice
+   * @return
+   */
+  @PostMapping(value="/create")
+  @ResponseBody
+  public ResponseEntity<Notification> notificationCreate(@RequestBody NotificationDTO dto) {
+    notificationService.notificationCreate(dto);
+    return ResponseEntity.ok().build();
   }
   
 }
