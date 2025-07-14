@@ -35,12 +35,14 @@ public class NewsService {
   }
   
   // 뉴스 생성
-  public String create(NewsRequestDTO dto) {
+  public String create(NewsRequestDTO dto, String jwt) {
     String url = "http://localhost:8000/news";
     
     // HTTP 헤더 설정 (JSON)
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
+    
+    headers.set("Authorization",jwt);
     
     Map<String, Object> body = new HashMap<>();
     body.put("option1", dto.getOption1());
@@ -57,7 +59,7 @@ public class NewsService {
   }
   
   // 뉴스 요약
-  public String summary(NewsRequestDTO dto) {
+  public String summary(NewsRequestDTO dto, String jwt) {
     JSONObject src = new JSONObject(dto); // String -> JSON
     
     String url = "http://localhost:8000/summary";
@@ -65,6 +67,8 @@ public class NewsService {
  // HTTP 헤더 설정 (JSON)
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
+    
+    headers.set("Authorization",jwt);
 
     // 요청 바디에 담을 데이터
     Map<String, Object> body = new HashMap<>();
