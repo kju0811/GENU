@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback, memo } from 'react';
+import { getIP } from "../components/Tool";
 
 /**
  * 더미 알림 데이터 (시각적 확인용, 나중에 삭제)
@@ -23,9 +24,9 @@ const NotificationItem = memo(({ item }) => (
       </span>
     </div>
     <div className="flex-1">
-      <p className="font-medium text-gray-900 dark:text-white">{item.title}</p>
-      <p className="text-gray-500 text-sm dark:text-gray-400">{item.contents}</p>
-      <span className="text-xs text-gray-400 mt-1 block">{item.rdate}</span>
+      <p className="font-medium text-gray-900 dark:text-white">{item.notification_nametype}</p>
+      <p className="text-gray-500 text-sm dark:text-gray-400">{item.notification_text}</p>
+      <span className="text-xs text-gray-400 mt-1 block">{item.notification_date}</span>
     </div>
   </li>
 ));
@@ -35,11 +36,26 @@ const NotificationItem = memo(({ item }) => (
  * - 버튼 클릭 시 드롭다운을 통해 알림 목록 표시
  * - 알림 항목이 많을 경우 스크롤 가능
  */
-export default function NotificationDropdown({ notifications = [] }) {
+export default function NotificationDropdown({ notifications: initialNotifications = [] }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   const toggleOpen = useCallback(() => setIsOpen(prev => !prev), []);
+  const jwt = sessionStorage.getItem("jwt");
+  const [notifications, setNotifications] = useState(initialNotifications);
+
+  useEffect(() => {
+    fetch(`http://${getIP()}:9093/notification/find_by_readtype0/1`, {
+        method: 'GET',
+        headers : { 'Authorization' : jwt }
+      })
+      .then(result => result.json())
+      .then(data => {
+        console.log("thisdate -> ", data)
+        setNotifications(data);
+      })
+      .catch(err => console.error(err))
+  }, [])
 
   useEffect(() => {
     const handleClickOutside = e => {
@@ -76,7 +92,7 @@ export default function NotificationDropdown({ notifications = [] }) {
             <p className="text-center text-gray-500 dark:text-gray-400">No notifications</p>
           ) : (
             <ul className="space-y-3 max-h-64 overflow-auto">  {/* max-h-64 및 overflow-auto로 스크롤 */}
-              {data.map(item => <NotificationItem key={item.id} item={item} />)}
+              {data.map(item => <NotificationItem key={item.notification_no} item={item} />)}
             </ul>
           )}
         </div>
