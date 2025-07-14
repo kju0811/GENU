@@ -40,7 +40,7 @@ export default function OrderForm({ coin_no }) {
       <div className="flex space-x-4">
         <button type="button" onClick={() => setSide('buy')} className={`${side==='buy'? 'bg-blue-500 text-white':'bg-gray-100 dark:bg-[#2A2C36] text-gray-500'} flex-1 py-2 rounded`}>매수</button>
         <button type="button" onClick={() => setSide('sell')} className={`${side==='sell'? 'bg-red-500 text-white':'bg-gray-100 dark:bg-[#2A2C36] text-gray-500'} flex-1 py-2 rounded`}>매도</button>
-        <button type="button" onClick={() => setSide('list')} className={`${side==='sell'? 'bg-red-500 text-white':'bg-gray-100 dark:bg-[#2A2C36] text-gray-500'} flex-1 py-2 rounded`}>내역</button>
+        <button type="button" onClick={() => setSide('list')} className={`${side==='list'? 'bg-red-500 text-white':'bg-gray-100 dark:bg-[#2A2C36] text-gray-500'} flex-1 py-2 rounded`}>내역</button>
       </div>
 
       {/* 주문 유형 선택 */}
