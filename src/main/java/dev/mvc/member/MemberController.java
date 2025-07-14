@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import dev.mvc.pay.PayService;
 import dev.mvc.team4.Home;
 import dev.mvc.team4.JwtService;
 import jakarta.servlet.http.HttpSession;
@@ -43,15 +44,17 @@ public class MemberController {
     private final MemberService memberService;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final PayService payService;
     
     private final Path storageLocation = Paths.get(Home.getUploadDir());
 
     public MemberController(MemberService memberService, JwtService jwtService,
-        AuthenticationManager authenticationManager
+        AuthenticationManager authenticationManager, PayService payService
     ) {
         this.memberService = memberService;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
+        this.payService = payService;
         try {
             Files.createDirectories(this.storageLocation);
         } catch (IOException e) {
@@ -94,6 +97,7 @@ public class MemberController {
                 }
             }
             Member saved = memberService.save(member);
+            payService.firstadditional(member, 10000000); // 기본금 지급
             return ResponseEntity.ok(saved);
 
         } catch (IOException e) {
