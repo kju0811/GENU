@@ -43,13 +43,32 @@ function NewsFind() {
   return(
     <>
     <Link to="/">메인 메뉴로</Link>
-    <div style={{textAlign:"center"}}>
-    <h5>뉴스 목록</h5> <input style={{border:'1px solid gray'}} value = {word}   onChange={(e) => {
+
+    <div style={{marginLeft:'80%',width:'13%'}}>
+    <label className="input flex items-center gap-2 bg-white shadow-md  border border-gray-300" style={{width:'100%'}}>
+      <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <g
+          strokeLinejoin="round"
+          strokeLinecap="round"
+          strokeWidth="2.8"
+          fill="none"
+          stroke="currentColor"
+        >
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.3-4.3"></path>
+        </g>
+      </svg>
+      <input type="search" required placeholder="Search..." value = {word}   onChange={(e) => {
     setWord(e.target.value);
     setSearchParams({ page: pageNumber, word: e.target.value });
-  }}></input>
+  }} />
+    </label>
     </div>
-  <div className="flex flex-wrap gap-4 justify-center">
+
+    <div style={{textAlign:"center",marginTop:'-2.5%'}}>
+    <h5 >뉴스 목록</h5> 
+    </div>
+  <div className="flex flex-wrap gap-4 justify-center" style={{marginTop:'2%'}}>
     {currentItems.map((item) => (
       <div className="card card-dash bg-base-100 w-96 shadow-xl hover:scale-105 hover:shadow-lg" key={item.news_no}>
         <div className="card-body">
