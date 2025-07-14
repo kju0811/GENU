@@ -33,6 +33,8 @@ import dev.mvc.news.News;
 import dev.mvc.news.NewsRepository;
 import dev.mvc.notice.Notice;
 import dev.mvc.notice.NoticeService;
+import dev.mvc.notification.NotificationDTO;
+import dev.mvc.notification.NotificationService;
 import dev.mvc.pay.Pay;
 import dev.mvc.pay.PayService;
 import dev.mvc.sms.SMS;
@@ -49,6 +51,7 @@ public class CoinService {
   private final DealService dealService;
   private final PayService payService;
   private final NoticeService noticeService;
+  private final NotificationService notificationService;
   
   private static final Logger logger = LoggerFactory.getLogger(DealService.class);
   
@@ -224,9 +227,22 @@ public class CoinService {
         for (Notice getn : noticeList) {
           String tel = getn.getMember().getMember_tel().replaceAll("-", "");
           String coin_name = coin.getCoin_name();
-          String wp = String.valueOf(getn.getNotice_price());
+          
+          // 천 단위 콤마 추가
+          int price = getn.getNotice_price();
+          String wp = String.format("%,d", price);
+//          String wp = String.valueOf(getn.getNotice_price());
+          
+          
           String msg = String.format("%s의 가격이 설정하신 %s누렁에 도달했습니다.", coin_name, wp);
           String[] args = {tel, msg};
+          
+          // 종합알림 컬럼 생성
+          NotificationDTO notificationDTO = new NotificationDTO(); // DTO 생성
+          notificationDTO.setNotification_text(msg);
+          notificationDTO.setNotification_nametype("금액알림");
+          notificationDTO.setMember(getn.getMember());
+          
           if (getn.getNotice_type() == 1) { // 알림 금액이 변동된 현재가 보다 상승해야함
             if(getn.getNotice_price() >= coin.getCoin_price()) { // 알림 보내기
               try {
@@ -237,6 +253,7 @@ public class CoinService {
               }
               getn.setNotice_status(1); // SMS 완료
               noticeService.saveUpdate(getn);
+              notificationService.notificationCreate(notificationDTO);
             }
           } else if (getn.getNotice_type() == 0) { // 알림 금액이 변동된 현재가 보다 하락해야함
             if(getn.getNotice_price() <= coin.getCoin_price()) { // 알림 보내기
@@ -248,6 +265,7 @@ public class CoinService {
               }
               getn.setNotice_status(1); // SMS 완료
               noticeService.saveUpdate(getn);
+              notificationService.notificationCreate(notificationDTO);
             }
           }
         }
