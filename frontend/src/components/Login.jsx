@@ -121,7 +121,7 @@ export default function Login({ isOpen, onClose }) {
           <div >
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
             <input
-              // type="email"
+              type="email"
               onKeyDown={e=>enter_chk(e,'passwd')} 
               onChange={idChange} 
               value={id}
@@ -153,7 +153,7 @@ export default function Login({ isOpen, onClose }) {
                 onMouseLeave={() => setShowPswd(false)}
             >
                 {/* 기본 이모지 또는 SVG 아이콘 사용 */}
-                {showPswd ? '🙈' : '🙉'}
+                {showPswd ? '🙉' : '🙈'}
             </div>
           </div>
 
