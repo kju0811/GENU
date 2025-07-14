@@ -13,6 +13,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.time.LocalDateTime;
+
 import dev.mvc.coin.Coin;
 import dev.mvc.community.Community;
 import dev.mvc.reply.Reply;
@@ -40,8 +43,8 @@ public class Replylike {
   private Long replylike_no;
   
   /** 댓글 좋아요 생성일 */
-  @Column(name = "replylike_date", nullable = false)
-  private String replylike_date;  
+  @Column(name = "replylike_date", nullable = false, columnDefinition = "DATE")
+  private LocalDateTime replylikeDate;  
 
   /** 회원번호 외래키 */
   @ManyToOne

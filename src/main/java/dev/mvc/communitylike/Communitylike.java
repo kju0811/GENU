@@ -14,6 +14,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.time.LocalDateTime;
+
 import dev.mvc.coin.Coin;
 import dev.mvc.community.Community;
 import dev.mvc.member.Member;
@@ -40,8 +43,8 @@ public class Communitylike {
   private Long communitylike_no;
 
   /** 좋아요 누른 날짜 */
-  @Column(name = "communitylike_date", nullable = false)
-  private String communitylike_date;
+  @Column(name = "communitylike_date", nullable = false, columnDefinition = "DATE")
+  private LocalDateTime communitylikeDate;
 
   /** 회원번호 외래키 */
   @ManyToOne
