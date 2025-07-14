@@ -5,7 +5,7 @@ import pandas as pd
 from sqlalchemy import create_engine  # Pandas -> Oracle
 import numpy as np
 
-def newsinsert(title, content, emotion):
+def newsinsert(title, content, emotion,coin_cate,member_no):
     
     try:
         cx_Oracle.init_oracle_client(lib_dir="/Users/kimjiun/kd/instantclient_23_3")
@@ -34,7 +34,7 @@ def newsinsert(title, content, emotion):
         'news_word': '경제,뉴스',
         'summary': '요약이 되지않았습니다',
         'visible': 'Y',
-        'member_no': 1
+        'member_no': member_no
     }
     
     insert = cursor.execute(sql_news, news)
@@ -45,12 +45,25 @@ def newsinsert(title, content, emotion):
     VALUES (fluctuation_seq.NEXTVAL, :coin_no, :news_no, sysdate)
     '''
     
-    fluctuation = {
-        'coin_no' : 1,
-        'news_no' : news_no
-    }
+    cursor = conn.cursor()
+    sql = '''
+    SELECT member_no FROM member
+    '''
+    cursor.execute(sql)
     
-    cursor.execute(sql_fluctuation,fluctuation)
+    if coin_cate != "선택하지 않음":
+     cursor.execute("SELECT coin_no FROM coin WHERE coin_cate=:coin_cate", {'coin_cate': coin_cate})
+    else:
+     cursor.execute("SELECT coin_no FROM coin")
+    
+    coin_list = cursor.fetchall()
+    for row in coin_list:
+        coin_no = row[0]
+        fluctuation = {
+            'coin_no': coin_no,
+            'news_no': news_no
+        }
+        cursor.execute(sql_fluctuation,fluctuation)
     
     conn.commit()
     
