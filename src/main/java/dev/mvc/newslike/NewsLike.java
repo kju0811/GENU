@@ -1,5 +1,7 @@
 package dev.mvc.newslike;
 
+import java.time.LocalDateTime;
+
 import dev.mvc.member.Member;
 import dev.mvc.news.News;
 import jakarta.persistence.Column;
@@ -34,7 +36,7 @@ public class NewsLike {
  
   // 작성일
   @Column(name = "newslike_date", nullable = false, columnDefinition = "DATE")
-  private String newslike_date = "";
+  private LocalDateTime newslikeDate;
   
   // 회원테이블 외래키
   @ManyToOne
