@@ -5,6 +5,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { getIP } from '../components/Tool';
 import { Link } from 'react-router-dom';
 import 'moment/locale/ko';
+import { jwtDecode } from 'jwt-decode';
 
 moment.locale('ko');
 const localizer = momentLocalizer(moment);
@@ -21,6 +22,19 @@ function Schedule() {
   const [newEventBody, setNewEventBody] = useState('');
   const [updateEventBody, setUpdateEventBody] = useState('');
   const [events, setEvents] = useState([]);
+
+  const jwt = sessionStorage.getItem("jwt");
+  let userInfo = null;
+    if (jwt != null) {
+      try {
+        userInfo = jwtDecode(jwt);
+        console.log("토큰있음");
+      } catch (err) {
+        console.error("JWT 디코딩 오류:", err);
+      }
+    } else {
+      console.log("토큰없음");
+    }
 
   const formats = {
     monthHeaderFormat: 'YYYY년 MM월',
@@ -226,100 +240,103 @@ useEffect(() => {
         onSelectSlot={handleSelectSlot}
         onSelectEvent={handleSelectEvent}
       />
-
-      {showEventModal && (
-        <div 
-          className="bg-white border p-4 rounded-lg shadow-lg z-50 w-80"
-          style={{
-            position: 'fixed',
-            top: `${modalPosition.top}px`,
-            left: `${modalPosition.left}px`,
-            backgroundColor: 'white',
-            padding: '10px',
-            zIndex: 1000,
-          }}
-        >
-          <h2 className="text-lg font-bold mb-2">일정 추가</h2>
-          <input
-            type="text"
-            placeholder="제목"
-            value={newEventTitle}
-            onChange={(e) => setNewEventTitle(e.target.value)}
-            className="w-full border px-2 py-1 mb-3"
-          />
-          <textarea
-            placeholder='내용'
-            value={newEventBody}
-            onChange={(e) => setNewEventBody(e.target.value)}
-            style={{height:200}}
-            className="w-full border px-2 py-1 mb-3"
-          />
-          <div className="flex justify-end gap-2">
-            <button
-              onClick={() => setShowEventModal(false)}
-              className="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400"
-            >
-              취소
-            </button>
-            <button
-              onClick={handleAddEvent} 
-              className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              추가
-            </button>
-          </div>
+  {userInfo?.role === "ADMIN" && (
+  <>
+    {showEventModal && (
+      <div
+        className="bg-white border p-4 rounded-lg shadow-lg z-50 w-80"
+        style={{
+          position: 'fixed',
+          top: `${modalPosition.top}px`,
+          left: `${modalPosition.left}px`,
+          backgroundColor: 'white',
+          padding: '10px',
+          zIndex: 1000,
+        }}
+      >
+        <h2 className="text-lg font-bold mb-2">일정 추가</h2>
+        <input
+          type="text"
+          placeholder="제목"
+          value={newEventTitle}
+          onChange={(e) => setNewEventTitle(e.target.value)}
+          className="w-full border px-2 py-1 mb-3"
+        />
+        <textarea
+          placeholder='내용'
+          value={newEventBody}
+          onChange={(e) => setNewEventBody(e.target.value)}
+          style={{ height: 200 }}
+          className="w-full border px-2 py-1 mb-3"
+        />
+        <div className="flex justify-end gap-2">
+          <button
+            onClick={() => setShowEventModal(false)}
+            className="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400"
+          >
+            취소
+          </button>
+          <button
+            onClick={handleAddEvent}
+            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            추가
+          </button>
         </div>
-      )}
+      </div>
+    )}
 
-      {showUpdateModal && (
-        <div 
-          className="bg-white border p-4 rounded-lg shadow-lg z-50 w-80"
-          style={{
-            position: 'fixed',
-            top: `${modalPosition.top}px`,
-            left: `${modalPosition.left}px`,
-            backgroundColor: 'white',
-            padding: '10px',
-            zIndex: 1000,
-          }}
-        >
-          <h2 className="text-lg font-bold mb-2">일정 수정</h2>
-          <input
-            type="text"
-            placeholder="제목"
-            value={updateEventTitle}
-            onChange={(e) => setNewEventTitle(e.target.value)}
-            className="w-full border px-2 py-1 mb-3"
-          />
-          <textarea
-            placeholder='내용'
-            value={updateEventBody}
-            onChange={(e) => setNewEventBody(e.target.value)}
-            style={{height:200}}
-            className="w-full border px-2 py-1 mb-3"
-          />
-          <div className="flex justify-end gap-2">
-            <button
-              onClick={() => setShowUpdateModal(false)}
-              className="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400"
-            >
-              취소
-            </button>
-            <button
-              onClick={handleDeleteEvent}
-              className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-            >
-              삭제
-            </button>
-            <button
-              onClick={handleUpdateEvent} 
-              className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              수정
-            </button>
-          </div>
+    {showUpdateModal && (
+      <div
+        className="bg-white border p-4 rounded-lg shadow-lg z-50 w-80"
+        style={{
+          position: 'fixed',
+          top: `${modalPosition.top}px`,
+          left: `${modalPosition.left}px`,
+          backgroundColor: 'white',
+          padding: '10px',
+          zIndex: 1000,
+        }}
+      >
+        <h2 className="text-lg font-bold mb-2">일정 수정</h2>
+        <input
+          type="text"
+          placeholder="제목"
+          value={updateEventTitle}
+          onChange={(e) => setNewEventTitle(e.target.value)}
+          className="w-full border px-2 py-1 mb-3"
+        />
+        <textarea
+          placeholder="내용"
+          value={updateEventBody}
+          onChange={(e) => setUpdateEventBody(e.target.value)}
+          style={{ height: 200 }}
+          className="w-full border px-2 py-1 mb-3"
+        />
+        <div className="flex justify-end gap-2">
+          <button
+            onClick={() => setShowUpdateModal(false)}
+            className="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400"
+          >
+            취소
+          </button>
+          <button
+            onClick={handleDeleteEvent}
+            className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+          >
+            삭제
+          </button>
+          <button
+            onClick={handleUpdateEvent}
+            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            수정
+          </button>
         </div>
-      )}
+      </div>
+    )}
+  </>
+)}
     </div>
     </>
   );

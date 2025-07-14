@@ -133,7 +133,7 @@ async def news(request:Request):
         
         #makeimg(content, title)
     else:
-        result = "권한이 부족합니다"
+        result = "정상적이지 않습니다"
     
     return result
 
@@ -192,49 +192,59 @@ async def get_session_history(request: Request):
     message = data.get('message')
     member = data.get('member_name')
     print(message)
-
-    if member not in store:
-        store[member] = InMemoryChatMessageHistory()
-
-    history: BaseChatMessageHistory = store[member]
-    history.add_message(HumanMessage(content=message))
     
-    documents = SimpleDirectoryReader('data').load_data()
-    index = VectorStoreIndex.from_documents(documents)
-
-    query_engine = index.as_query_engine()
+    jwtToken = request.headers.get("Authorization")
+    jwtToken = jwtToken.replace("Bearer ", "").strip()
     
-    similar_answer = query_engine.query(message)
+    payload = jwt.decode(jwtToken, SECRET_KEY, algorithms=["HS512"])
+    
+    role = payload.get("role")
+    if role == "ADMIN" or role == "USER":
+        if member not in store:
+            store[member] = InMemoryChatMessageHistory()
 
-    # 출력 스키마 & 파서
-    response_schemas = [
-        ResponseSchema(name="res", description="{'대답'}")
-    ]
-    output_parser = StructuredOutputParser.from_response_schemas(response_schemas)
-    format_instructions = output_parser.get_format_instructions()
+        history: BaseChatMessageHistory = store[member]
+        history.add_message(HumanMessage(content=message))
+        
+        documents = SimpleDirectoryReader('data').load_data()
+        index = VectorStoreIndex.from_documents(documents)
 
-    # 프롬프트 템플릿
-    prompt = PromptTemplate.from_template(
-        "{system}\n\n"
-        "{history}\n\n"
-        "위의 내용은 기억해두고,질문에 답변과 질문의 키워드가 일치하고 답변이 있다면 답변으로 똑같이 대답해 만약 답변이 없다면 자유로운 대화를 해줘,질문자가 사용하는 언어로 대답해줘:\n"
-        "답변: {similar_answer}"
-        "질문:{message}\n\n"
-        "{format_instructions}"
-    )
+        query_engine = index.as_query_engine()
+        
+        similar_answer = query_engine.query(message)
 
-    inputs = {
-        "system": "투자 가이드 챗봇 시스템",
-        "message": message,
-        "history": "\n".join([msg.content for msg in history.messages]),
-        "similar_answer": str(similar_answer),
-        "format_instructions": format_instructions
-    }
+        # 출력 스키마 & 파서
+        response_schemas = [
+            ResponseSchema(name="res", description="{'대답'}")
+        ]
+        output_parser = StructuredOutputParser.from_response_schemas(response_schemas)
+        format_instructions = output_parser.get_format_instructions()
 
-    pipeline = prompt | llm | output_parser
-    result = pipeline.invoke(inputs)
+        # 프롬프트 템플릿
+        prompt = PromptTemplate.from_template(
+            "{system}\n\n"
+            "{history}\n\n"
+            "위의 내용은 기억해두고,질문에 답변과 질문의 키워드가 일치하고 답변이 있다면 답변으로 똑같이 대답해 만약 답변이 없다면 자유로운 대화를 해줘,질문자가 사용하는 언어로 대답해줘:\n"
+            "답변: {similar_answer}"
+            "질문:{message}\n\n"
+            "{format_instructions}"
+        )
 
-    print("-> result:", result)
+        inputs = {
+            "system": "투자 가이드 챗봇 시스템",
+            "message": message,
+            "history": "\n".join([msg.content for msg in history.messages]),
+            "similar_answer": str(similar_answer),
+            "format_instructions": format_instructions
+        }
+
+        pipeline = prompt | llm | output_parser
+        result = pipeline.invoke(inputs)
+
+        print("-> result:", result)
+    else:
+        result = "정상적이지 않습니다"
+        
     return result
     
 if __name__ == "__main__":

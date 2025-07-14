@@ -1,10 +1,16 @@
 package dev.mvc.news;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.hibernate.annotations.ColumnDefault;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import dev.mvc.fluctuation.Fluctuation;
 import dev.mvc.member.Member;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,6 +19,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
@@ -89,6 +96,7 @@ public class News {
   private String news_word = "";
   
   // 뉴스 등록일
+  @JsonFormat(pattern = "yyyy-MM-dd HH:MM")
   @Column(name = "news_rdate", nullable = false, columnDefinition = "DATE")
   private LocalDateTime newsrdate;
   
@@ -146,5 +154,8 @@ public class News {
 		  newsrdate = LocalDateTime.now();
 	  }
   }
+  
+  @OneToMany(mappedBy = "news", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Fluctuation> fluctuations = new ArrayList<>();
   
 }
