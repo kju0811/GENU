@@ -12,6 +12,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+
+import dev.mvc.calendar.Calendar;
 
 
 @RequestMapping(value = "/news")
@@ -67,5 +70,15 @@ public class NewsController {
   public Optional<News> read(@PathVariable("id") Long id) {
     return newsService.find_by_id(id);
   }
+  
+	@DeleteMapping(value="/delete/{new_no}") 
+	public ResponseEntity<Calendar> delete(@PathVariable("new_no") Long id) {
+	    if (newsService.find_by_id(id).isPresent()) { // Entity가 존재하면
+	    	newsService.deleteEntity(id); // 삭제
+	        return ResponseEntity.ok().build(); // 성공적으로 삭제된 경우 200 반환
+	      } else {
+	        return ResponseEntity.notFound().build(); // 찾지 못한 경우 404 반환
+	      }
+	}
 
 }
