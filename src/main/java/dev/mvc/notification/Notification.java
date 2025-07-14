@@ -13,6 +13,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.SequenceGenerator;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,6 +22,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity @Getter @Setter @ToString
+@Builder
 public class Notification {
   
   /**
@@ -41,7 +43,7 @@ public class Notification {
   @Column(name = "notification_readtype", columnDefinition = "NUMBER(1)", nullable = false)
   private int notification_readtype=0;
   
-  /** 알림 내용 */
+  /** 알림 생성 위치 */
   @Column(name = "notification_nametype", length = 10, nullable = false)
   private String notification_nametype;
   
