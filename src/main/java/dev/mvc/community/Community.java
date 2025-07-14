@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.SequenceGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -70,5 +71,12 @@ public class Community {
   @ManyToOne
   @JoinColumn(name = "coin_no", nullable = false)
   private Coin coin;
+  
+  @PrePersist
+  public void prePersist() {
+    if (this.communityDate == null) {
+      this.communityDate = LocalDateTime.now();
+    }
+  }
 
 }
