@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.SequenceGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -55,5 +56,12 @@ public class Replylike {
   @ManyToOne
   @JoinColumn(name = "reply_no", nullable = false)
   private Reply reply;
+  
+  @PrePersist
+  public void prePersist() {
+    if (this.replylikeDate == null) {
+      this.replylikeDate = LocalDateTime.now();
+    }
+  }
 
 }
