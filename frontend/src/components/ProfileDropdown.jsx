@@ -32,7 +32,6 @@ const MenuItem = memo(({ item }) => (
 ));
 
 export default function ProfileDropdown({
-  user = { name: 'James Lee', avatar: 'https://cdn.startupful.io/img/app_logo/no_img.png' },
   menuItems = defaultMenu
 }) {
   const { sw, setSw } = useGlobal();
