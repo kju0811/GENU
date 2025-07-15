@@ -38,6 +38,8 @@ export default function OrderForm({ coin_no, coin_price }) {
   const handleSubmit = async e => {
     e.preventDefault();
     // TODO: 주문 API 호출 로직
+    // 만약 시장가라면 해당 코인의 가격으로 설정
+
     console.log({ coin_no, side, type, price, quantity });
     const dto = {
       coin: {"coin_no": coin_no},
@@ -70,6 +72,25 @@ export default function OrderForm({ coin_no, coin_price }) {
         .catch(err => console.error(err))
 
       } else if (side == "sell") {
+        fetch(`http://${getIP()}:9093/deal/selldeal`, {
+          method: 'POST',
+          headers : { 
+            'Authorization' : jwt ,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(dto)
+        }).then(result => result.json())
+        .then(data => {
+          console.log("date -> ", data)
+          if (data.deal_no > 0) {
+            alert('매도 주문 완료!');
+            window.location.reload();
+          } else {
+            alert('매도 주문 실패. 다시 시도하세요.');
+          }
+
+        })
+        .catch(err => console.error(err))
 
       }
     } catch (err) {
