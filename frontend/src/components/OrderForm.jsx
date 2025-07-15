@@ -12,10 +12,10 @@ import { jwtDecode } from 'jwt-decode';
  * - 총 주문 금액 계산
  * TODO: 백엔드 주문 API 연동
  */
-export default function OrderForm({ coin_no, coin_price }) {
+export default function OrderForm({ coin_no, defaultPrice }) {
   const [type, setType] = useState('limit'); // 'limit' | 'market'
   const [side, setSide] = useState('buy');  // 'buy' | 'sell'
-  const [price, setPrice] = useState('');
+  const [price, setPrice] = useState(defaultPrice || '');
   const [quantity, setQuantity] = useState('');
 
   // 총 주문 금액 계산
@@ -43,44 +43,49 @@ export default function OrderForm({ coin_no, coin_price }) {
       coin: {"coin_no": coin_no},
       member: {"member_no": memberNo},
       price: parseInt(price),
-      cnt: parseInt(quantity),
+      cnt: parseInt(quantity),  
     };
     console.log("dto -> ", dto)
 
-    // try {
-    //   if (side == "buy"){
-    //     fetch(`http://${getIP()}:9093/deal/buydeal`, {
-    //       method: 'POST',
-    //       headers : { 
-    //         'Authorization' : jwt ,
-    //         'Content-Type': 'application/json'
-    //       },
-    //       body: JSON.stringify(dto)
-    //     }).then(result => result.json())
-    //     .then(data => {
-    //       console.log("date -> ", data)
-    //       if (data.deal_no > 0) {
-    //         alert('매수 주문 완료!');
-    //         window.location.reload();
-    //       } else {
-    //         alert('매수 주문 실패. 다시 시도하세요.');
-    //       }
+    try {
+      if (side == "buy"){
+        fetch(`http://${getIP()}:9093/deal/buydeal`, {
+          method: 'POST',
+          headers : { 
+            'Authorization' : jwt ,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(dto)
+        }).then(result => result.json())
+        .then(data => {
+          console.log("date -> ", data)
+          if (data.deal_no > 0) {
+            alert('매수 주문 완료!');
+            window.location.reload();
+          } else {
+            alert('매수 주문 실패. 다시 시도하세요.');
+          }
 
-    //     })
-    //     .catch(err => console.error(err))
+        })
+        .catch(err => console.error(err))
 
-    //   } else if (side == "sell") {
+      } else if (side == "sell") {
 
-    //   }
-    // } catch (err) {
-    //   console.error(err);
-    //   alert('서버 오류 발생');
-    // }
+      }
+    } catch (err) {
+      console.error(err);
+      alert('서버 오류 발생');
+    }
 
 
   };
 
 
+    // defaultPrice가 바뀔 때마다 price를 업데이트
+    useEffect(() => {
+      setPrice(defaultPrice ?? '');
+    }, [defaultPrice]);
+  
 
 
 
@@ -137,19 +142,24 @@ export default function OrderForm({ coin_no, coin_price }) {
       {type === 'limit' && (
         <div>
           <label className="block text-xs text-gray-500">가격</label>
-          <input 
-            type="number" 
-            value={price} 
-            onChange={e=>setPrice(e.target.value)} 
-            className="w-full mt-1 p-2 border rounded bg-gray-50 dark:bg-[#2A2C36]" 
-            placeholder="0.0" />
-        </div>
+          <input
+            type="number"
+            value={price}
+            onChange={e => setPrice(e.target.value)}
+            className="w-full mt-1 p-2 border rounded bg-gray-50 dark:bg-[#2A2C36]"
+          />
+      </div>
       )}
 
       {/* 수량 입력 */}
       <div>
         <label className="block text-xs text-gray-500">수량</label>
-        <input type="number" value={quantity} onChange={e=>setQuantity(e.target.value)} className="w-full mt-1 p-2 border rounded bg-gray-50 dark:bg-[#2A2C36]" placeholder="0.0" />
+        <input 
+          type="number" 
+          value={quantity} 
+          onChange={e=>setQuantity(e.target.value)} 
+          className="w-full mt-1 p-2 border rounded bg-gray-50 dark:bg-[#2A2C36]" 
+          placeholder="0.0" />
         {/* 수량 비율 버튼 */}
         <div className="flex space-x-2 mt-1">
           {[10,25,50,100].map(p => (
