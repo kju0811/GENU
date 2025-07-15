@@ -30,8 +30,8 @@ public class NoticeController {
   @PostMapping(value="/create")
   @ResponseBody
   public ResponseEntity<Notice> create(@RequestBody Notice notice) {
-    noticeService.save(notice);
-    return ResponseEntity.ok().build();
+    Notice nt = noticeService.save(notice);
+    return ResponseEntity.ok(nt);
   }
   
   /**
@@ -90,6 +90,18 @@ public class NoticeController {
   public List<Notice> getMemberNotice(@PathVariable("member_no") Long member_no) {
     
     return noticeService.getMemberNotice(member_no);
+  }
+  
+  /**
+   * 멤버가 코인에 설정한 알림 반환
+   * @param member_no, coin_no
+   * @return
+   */
+  @GetMapping(value = "/member/{member_no}/coin/{coin_no}")
+  public List<Notice> getMemberCoinNotice(@PathVariable("member_no") Long member_no,
+                                                      @PathVariable("coin_no") Long coin_no) {
+    
+    return noticeService.getMemberCoinNotice(member_no, coin_no);
   }
   
   /**
