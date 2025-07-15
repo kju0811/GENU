@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {Routes, Route } from "react-router-dom";
+import {Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
 // import Footer from "./components/Footer";
 import Home from "./pages/Home";
@@ -28,12 +28,14 @@ import NotificationLog from "./components/NotificationLog";
 
 import "react-chatbot-kit/build/main.css";
 import "./style/chat.css";
+import NotFound from "./pages/NotFound";
 
 function App() {
-  const { close,setClose } = useGlobal();
+  const { close, hideNavbar } = useGlobal();
+
   return (
     <>
-      <Navbar />
+      {!hideNavbar && <Navbar />}
       <Routes>
         <Route path="/" element={<Home />} /> {/* <Link to="/"> */}
         <Route path="/SignUp" element={<SignUp />} /> 
@@ -50,7 +52,7 @@ function App() {
         <Route path="/member" element={<MemberList />} />
         <Route path="/deal/dealList/:member_no" element={<DealList/>} />
         <Route path="/notification/find_by_MemberNotification/:member_no" element={<NotificationLog/>} />
-        {/* <Route path="*" element={<NotFound />} /> */}
+        <Route path="*" element={<NotFound/>} />
       </Routes>
       {!close ?
       <Chatbot
