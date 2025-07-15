@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import dev.mvc.coin.Coin;
 import dev.mvc.news.News;
 import jakarta.persistence.Column;
@@ -44,6 +46,7 @@ public class Fluctuation {
    */
   @ManyToOne
   @JoinColumn(name="news_no", referencedColumnName = "news_no", nullable = false)
+  @JsonBackReference
   private News news;
   
   /**

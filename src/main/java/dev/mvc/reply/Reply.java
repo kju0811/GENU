@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.SequenceGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -58,5 +59,12 @@ public class Reply {
   @ManyToOne
   @JoinColumn(name = "community_no", nullable = false)
   private Community community;
+  
+  @PrePersist
+  public void prePersist() {
+    if (this.replyDate == null) {
+      this.replyDate = LocalDateTime.now();
+    }
+  }
 
 }
