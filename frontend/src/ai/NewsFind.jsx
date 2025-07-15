@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getIP } from '../components/Tool';
 import { Link, useSearchParams } from 'react-router-dom';
 import Pagination from 'react-js-pagination';
+import load from "../images/로딩.gif";
 
 export default function NewsFind() {
   const [data, setData] = useState([]);
@@ -11,15 +12,18 @@ export default function NewsFind() {
   const [page, setPage] = useState(pageParam);
   const [word, setWord] = useState(wordParam);
   const size = 6;
+  const [loading,setLoading] = useState(false);
 
   useEffect(() => {
     const url = word
       ? `http://${getIP()}:9093/news/find?word=${encodeURIComponent(word)}`
       : `http://${getIP()}:9093/news/find_all`;
+    setLoading(true);
     fetch(url)
       .then(res => res.json())
       .then(result => setData(result))
-      .catch(err => console.error(err));
+      .catch(err => console.error(err))
+      .finally(() => setLoading(false));
   }, [word]);
 
   const handlePageChange = (pageNumber) => {
@@ -104,14 +108,21 @@ export default function NewsFind() {
           </article>
         ))}
       </div>
+      
+      {loading ? (
+      <div>
+        <img src={load}/><br />
+        기사들 물어오는 중 ...
+      </div>) : null
+      } 
 
       {/* Pagination */}
       <div className="mt-8 py-5 flex justify-center gap-2">
         <Pagination
           innerClass="flex justify-center mt-4 gap-2"
-          itemClass=""
-          linkClass="w-10 h-10 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-200 text-sm"
-          activeClass="bg-indigo-500 text-white border-indigo-500 rounded-lg"
+          itemClass="rounded-lg"
+          linkClass="w-10 h-10 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-200 text-sm rounded-lg"
+          activeClass="bg-sky-500 text-white border-sky-500 rounded-lg"
           activePage={page}
           itemsCountPerPage={size}
           totalItemsCount={data.length}
