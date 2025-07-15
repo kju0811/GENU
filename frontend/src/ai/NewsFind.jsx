@@ -1,129 +1,125 @@
-import React from "react";
-import { useState, useEffect } from "react";
-import { getIP } from "../components/Tool";
-import { Link, useSearchParams} from "react-router-dom";
-import Pagination from 'react-js-pagination'
-import '../index.css';
+import React, { useState, useEffect } from 'react';
+import { getIP } from '../components/Tool';
+import { Link, useSearchParams } from 'react-router-dom';
+import Pagination from 'react-js-pagination';
 
-function NewsFind() {
-  const [data,setData] = useState([]);
+export default function NewsFind() {
+  const [data, setData] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
-  const pageParam = parseInt(searchParams.get("page")) || 1;
-  const wording = searchParams.get("word") || "";
-  const [page, setActivePage] = useState(pageParam);
-  
-  const [size,setSize] = useState(8);
-  const [word,setWord] = useState(wording);
-
-  const handlePageChange = (pageNumber) => {
-    setActivePage(pageNumber);
-    // 검색어가 있으면 word도 함께 유지
-    if (word) {
-      setSearchParams({ page: pageNumber, word: word });
-    } else {
-      setSearchParams({ page: pageNumber });
-    }
-  };
-
-  const indexOfLastItem = page * size;
-  const indexOfFirstItem = indexOfLastItem - size;
-  const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
+  const pageParam = parseInt(searchParams.get('page')) || 1;
+  const wordParam = searchParams.get('word') || '';
+  const [page, setPage] = useState(pageParam);
+  const [word, setWord] = useState(wordParam);
+  const size = 6;
 
   useEffect(() => {
-   const url = word
-  ? `http://${getIP()}:9093/news/find?word=${encodeURIComponent(word)}`
-  : `http://${getIP()}:9093/news/find_all`;
-       
-    fetch(url,{
-      method:'GET'
-    })
-    .then(result => result.json())
-    .then(result => {
-      setData(result);
-      setSize(8);
-      console.log(result);
-    })
-    .catch(err => console.error(err))
-  }, [page, word]);
+    const url = word
+      ? `http://${getIP()}:9093/news/find?word=${encodeURIComponent(word)}`
+      : `http://${getIP()}:9093/news/find_all`;
+    fetch(url)
+      .then(res => res.json())
+      .then(result => setData(result))
+      .catch(err => console.error(err));
+  }, [word]);
+
+  const handlePageChange = (pageNumber) => {
+    setPage(pageNumber);
+    setSearchParams(word ? { page: pageNumber, word } : { page: pageNumber });
+  };
 
   const handleSearchChange = (e) => {
     const newWord = e.target.value;
     setWord(newWord);
-    setActivePage(1); 
-    
-    if (newWord) {
-      setSearchParams({ page: 1, word: newWord });
-    } else {
-      setSearchParams({ page: 1 });
-    }
+    setPage(1);
+    setSearchParams(newWord ? { page: 1, word: newWord } : { page: 1 });
   };
 
-  return(
+  // 페이지네이션 아이템 계산
+  const indexOfLast = page * size;
+  const indexOfFirst = indexOfLast - size;
+  const currentItems = data.slice(indexOfFirst, indexOfLast);
+
+  return (
     <>
-    <Link to="/">메인 메뉴로</Link>
-    
-    <div style={{marginLeft:'80%',width:'13%'}}>
-    <label className="input flex items-center gap-2 bg-white shadow-md border border-gray-300" style={{width:'100%'}}>
-      <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <g
-          strokeLinejoin="round"
-          strokeLinecap="round"
-          strokeWidth="2.8"
-          fill="none"
-          stroke="currentColor"
-        >
-          <circle cx="11" cy="11" r="8"></circle>
-          <path d="m21 21-4.3-4.3"></path>
-        </g>
-      </svg>
-      <input 
-        type="search" 
-        required 
-        placeholder="Search..." 
-        value={word}
-        onChange={handleSearchChange}
-      />
-    </label>
-    </div>
-    
-    <div style={{textAlign:"center",marginTop:'-2.5%'}}>
-    <h5>뉴스 목록</h5>
-    </div>
-  <div className="flex flex-wrap gap-4 justify-center" style={{marginTop:'3%'}}>
-    {currentItems.map((item) => (
-      <div className="card card-dash bg-base-100 w-96 shadow-xl hover:scale-105 hover:shadow-lg" key={item.news_no}>
-        <div className="card-body">
-          <h2 className="card-title">{item.title}</h2>
-          <p>
-          {item.content.length > 70
-            ? `${item.content.slice(0, 70)}...`
-            : item.content}
-          </p>
-                     
-          <div className="card-actions justify-end">
-            <span style={{marginTop:'15px', marginRight:'5px'}}>{item.newsrdate}</span>
-           <Link to={`/ai/read/${item.news_no}`}> <button className="btn btn-primary">뉴스 보러가기</button> </Link>
-          </div>
-        </div>
+      <Link to="/" className="text-indigo-600 hover:underline">메인 메뉴로</Link>
+
+      <div className="flex justify-between items-center mb-6">
+        <input
+          type="search"
+          placeholder="Search..."
+          value={word}
+          onChange={handleSearchChange}
+          className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        />
       </div>
-    ))}
-  </div>
-    
-    <Pagination
-       innerClass="flex justify-center mt-4 gap-2"
-      itemClass="page-item"
-      linkClass="w-8 h-8 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-200 text-sm"
-      activeClass="bg-blue-500 text-white border-blue-500 rounded-lg"
-      activeLinkClass="bg-blue-500 text-white border-blue-500"
-      activePage={page}
-      itemsCountPerPage={size}
-      totalItemsCount={data.length}
-      pageRangeDisplayed={5}
-      onChange={handlePageChange}>
-     </Pagination>
-    
-     </>
+
+      {/* Card Grid: MainContent 스타일 적용 */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {currentItems.map(item => (
+          <article
+            key={item.news_no}
+            className="rounded-xl overflow-hidden bg-gray-50 dark:bg-[#252731] transition-transform hover:scale-[1.02]"
+          >
+            <img
+              src={item.news_img_url || 'https://cdn.startupful.io/img/app_logo/no_img2.png'}
+              alt={item.title}
+              className="w-full h-48 object-cover"
+            />
+            <div className="p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="px-2 py-1 rounded-full text-xs bg-indigo-100 dark:bg-indigo-900 text-indigo-500">
+                  News
+                </span>
+                <span className="text-gray-500 dark:text-gray-400 text-sm">
+                  {item.newsrdate}
+                </span>
+              </div>
+              <h3 className="text-lg font-semibold text-black dark:text-white mb-2">
+                {item.title}
+              </h3>
+              <p className="text-gray-500 dark:text-gray-400 text-sm mb-4 line-clamp-2">
+                {item.content.length > 70
+                  ? `${item.content.slice(0, 70)}...`
+                  : item.content
+                }
+              </p>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <img
+                    src={item.author_avatar || 'https://cdn.startupful.io/img/app_logo/no_img.png'}
+                    alt={item.author_name || 'Admin'}
+                    className="w-8 h-8 rounded-full"
+                  />
+                  <span className="text-sm text-black dark:text-white">
+                    {item.author_name || 'Admin'}
+                  </span>
+                </div>
+                <Link to={`/ai/read/${item.news_no}`}>  
+                  <button className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">
+                    뉴스 보러가기
+                  </button>
+                </Link>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      {/* Pagination */}
+      <div className="mt-8 py-5 flex justify-center gap-2">
+        <Pagination
+          innerClass="flex justify-center mt-4 gap-2"
+          itemClass=""
+          linkClass="w-10 h-10 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-200 text-sm"
+          activeClass="bg-indigo-500 text-white border-indigo-500 rounded-lg"
+          activePage={page}
+          itemsCountPerPage={size}
+          totalItemsCount={data.length}
+          pageRangeDisplayed={5}
+          onChange={handlePageChange}
+        />
+      </div>
+
+    </>
   );
 }
-
-export default NewsFind;
