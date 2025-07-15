@@ -17,8 +17,10 @@ export default function ApexChart({ coin_no, days = 30 }) {
     chart: { type: 'candlestick', height: 350, toolbar: { show: true } },
     title: { text: `${coin_no}번 코인 캔들스틱 (${days}일)`, align: 'left' },
     xaxis: { type: 'datetime' },
-    yaxis: { opposite: true, tooltip: { enabled: true } },
-    yaxis: { tooltip: { enabled: true } }
+    yaxis: { 
+      opposite: true, 
+      tooltip: { enabled: true } 
+    }
   };
 
   useEffect(() => {
