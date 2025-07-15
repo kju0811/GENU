@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback, memo } from 'react';
 import { getIP } from "../components/Tool";
+import { jwtDecode } from 'jwt-decode';
 
 /**
  * 더미 알림 데이터 (시각적 확인용, 나중에 삭제)
@@ -45,17 +46,28 @@ export default function NotificationDropdown({ notifications: initialNotificatio
   const [notifications, setNotifications] = useState(initialNotifications);
 
   useEffect(() => {
-    fetch(`http://${getIP()}:9093/notification/find_by_readtype0/1`, {
-        method: 'GET',
-        headers : { 'Authorization' : jwt }
-      })
-      .then(result => result.json())
-      .then(data => {
-        console.log("thisdate -> ", data)
-        setNotifications(data);
-      })
-      .catch(err => console.error(err))
-  }, [])
+    try {
+      const decoded = jwtDecode(jwt);
+      console.log(decoded);
+      const decodedMemberNo = decoded.member_no;
+      // setMemberNo(decoded.member_no);
+      if (typeof jwt === 'string' && jwt.length > 0) {
+        fetch(`http://${getIP()}:9093/notification/find_by_readtype0/${decodedMemberNo}`, {
+          method: 'GET',
+          headers : { 'Authorization' : jwt }
+        })
+        .then(result => result.json())
+        .then(data => {
+          console.log("thisdate -> ", data)
+          setNotifications(data);
+        })
+        .catch(err => console.error(err))
+      }
+    } catch (err) {
+      console.error("Invalid token:", err.message);
+    }
+
+  }, [jwt])
 
   useEffect(() => {
     const handleClickOutside = e => {
