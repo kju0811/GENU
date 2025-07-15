@@ -93,7 +93,7 @@ public class PayController {
    * @param member_no
    * @return
    */
-  @GetMapping(value = "/test/{member_no}")
+  @GetMapping(value = "/my/{member_no}")
   public int getMemberPay(@PathVariable("member_no") Long member_no) {
     
     return payService.getMemberPay(member_no);
