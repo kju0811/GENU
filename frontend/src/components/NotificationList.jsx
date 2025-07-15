@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback, memo } from 'react';
 import { getIP } from "../components/Tool";
 import { jwtDecode } from 'jwt-decode';
+import bell from "../images/bell.png"
 
 /**
  * 더미 알림 데이터 (시각적 확인용, 나중에 삭제)
@@ -91,7 +92,7 @@ export default function NotificationDropdown({ notifications: initialNotificatio
     <div className="relative inline-block text-left" ref={dropdownRef}>
       <button onClick={toggleOpen} className="flex items-center gap-3 px-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1E2028] rounded-lg shadow hover:shadow-md transition-all">
         <div className="relative inline-block">
-          <img src="https://cdn.startupful.io/img/app_logo/no_img.png" alt="User profile" className="w-10 h-10 rounded-full object-cover" />
+          <img src={bell} alt="알림(notice)" className="w-10 h-10 rounded-full object-cover" />
           {data.length > 0 && (
             <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-[20px] h-5 bg-red-500 rounded-full text-xs text-white border-2 border-white px-1">{displayCount}</span>
           )}
