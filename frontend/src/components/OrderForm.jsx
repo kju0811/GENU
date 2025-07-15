@@ -47,42 +47,38 @@ export default function OrderForm({ coin_no }) {
     };
     console.log("dto -> ", dto)
 
-    // try {
-    //   if (side == "buy"){
-    //     fetch(`http://${getIP()}:9093/deal/buydeal`, {
-    //       method: 'POST',
-    //       headers : { 
-    //         'Authorization' : jwt ,
-    //         'Content-Type': 'application/json'
-    //       },
-    //       body: JSON.stringify(dto)
-    //     }).then(result => result.json())
-    //     .then(data => {
-    //       console.log("date -> ", data)
-    //       if (data.deal_no > 0) {
-    //         alert('매수 주문 완료!');
-    //         window.location.reload();
-    //       } else {
-    //         alert('매수 주문 실패. 다시 시도하세요.');
-    //       }
+    try {
+      if (side == "buy"){
+        fetch(`http://${getIP()}:9093/deal/buydeal`, {
+          method: 'POST',
+          headers : { 
+            'Authorization' : jwt ,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(dto)
+        }).then(result => result.json())
+        .then(data => {
+          console.log("date -> ", data)
+          if (data.deal_no > 0) {
+            alert('매수 주문 완료!');
+            window.location.reload();
+          } else {
+            alert('매수 주문 실패. 다시 시도하세요.');
+          }
 
-    //     })
-    //     .catch(err => console.error(err))
+        })
+        .catch(err => console.error(err))
 
-    //   } else if (side == "sell") {
+      } else if (side == "sell") {
 
-    //   }
-    // } catch (err) {
-    //   console.error(err);
-    //   alert('서버 오류 발생');
-    // }
+      }
+    } catch (err) {
+      console.error(err);
+      alert('서버 오류 발생');
+    }
 
 
   };
-
-
-
-
 
   useEffect(() => {
     try {
