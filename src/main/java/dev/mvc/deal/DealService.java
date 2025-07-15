@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import dev.mvc.coin.Coin;
+import dev.mvc.coin.CoinRepository;
 import dev.mvc.coin.CoinService;
 import dev.mvc.coinlike.CoinlikeRepository;
 import dev.mvc.member.Member;
@@ -29,6 +30,7 @@ public class DealService {
   private final DealRepository dealRepository;
   private final PayService payService;
   private static final Logger logger = LoggerFactory.getLogger(DealService.class);
+  private final CoinRepository coinRepository;
   
   /** Create, INSERT~, UPDATE~ */
   public void save(Deal deal) {
@@ -102,6 +104,7 @@ public class DealService {
     System.out.println("현자산: " + wp);
     System.out.println("멤버no: " +request.getMember().getMember_no());
     int price = request.getPrice();
+    System.out.println("price -> "+ price);
     int cnt = request.getCnt();
     int fee = feeCheck(price, cnt);
     int total = price*cnt+fee; // 총 필요금액
@@ -109,18 +112,27 @@ public class DealService {
     if (total > wp) {
         throw new IllegalArgumentException("금액이 부족합니다.");
     }
-    
-    // 현재 코인 가격 보다 높은 금액으로 매수시 최저가로 매수됨
-    if (price >= request.getCoin().getCoin_price()) {
-      request.setPrice(request.getCoin().getCoin_price());
-      price = request.getPrice();
-      fee = feeCheck(price, cnt);
-      request.setFee(fee);
-      total = price*cnt+fee;
+
+    Optional<Coin> optcoin = coinRepository.findById(request.getCoin().getCoin_no()); // 프론트에서 coin_no만 넘김
+    if (optcoin.isPresent()) {
+      Coin coin = optcoin.get();
       
+      // 현재 코인 가격 보다 높은 금액으로 매수시 최저가로 매수됨
+      if (price >= coin.getCoin_price()) {
+        request.setPrice(coin.getCoin_price()); // 최저가
+        price = request.getPrice();
+        System.out.println("2번 price -> "+ price);
+        fee = feeCheck(price, cnt);
+        request.setFee(fee);
+        total = price*cnt+fee;
+        
+      } else {
+        request.setType(3); // 예약으로 돌림
+        request.setFee(fee);
+        
+      }
     } else {
-      request.setType(3); // 예약으로 돌림
-      request.setFee(fee);
+      throw new IllegalArgumentException("해당 코인을 찾을 수 없습니다.");
     }
     
     logger.info("코인에 매수 진행 - member:{}, coin:{}, pay:{}, type:{}", request.getMember().getMember_no(), request.getCoin().getCoin_no(), request.getPrice(), request.getType());
@@ -165,30 +177,37 @@ public class DealService {
     if (ownedCnt < cnt) {
       throw new IllegalArgumentException("가지고 있는 갯수 부족합니다.");
     }
-    
-    // 현재 코인 가격 보다 높은 금액으로 매수시 최저가로 매수됨
-    if (price <= request.getCoin().getCoin_price()) {
-      request.setPrice(request.getCoin().getCoin_price());
-      price = request.getPrice();
-      fee = feeCheck(price, cnt);
-      request.setFee(fee);
-      total = price*cnt-fee;
+
+    Optional<Coin> optcoin = coinRepository.findById(request.getCoin().getCoin_no()); // 프론트에서 coin_no만 넘김
+    if (optcoin.isPresent()) {
+      Coin coin = optcoin.get();
       
-      //거래에 데이터 삽입
-      Deal deal = dealRepository.save(request.toEntity());
-      
-      //크레딧 서비스 호출 크레딧 또 빼고
-      payService.sell(request.getMember(), total, deal);
-      
-      logger.info("코인에 매도 진행 - member:{}, coin:{}, pay:{}, type:{}", request.getMember().getMember_no(), request.getCoin().getCoin_no(), request.getPrice(), request.getType());
-      
-      return deal;
+   // 현재 코인 가격 보다 높은 금액으로 매수시 최저가로 매수됨
+      if (price <= coin.getCoin_price()) { 
+        request.setPrice(coin.getCoin_price());
+        price = request.getPrice();
+        fee = feeCheck(price, cnt);
+        request.setFee(fee);
+        total = price*cnt-fee;
+        
+        //거래에 데이터 삽입
+        Deal deal = dealRepository.save(request.toEntity());
+        
+        //크레딧 서비스 호출 크레딧 또 빼고
+        payService.sell(request.getMember(), total, deal);
+        
+        logger.info("코인에 매도 진행 - member:{}, coin:{}, pay:{}, type:{}", request.getMember().getMember_no(), request.getCoin().getCoin_no(), request.getPrice(), request.getType());
+        
+        return deal;
+      } else {
+        request.setType(4); // 예약으로 돌림
+        request.setFee(fee);
+        
+      }
     } else {
-      request.setType(4); // 예약으로 돌림
-      request.setFee(fee);
-      
+      throw new IllegalArgumentException("해당 코인을 찾을 수 없습니다.");
     }
-    
+
     logger.info("코인에 매도 진행 - member:{}, coin:{}, pay:{}, type:{}", request.getMember().getMember_no(), request.getCoin().getCoin_no(), request.getPrice(), request.getType());
     
     //거래에 데이터 삽입
