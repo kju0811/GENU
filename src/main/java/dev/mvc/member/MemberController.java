@@ -166,7 +166,7 @@ public class MemberController {
 
     /** 회원 단건 조회 */
     @GetMapping("/read/{member_no}")
-    public ResponseEntity<Member> read(@PathVariable Long member_no) {
+    public ResponseEntity<Member> read(@PathVariable("member_no") Long member_no) {
         Member m = memberService.findByMember_no(member_no);
         return ResponseEntity.ok(m);
     }
