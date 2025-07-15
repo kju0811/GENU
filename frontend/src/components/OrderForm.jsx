@@ -12,7 +12,7 @@ import { jwtDecode } from 'jwt-decode';
  * - 총 주문 금액 계산
  * TODO: 백엔드 주문 API 연동
  */
-export default function OrderForm({ coin_no }) {
+export default function OrderForm({ coin_no, coin_price }) {
   const [type, setType] = useState('limit'); // 'limit' | 'market'
   const [side, setSide] = useState('buy');  // 'buy' | 'sell'
   const [price, setPrice] = useState('');
@@ -137,7 +137,12 @@ export default function OrderForm({ coin_no }) {
       {type === 'limit' && (
         <div>
           <label className="block text-xs text-gray-500">가격</label>
-          <input type="number" value={price} onChange={e=>setPrice(e.target.value)} className="w-full mt-1 p-2 border rounded bg-gray-50 dark:bg-[#2A2C36]" placeholder="0.0" />
+          <input 
+            type="number" 
+            value={price} 
+            onChange={e=>setPrice(e.target.value)} 
+            className="w-full mt-1 p-2 border rounded bg-gray-50 dark:bg-[#2A2C36]" 
+            placeholder="0.0" />
         </div>
       )}
 
