@@ -98,7 +98,7 @@ public class DealController {
   public ResponseEntity<?> buydeal(@Valid @RequestBody DealDTO.DealBuyPay dto) {
     Deal deal = dealService.buydeal(dto);
     if (deal == null) {
-      return ResponseEntity.badRequest().body("거래 생성 실패: 유효하지 않은 데이터입니다.");
+      return ResponseEntity.badRequest().body("매수 주문 실패: 유효하지 않은 데이터입니다.");
     }
     return ResponseEntity.ok(deal);
   }
@@ -109,8 +109,11 @@ public class DealController {
    * @return
    */
   @PostMapping(value = "/selldeal")
-  public ResponseEntity<Deal> selldeal(@Valid @RequestBody DealDTO.DealSellPay dto) {
+  public ResponseEntity<?> selldeal(@Valid @RequestBody DealDTO.DealSellPay dto) {
     Deal deal = dealService.selldeal(dto);
+    if (deal == null) {
+      return ResponseEntity.badRequest().body("매도 주문 실패: 유효하지 않은 데이터입니다.");
+    }
     return ResponseEntity.ok(deal);
   }
   
