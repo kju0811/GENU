@@ -90,25 +90,28 @@ public class DealController {
   }
  
   /**
-   * 매수 주문 // 스프링 시큐리티하면 추가할 예정
+   * 매수 주문
    * @param member_no
    * @return
    */
   @PostMapping(value = "/buydeal")
-  public ResponseEntity<Deal> buydeal(@Valid @RequestBody DealDTO.DealBuyPay dto) {
-    dealService.buydeal(dto);
-    return ResponseEntity.ok().build();
+  public ResponseEntity<?> buydeal(@Valid @RequestBody DealDTO.DealBuyPay dto) {
+    Deal deal = dealService.buydeal(dto);
+    if (deal == null) {
+      return ResponseEntity.badRequest().body("거래 생성 실패: 유효하지 않은 데이터입니다.");
+    }
+    return ResponseEntity.ok(deal);
   }
   
   /**
-   * 매도 주문 // 스프링 시큐리티하면 추가할 예정
+   * 매도 주문
    * @param member_no
    * @return
    */
   @PostMapping(value = "/selldeal")
   public ResponseEntity<Deal> selldeal(@Valid @RequestBody DealDTO.DealSellPay dto) {
-    dealService.selldeal(dto);
-    return ResponseEntity.ok().build();
+    Deal deal = dealService.selldeal(dto);
+    return ResponseEntity.ok(deal);
   }
   
   /**
