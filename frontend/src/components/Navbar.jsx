@@ -5,6 +5,9 @@ import SearchInput from './SearchInput';
 import NotificationDropdown from './NotificationList';
 
 export default function Navbar() {
+
+  const jwt = sessionStorage.getItem('jwt');
+
   return (
     <nav className="bg-white shadow-md p-4 w-full" aria-label="Main navigation">
       {/* 상단 바: 3단 레이아웃으로 중앙에 검색창 배치 */}
@@ -30,7 +33,7 @@ export default function Navbar() {
 
         {/* 우측: 알림 + 프로필 */}
         <div className="col-start-3 flex justify-end items-center gap-4">
-          <NotificationDropdown />
+          {jwt ? (<NotificationDropdown />) : null}
           <ProfileDropdown />
         </div>
       </div>
