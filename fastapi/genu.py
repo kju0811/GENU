@@ -99,7 +99,7 @@ async def news(request:Request):
         format_instructions = output_parser.get_format_instructions()
         prompt = PromptTemplate.from_template(
             "{system}\n"
-            "{option1}과 카테고리 {coin_cate}, 그리고 추가 사항 {option3}조건에 맞는 경제 뉴스를 생성해줘, 내용은 5글자이하 사이에서 생성해줘, 호재는 1로 악재를 0으로 판별해줘"
+            "{option1}과 카테고리 {coin_cate}, 그리고 추가 사항 {option3}조건에 맞는 경제 뉴스를 생성해줘, 내용은 1500글자이상 2000글자이하 사이에서 생성해줘, 호재는 1로 악재를 0으로 판별해줘"
             "{format_instructions}"
         )
 
@@ -246,6 +246,76 @@ async def get_session_history(request: Request):
         result = "정상적이지 않습니다"
         
     return result
+
+@app.post("/mind")
+async def mind(request:Request):
+    print("-> mind 함수")
+    
+    data = await request.json()
+    deal = data.get("deal")
+    
+    #print('넘어온 데이터:',result)
+    
+    jwtToken = request.headers.get("Authorization")
+    jwtToken = jwtToken.replace("Bearer ", "").strip()
+    
+    payload = jwt.decode(jwtToken, SECRET_KEY, algorithms=["HS512"])
+    
+    role = payload.get("role")
+    
+    
+    if role == "ADMIN" or role == "USER":
+        # 2) 출력 스키마 & 출력 파서 설정
+        response_schemas = [
+            ResponseSchema(name="res", description="{'심리분석된 내용'}")
+        ]
+        output_parser = StructuredOutputParser.from_response_schemas(response_schemas)
+        format_instructions = output_parser.get_format_instructions()
+        prompt = PromptTemplate.from_template(
+            "{system}\n"
+            "{deal}은 유저들의 거래 기록이야, 기록을 바탕으로 유저들의 아래의 등급표를 보고 투자 심리를 분석해줘\n\n"
+            '''
+            S등급
+            초공격형
+            극도의 수익을 추구하며, 큰 손실도 감수할 수 있는 성향.
+            
+            A등급
+            공격형
+            수익을 중시하며, 일정 수준의 손실을 감내할 수 있는 성향.
+            
+            B등급
+            적극형
+            수익과 안정성 사이에서 균형을 추구하는 성향.
+            
+            C등급
+            안정추구형
+            안정적인 수익을 선호하고, 리스크에 민감한 성향.
+            
+            D등급
+            보수형
+            원금 손실을 극도로 회피하며, 리스크 회피 성향이 강함.
+            \n\n
+            '''
+            "{format_instructions}"
+        )
+
+        inputs = {
+            "system": "투자 심리 분석 시스템",
+            "deal" : deal,
+            "format_instructions": format_instructions
+        }
+        pipeline = prompt | llm | output_parser
+        mind = pipeline.invoke(inputs)
+        
+        # oracle.newssummary(
+        #     summary
+        # )
+        
+        print("-> result", summary)
+    else:
+        mind="잘못된 형식의 토큰입니다"
+        
+    return mind
     
 if __name__ == "__main__":
     # uvicorn.run("resort_auth:app", host="121.78.128.17", port=8000, reload=True) # Gabia 할당 불가
