@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import Login from '../components/Login';
 import { useGlobal } from '../components/GlobalContext';
 import { getIP } from '../components/Tool';
+import { jwtDecode } from 'jwt-decode';
+import basic from "../images/profile.png"
 
 // 기본 메뉴 항목 배열에서 signout 아이템은 action만 담고 to 는 비워둡니다
 const defaultMenu = [
@@ -30,29 +32,61 @@ const MenuItem = memo(({ item }) => (
 ));
 
 export default function ProfileDropdown({
-  user = { name: 'James Lee', avatar: 'https://cdn.startupful.io/img/app_logo/no_img.png' },
   menuItems = defaultMenu
 }) {
   const { sw, setSw } = useGlobal();
   const [isOpen, setIsOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const dropdownRef = useRef(null); 
+  const [member,setMember] = useState([]);
 
   const toggleOpen = useCallback(() => setIsOpen(v => !v), []);
 
-  useEffect(() => {
-    const handler = e => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handler);
-    document.addEventListener('touchstart', handler);
-    return () => {
-      document.removeEventListener('mousedown', handler);
-      document.removeEventListener('touchstart', handler);
-    };
-  }, []);
+  const jwt = sessionStorage.getItem('jwt');
+  let userInfo = null;
+  if (jwt != null) {
+    try {
+      userInfo = jwtDecode(jwt);
+      console.log("토큰있음");
+    } catch (err) {
+      console.error("JWT 디코딩 오류:", err);
+    }
+  } else {
+    console.log("토큰없음");
+  }
+  const member_no = userInfo?.member_no;
+  const img = member.member_img;
+  const nick = member.member_nick;
+  const name = member.member_name;
+
+ // 1. 사용자 정보 fetch
+useEffect(() => {
+  if (member_no != null) {
+    fetch(`http://${getIP()}:9093/member/read/${member_no}`, {
+      method: 'GET'
+    })
+      .then(res => res.json())
+      .then(data => setMember(data))
+      .catch(err => console.error(err));
+  }
+}, [userInfo?.member_no]);
+
+// 2. 드롭다운 외부 클릭 감지
+useEffect(() => {
+  const handler = e => {
+    if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+      setIsOpen(false);
+    }
+  };
+
+  document.addEventListener('mousedown', handler);
+  document.addEventListener('touchstart', handler);
+
+  return () => {
+    document.removeEventListener('mousedown', handler);
+    document.removeEventListener('touchstart', handler);
+  };
+}, []);
 
   // 로그아웃 처리 함수
   const handleLogout = async () => {
@@ -79,6 +113,7 @@ export default function ProfileDropdown({
 
   return (
     <div className="relative inline-block text-left" ref={dropdownRef}>
+      {jwt != null ?(
       <button
         onClick={toggleOpen}
         aria-haspopup="true"
@@ -86,24 +121,22 @@ export default function ProfileDropdown({
         className="flex items-center gap-3 px-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1E2028] rounded-lg shadow hover:shadow-md transition-all"
       >
         <img
-          src={user.avatar}
-          alt={`${user.name} 프로필`}
+          src={img ? (`http://${getIP()}:9093/home/storage/${img}`) : `${basic}`}
+          alt={`${name} 프로필`}
           className="w-10 h-10 rounded-full object-cover"
         />
-        <span className="text-sm font-medium text-gray-900 dark:text-white">{user.name}</span>
-      </button>
+        <span className="text-sm font-medium text-gray-900 dark:text-white">{nick} 님</span>
+      </button> ) : 
+      <button
+      onClick={() => setLoginOpen(true)}
+      aria-haspopup="true"
+      aria-expanded={isOpen}
+      className="flex items-center gap-3 px-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1E2028] rounded-lg shadow hover:shadow-md transition-all"
+       > <span className="text-sm font-medium text-gray-900 dark:text-white">로그인이 필요합니다</span> </button> 
+      }
 
       {isOpen && (
         <div className="absolute right-0 mt-3 w-64 z-50 bg-white dark:bg-[#1E2028] rounded-lg shadow-lg p-2 space-y-1">
-          {!sw && (
-            <button
-              onClick={() => setLoginOpen(true)}
-              className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-[#2A2C36] rounded-md"
-            >
-              로그인
-            </button>
-          )}
-
           {sw && (
             <>
               <div className="border-t border-gray-200 dark:border-gray-700" />
