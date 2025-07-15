@@ -31,7 +31,7 @@ import "./style/chat.css";
 import NotFound from "./pages/NotFound";
 
 function App() {
-  const { close, hideNavbar } = useGlobal();
+  const { close, hideNavbar,hideChatbot } = useGlobal();
 
   return (
     <>
@@ -54,14 +54,18 @@ function App() {
         <Route path="/notification/find_by_MemberNotification/:member_no" element={<NotificationLog/>} />
         <Route path="*" element={<NotFound/>} />
       </Routes>
-      {!close ?
-      <Chatbot
-        config={config}
-        messageParser={MessageParser}
-        actionProvider={ActionProvider}
-        placeholderText = "메세지를 입력해주세요"
-      /> : <ChatOpen />
-      }
+      {!hideChatbot && (
+        !close ? (
+          <Chatbot
+            config={config}
+            messageParser={MessageParser}
+            actionProvider={ActionProvider}
+            placeholderText="메세지를 입력해주세요"
+          />
+        ) : (
+          <ChatOpen />
+        )
+      )}
       {/* <Footer /> */}
     </>
   );  
