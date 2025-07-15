@@ -2,6 +2,8 @@ package dev.mvc.notification;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import dev.mvc.member.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -48,6 +50,7 @@ public class Notification {
   private String notification_nametype;
   
   /** 알림 생성일 */
+  @JsonFormat(pattern = "yyyy-MM-dd HH:MM")
   @Column(name = "notification_date", columnDefinition = "DATE", nullable = false)
   private LocalDateTime notification_date;
   
