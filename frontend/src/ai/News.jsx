@@ -81,9 +81,15 @@ const jwt = sessionStorage.getItem('jwt');
     <>
     <Link to="/">메인 메뉴로</Link>
     <Link to="/ai/newsfind">기사 보러가기</Link>
-    <button onClick={() => setNews({ res: '' })}>지우기</button>
+    <button className="btn btn-accent" onClick={() => setNews({ res: '' }  && setSummary({ res: ''}))}>지우기</button>
 
-    <div>
+    <div style={{marginRight:'60%'}}>
+      <h2>‼️기사 생성시‼️</h2>
+      <span>기사 생성시 이미지는 자동으로 만들어집니다!</span><br />
+      <span>다음 기사 생성시에는 "지우기"를 먼저 해주세요!!&nbsp;&nbsp;오류가 날수있습니다...</span>
+    </div>
+
+    <div style={{marginTop:'-3.5%'}}>
       <div className="dropdown dropdown-start" style={{margin:'5px'}}>
         <div tabIndex={0} role="button" className="btn btn-accent">호/악재 생성</div> 
         <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm" style={{width:'120%'}}>
