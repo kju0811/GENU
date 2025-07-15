@@ -17,6 +17,9 @@ export const GlobalProvider = ({ children }) => {
     () => Number(sessionStorage.getItem('member_no') || 0)
   );
 
+  const [hideNavbar,setHideNavbar] = useState(false);
+  const [hideChatbot,setHideChatbot] = useState(false);
+
   // 초기 paging 인덱스 설정 (한 번만 실행)
   useEffect(() => {
     sessionStorage.setItem('nextIndex', '0');
@@ -37,7 +40,7 @@ export const GlobalProvider = ({ children }) => {
   }, [member_no]);
 
   return (
-    <GlobalContext.Provider value={{ sw, setSw, member_no, setMember_no, close, setClose , option2, setOption2}}>
+    <GlobalContext.Provider value={{ sw, setSw, member_no, setMember_no, close, setClose , option2, setOption2, hideNavbar, setHideNavbar, hideChatbot,setHideChatbot}}>
       {children}
     </GlobalContext.Provider>
   );
