@@ -26,7 +26,7 @@ function NotFound() {
     <div style={{position:'relative',left:'25%',zIndex:'0',top:'30%',textAlign:'center'}}>
     <h1 style={{fontSize:'80px'}}>404 NotFound</h1>
     <h2>요청하신 페이지는 없는 페이지입니다</h2><br />
-    <button onClick={() => back()} className="btn btn-soft btn-error">되돌아가기 ↩️</button>
+    <span onClick={() => back()} style={{cursor:'pointer',color:'blue',fontSize:'20px',fontWeight:'bold'}}>⬅ 되돌아가기</span>
     </div>
 
     <div style={{position: 'relative', right:'25%', width:'50%',marginTop:'-15%'}}>
