@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { getIP } from "./Tool";
+import { jwtDecode } from 'jwt-decode';
 
 /**
  * OrderForm
@@ -28,11 +30,87 @@ export default function OrderForm({ coin_no }) {
     setQuantity(qty);
   };
 
-  const handleSubmit = e => {
+  let [memberNo, setMemberNo] = useState(null);
+  const jwt = sessionStorage.getItem("jwt");
+  // const token = localStorage.getItem('token');
+  const [myprice, setMyprice] = useState(0);
+
+  const handleSubmit = async e => {
     e.preventDefault();
     // TODO: 주문 API 호출 로직
     console.log({ coin_no, side, type, price, quantity });
+    const dto = {
+      coin: {"coin_no": coin_no},
+      member: {"member_no": memberNo},
+      price: parseInt(price),
+      cnt: parseInt(quantity),
+    };
+    console.log("dto -> ", dto)
+
+    // try {
+    //   if (side == "buy"){
+    //     fetch(`http://${getIP()}:9093/deal/buydeal`, {
+    //       method: 'POST',
+    //       headers : { 
+    //         'Authorization' : jwt ,
+    //         'Content-Type': 'application/json'
+    //       },
+    //       body: JSON.stringify(dto)
+    //     }).then(result => result.json())
+    //     .then(data => {
+    //       console.log("date -> ", data)
+    //       if (data.deal_no > 0) {
+    //         alert('매수 주문 완료!');
+    //         window.location.reload();
+    //       } else {
+    //         alert('매수 주문 실패. 다시 시도하세요.');
+    //       }
+
+    //     })
+    //     .catch(err => console.error(err))
+
+    //   } else if (side == "sell") {
+
+    //   }
+    // } catch (err) {
+    //   console.error(err);
+    //   alert('서버 오류 발생');
+    // }
+
+
   };
+
+
+
+
+
+  useEffect(() => {
+    try {
+      const decoded = jwtDecode(jwt);
+      console.log(decoded);
+      const decodedMemberNo = decoded.member_no;
+      setMemberNo(decoded.member_no);
+
+      console.log("member_no -> ", decodedMemberNo);
+      fetch(`http://${getIP()}:9093/pay/my/${decodedMemberNo}`, {
+        method: 'GET',
+        headers : { 'Authorization' : jwt }
+
+      })
+      .then(result => result.json())
+      .then(data => {
+        console.log("돈date -> ", data)
+        setMyprice(data);
+
+      })
+      .catch(err => console.error(err))
+
+    } catch (err) {
+      console.error("Invalid token:", err.message);
+      setMyprice(0);
+    }
+  }, [jwt])
+
 
   return (
     <form onSubmit={handleSubmit} className="bg-white dark:bg-[#1E2028] rounded-lg p-4 shadow space-y-4">
@@ -47,6 +125,12 @@ export default function OrderForm({ coin_no }) {
       <div className="flex space-x-2">
         <button type="button" onClick={() => setType('limit')} className={`${type==='limit'? 'font-medium':'text-gray-500'} text-sm`}>지정가</button>
         <button type="button" onClick={() => setType('market')} className={`${type==='market'? 'font-medium':'text-gray-500'} text-sm`}>시장가</button>
+      </div>
+
+      <div>
+        보유금액 : {typeof myprice === 'object'
+          ? (myprice.message || JSON.stringify(myprice))
+          : Number(myprice).toLocaleString()} 누렁
       </div>
 
       {/* 가격 입력 (지정가일 때만 표시) */}
@@ -74,7 +158,7 @@ export default function OrderForm({ coin_no }) {
         총 주문 금액: <span className="font-medium">{total}</span> 원
       </div>
 
-      <button type="submit" className="w-full py-2 bg-green-500 text-white rounded font-medium">{side==='buy'?'매수':'매도'} 예약</button>
+      <button type="submit" className="w-full py-2 bg-green-500 text-white rounded font-medium">{side==='buy'?'매수':'매도'} 주문</button>
     </form>
   )
 }
