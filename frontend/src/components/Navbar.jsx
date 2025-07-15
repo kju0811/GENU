@@ -48,7 +48,7 @@ export default function Navbar() {
           홈
         </NavLink>
         <NavLink
-          to="/ai/news"
+          to="/ai/newsfind"
           className={({ isActive }) =>
             `px-3 py-1 rounded-xl font-medium transition ${
               isActive ? 'text-blue-600 border-b-2 border-blue-600' : 'hover:text-blue-600'
