@@ -18,6 +18,7 @@ function NotFound() {
         // 컴포넌트가 언마운트될 때 (다른 페이지로 이동할 때) 네비바 다시 보이기
         return () => {
         setHideNavbar(false);
+        setHideChatbot(false);
         };
     }, [setHideNavbar]);
 
