@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.SequenceGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,6 +26,7 @@ import lombok.ToString;
 //    address2       VARCHAR(50)   NULL,            -- 주소 2
 //    member_date    DATE          NOT NULL,        -- 가입일
 //    member_grade   NUMBER(2)     NOT NULL,        -- 회원등급
+//    member_img    VARCHAR(45)   NOT NULL, -- 회원이미지
 //    member_nick    VARCHAR(45)   NOT NULL UNIQUE, -- 활동명
 //    PRIMARY KEY (member_no)
 //  );
@@ -84,8 +86,19 @@ public class Member {
   private String member_nick = "";
   
   /** 멤버 이미지 */
-  @Column(name = "member_img")
+  @Column(name = "member_img", nullable = false)
   private String member_img="";
+  
+  /** 멤버 생년월일(8자리 고정) */
+  @Column(name = "member_birth", nullable = false, length = 8)
+  private String memberBirth="";  
+  
+  @PrePersist
+  public void prePersist() {
+    if (this.memberDate == null) {
+      this.memberDate = LocalDateTime.now();
+    }
+  }
   
   public String getRole() {
     String grade_str = "GUEST";

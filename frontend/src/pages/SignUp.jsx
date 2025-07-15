@@ -1,208 +1,200 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getIP, getNowDate } from '../components/Tool';
 
 export default function SignUp() {
-  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const [step, setStep] = useState(1);
+  const [showPswd, setShowPswd] = useState(false);
 
-  const getPasswordStrength = (pwd) => {
-    let strength = 0;
-    if (pwd.length >= 8) strength++;
-    if (/[A-Z]/.test(pwd) && /[a-z]/.test(pwd)) strength++;
-    if (/[0-9]/.test(pwd)) strength++;
-    return strength;
+  // Step1: Account Info
+  const [id, setId] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPw, setConfirmPw] = useState('');
+  const [agree, setAgree] = useState(false);
+
+  // Step2: Profile Info
+  const [name, setName] = useState('');
+  const [birth, setBirth] = useState('');
+  const [tel, setTel] = useState('');
+  const [zipcode, setZipcode] = useState('');
+  const [address1, setAddress1] = useState('');
+  const [address2, setAddress2] = useState('');
+  const [nick, setNick] = useState('');
+  const [avatar, setAvatar] = useState(null);
+
+  // Move to Step2 after validating Step1
+  const handleNext = () => {
+    if (!id || !password || !confirmPw || password !== confirmPw || !agree) {
+      alert('이메일, 비밀번호 일치 및 약관 동의가 필요합니다.');
+      return;
+    }
+    setStep(2);
   };
 
-  const strength = getPasswordStrength(password);
-  const strengthText = ["Too weak", "Weak", "Medium", "Strong"][strength];
+  // Final submit with FormData
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const handleSubmit = (e) => {
-    e.preventDefault(); 
-    console.log("Form submitted");
-    // 추가 처리 로직 작성 가능
+    console.log("Birth: ", birth);
+    const formattedBirth = birth.replace(/-/g, '');
+    console.log("formattedBirth: ", formattedBirth);
+
+    const member = {
+      memberId: id,
+      memberPw: password,
+      member_name: name,
+      member_tel: tel,
+      memberBirth: formattedBirth,
+      zipcode,
+      address1,
+      address2,
+      member_grade: 10,
+      member_nick: nick
+    };
+
+    const formData = new FormData();
+    formData.append('member', new Blob([JSON.stringify(member)], { 
+      type: 'application/json' 
+    }));
+    if (avatar) formData.append('file', avatar);
+
+    try {
+      const res = await fetch(`http://${getIP()}:9093/member/create`, {
+        method: 'POST',
+        body: formData
+      });
+      const result = await res.json();
+      if (result.member_no) {
+        setStep(3);
+      } else {
+        alert('회원가입 실패: 다시 시도해주세요.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('서버 오류 발생');
+    }
   };
 
   return (
-    <div className="w-full min-h-screen bg-white dark:bg-[#1E2028] text-black dark:text-white">
-      {/* Header */}
-      <header className="w-full border-b border-gray-100 dark:border-gray-800">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-8">
-              <img
-                src="https://cdn.startupful.io/img/app_logo/no_img.png"
-                alt="Logo"
-                className="w-10 h-10"
+    <div className="w-full min-h-screen bg-white dark:bg-[#1E2028] text-black dark:text-white flex items-center justify-center p-4">
+      <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        {/* Progress */}
+        <div className="flex justify-between mb-6">
+          {['Account','Profile','Complete'].map((label, i) => (
+            <div key={i} className="flex-1 text-center">
+              <div className={`mx-auto w-8 h-8 rounded-full flex items-center justify-center mb-1 \
+                ${step-1 >= i ? 'bg-indigo-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-500'}`}>
+                {i+1}
+              </div>
+              <span className={`${step-1 >= i ? 'text-indigo-600' : 'text-gray-500 dark:text-gray-400'} text-xs`}>
+                {label}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* Step 1: Account */}
+        {step === 1 && (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+              <input
+                type="email"
+                value={id}
+                onChange={e => setId(e.target.value)}
+                className="w-full border rounded p-2"
+                placeholder="you@example.com"
+                required
               />
-              <nav className="hidden md:flex items-center space-x-6">
-                <a href="#" className="text-sm text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white">Products</a>
-                <a href="#" className="text-sm text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white">Solutions</a>
-                <a href="#" className="text-sm text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white">Resources</a>
-              </nav>
             </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Main */}
-      <main className="max-w-7xl mx-auto px-6 py-12">
-        <div className="max-w-xl mx-auto">
-          {/* Progress Steps */}
-          <div className="flex justify-between mb-8">
-            {["Account", "Profile", "Complete"].map((label, idx) => (
-              <React.Fragment key={label}>
-                <div className="flex flex-col items-center">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${
-                    idx === 0 ? "bg-indigo-500 text-white" : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
-                  }`}>
-                    {idx + 1}
-                  </div>
-                  <span className={`text-xs mt-2 ${
-                    idx === 0 ? "text-indigo-500" : "text-gray-500 dark:text-gray-400"
-                  }`}>{label}</span>
-                </div>
-                {idx < 2 && (
-                  <div className="flex-1 flex items-center px-4">
-                    <div className={`h-0.5 w-full ${
-                      idx === 0 ? "bg-indigo-500" : "bg-gray-200 dark:bg-gray-700"
-                    }`} />
-                  </div>
-                )}
-              </React.Fragment>
-            ))}
-          </div>
-
-          {/* Form */}
-          <div className="bg-gray-50 dark:bg-[#252731] rounded-2xl p-8">
-            <div className="mb-8">
-              <h1 className="text-2xl font-semibold mb-2">Create your account</h1>
-              <p className="text-gray-500 dark:text-gray-400">
-                Enter your details to get started with your free account.
-              </p>
+            <div className="relative">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
+              <input
+                type={showPswd ? 'text' : 'password'}
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 pr-10"
+                required
+                minLength={8}
+              />
+              <span
+                className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+                onMouseDown={() => setShowPswd(true)}
+                onMouseUp={() => setShowPswd(false)}
+                onMouseLeave={() => setShowPswd(false)}
+              >{showPswd ? '🙉' : '🙈'}</span>
             </div>
-
-            <form className="space-y-6" onSubmit={handleSubmit}>
-              {/* 이름 */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="firstName" className="block text-sm font-medium mb-2">First name</label>
-                  <input
-                    type="text"
-                    id="firstName"
-                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#1E2028] focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                    required
-                  />
-                </div>
-                <div>
-                  <label htmlFor="lastName" className="block text-sm font-medium mb-2">Last name</label>
-                  <input
-                    type="text"
-                    id="lastName"
-                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#1E2028] focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                    required
-                  />
-                </div>
-              </div>
-
-              {/* 이메일 */}
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium mb-2">Work email</label>
-                <input
-                  type="email"
-                  id="email"
-                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#1E2028] focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                  required
-                />
-              </div>
-
-              {/* 비밀번호 */}
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium mb-2">Password</label>
-                <div className="relative">
-                  <input
-                    type="password"
-                    id="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#1E2028] focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                    required
-                  />
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center space-x-1">
-                    {[0, 1, 2].map((i) => (
-                      <div
-                        key={i}
-                        className={`w-2 h-6 rounded-full ${
-                          i < strength
-                            ? strength === 1
-                              ? "bg-red-500"
-                              : strength === 2
-                              ? "bg-yellow-500"
-                              : "bg-green-500"
-                            : "bg-gray-200 dark:bg-gray-700"
-                        }`}
-                      />
-                    ))}
-                  </div>
-                </div>
-                <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                  Password strength: {strengthText}
-                </p>
-              </div>
-
-              {/* 회사 */}
-              <div>
-                <label htmlFor="company" className="block text-sm font-medium mb-2">Company name</label>
-                <input
-                  type="text"
-                  id="company"
-                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#1E2028] focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                  required
-                />
-              </div>
-
-              {/* 약관 동의 */}
-              <div className="space-y-4">
-                <label className="flex items-start space-x-3">
-                  <input type="checkbox" className="mt-1 rounded border-gray-300 dark:border-gray-600 text-indigo-500 focus:ring-indigo-500" required />
-                  <span className="text-sm text-gray-500 dark:text-gray-400">
-                    I agree to the <a href="#" className="text-indigo-500 hover:text-indigo-600">Terms of Service</a> and <a href="#" className="text-indigo-500 hover:text-indigo-600">Privacy Policy</a>
-                  </span>
-                </label>
-                <label className="flex items-start space-x-3">
-                  <input type="checkbox" className="mt-1 rounded border-gray-300 dark:border-gray-600 text-indigo-500 focus:ring-indigo-500" />
-                  <span className="text-sm text-gray-500 dark:text-gray-400">
-                    Send me occasional product updates, announcements, and offers.
-                  </span>
-                </label>
-              </div>
-
-              {/* 제출 버튼 */}
-              <button
-                type="submit"
-                className="w-full py-2.5 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-[#252731] transition-colors"
-              >
-                Continue to Profile
-              </button>
-            </form>
-          </div>
-        </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="w-full border-t border-gray-100 dark:border-gray-800 mt-12">
-        <div className="max-w-7xl mx-auto px-6 py-8">
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <div className="flex items-center space-x-4">
-              <img src="https://cdn.startupful.io/img/app_logo/no_img.png" alt="Logo" className="w-8 h-8" />
-              <span className="text-sm text-gray-500 dark:text-gray-400">© 2024 Company. All rights reserved.</span>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Confirm Password</label>
+              <input
+                type="password"
+                value={confirmPw}
+                onChange={e => setConfirmPw(e.target.value)}
+                className="w-full border rounded p-2"
+                required
+                minLength={8}
+              />
             </div>
-            <div className="flex items-center space-x-6">
-              <a href="#" className="text-sm text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white">Privacy</a>
-              <a href="#" className="text-sm text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white">Terms</a>
-              <a href="#" className="text-sm text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white">Support</a>
-              <a href="#" className="text-sm text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white">Contact</a>
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                checked={agree}
+                onChange={e => setAgree(e.target.checked)}
+                className="mr-2"
+                required
+              />
+              <span className="text-sm">약관에 동의합니다</span>
             </div>
+            <button
+              type="button"
+              onClick={handleNext}
+              className="w-full py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
+            >Next</button>
           </div>
-        </div>
-      </footer>
+        )}
+
+        {/* Step 2: Profile */}
+        {step === 2 && (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div><label className="block text-sm">Name</label>
+              <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full border rounded p-2" required />
+            </div>
+            <div><label className="block text-sm">Birth</label>
+              <input type="date" value={birth} onChange={e => setBirth(e.target.value)} className="w-full border rounded p-2" required />
+            </div>
+            <div><label className="block text-sm">Phone</label>
+              <input type="tel" value={tel} onChange={e => setTel(e.target.value)} className="w-full border rounded p-2" required />
+            </div>
+            <div><label className="block text-sm">Address</label>
+              <div className="flex space-x-2">
+                <input type="text" value={zipcode} onChange={e => setZipcode(e.target.value)} placeholder="Zip" className="border rounded p-2 w-1/4" required />
+                <input type="text" value={address1} onChange={e => setAddress1(e.target.value)} placeholder="Address1" className="border rounded p-2 flex-1" required />
+              </div>
+              <input type="text" value={address2} onChange={e => setAddress2(e.target.value)} placeholder="Address2" className="mt-2 border rounded p-2 w-full" />
+            </div>
+            <div><label className="block text-sm">Nickname</label>
+              <input type="text" value={nick} onChange={e => setNick(e.target.value)} className="w-full border rounded p-2" required />
+            </div>
+            <div><label className="block text-sm">Avatar</label>
+              <input type="file" accept="image/*" onChange={e => setAvatar(e.target.files[0])} className="w-full" />
+            </div>
+            <div className="flex justify-between">
+              <button type="button" onClick={() => setStep(1)} className="px-4 py-2 bg-gray-200 rounded">Prev</button>
+              <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded">Submit</button>
+            </div>
+          </form>
+        )}
+
+        {/* Step 3: Complete */}
+        {step === 3 && (
+          <div className="text-center space-y-4">
+            <h3 className="text-xl font-semibold">회원가입 완료!</h3>
+            <p className="text-gray-600">계정이 성공적으로 생성되었습니다.</p>
+            <button onClick={() => navigate('/')} className="px-6 py-2 bg-indigo-600 text-white rounded">홈으로 가기</button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
