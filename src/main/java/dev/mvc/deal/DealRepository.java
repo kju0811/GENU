@@ -61,6 +61,12 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
       + "LOWER(d.coin.coin_name) LIKE LOWER(CONCAT('%', :coin_name, '%'))")
   Page<Deal> findDealsByMemberSearch(@Param("member_no") Long member_no, @Param("coin_name") String coin_name, Pageable pageable);
  
-  
+  // 멤버가 해당 코인에 주문한 거래내역 날짜 내림차 순 반환, 주문 체결X
+  @Query("SELECT d FROM Deal d "
+      + "WHERE d.member.member_no = :member_no "
+      + "AND d.coin.coin_no = :coin_no "
+      + "AND d.deal_type IN (3, 4) "
+      + "ORDER BY deal_date DESC")
+  List<Deal> findDealsByMemberCoin(@Param("member_no") Long member_no, @Param("coin_no") Long coin_no);
   
 }
