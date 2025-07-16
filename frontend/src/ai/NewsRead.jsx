@@ -109,8 +109,7 @@ useEffect(() => {
         .then(response => {
           if (response.ok) {
             alert('뉴스가 성공적으로 삭제 되었습니다');
-            const query = `?page=${page}${word ? `&word=${encodeURIComponent(word)}` : ''}`;
-            window.location.href = `/ai/newsfind${query}`;
+            history.back();
           } else {
             alert('삭제에 실패하였습니다');
           }
@@ -284,6 +283,9 @@ useEffect(() => {
                   >
                     댓글
                   </button>
+                  {userInfo?.role === 'ADMIN' && (
+                  <button onClick={deleteNews}>뉴스 삭제하기</button>
+                  )}
                 </div>
               </div>
             </div>) : <textarea
@@ -296,8 +298,8 @@ useEffect(() => {
                       />}
           </div>
         </div>
-      </div>
 
+      </div>
     </div>
   );
 }
