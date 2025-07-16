@@ -119,8 +119,11 @@ export default function OrderForm({ coin_no, defaultPrice }) {
       const decodedMemberNo = decoded.member_no;
       setMemberNo(decoded.member_no);
 
-      console.log("member_no -> ", decodedMemberNo);
-      fetch(`http://${getIP()}:9093/pay/my/${decodedMemberNo}`, {
+      
+      const endpoint = side === 'buy' 
+      ? `http://${getIP()}:9093/pay/my/${decodedMemberNo}` 
+      : `http://${getIP()}:9093/deal/get_total_cnt/${decodedMemberNo}/${coin_no}`;
+      fetch(endpoint, {
         method: 'GET',
         headers : { 'Authorization' : jwt }
 
@@ -137,7 +140,8 @@ export default function OrderForm({ coin_no, defaultPrice }) {
       console.error("Invalid token:", err.message);
       setMyprice(0);
     }
-  }, [jwt])
+
+  }, [jwt, side])
 
 
   return (
@@ -156,9 +160,27 @@ export default function OrderForm({ coin_no, defaultPrice }) {
       </div>
 
       <div>
-        보유금액 : {typeof myprice === 'object'
-          ? (myprice.message || JSON.stringify(myprice))
-          : Number(myprice).toLocaleString()} 누렁
+        {side === 'buy' && (
+          <div>
+            보유금액 : {
+              typeof myprice === 'object'
+                ? (myprice.message || JSON.stringify(myprice))
+                : Number(myprice).toLocaleString()
+            } 누렁
+          </div>
+        )}
+
+        {side === 'sell' && (
+          <div>
+            매도 가능 수량 : {myprice} 개
+          </div>
+        )}
+
+        {side === 'list' && (
+          <div>
+            최근 거래 내역을 확인하세요.
+          </div>
+        )}
       </div>
 
       {/* 가격 입력 (지정가일 때만 표시) */}
