@@ -198,4 +198,18 @@ public class DealController {
     return dealService.getTotalCnt(member_no, coin_no);
   }
 
+  /**
+   * 멤버가 해당 코인에 주문한 거래내역 날짜 내림차 순 반환
+   * http://localhost:9093/deal/find_deal_by_member_coin/1/1
+   * @param member_no
+   * @param coin_no
+   * @return
+   */
+  @GetMapping(path = "/find_deal_by_member_coin/{member_no}/{coin_no}")
+  public List<Deal> find_deal_by_member_coin(@PathVariable(name="member_no") Long member_no,
+                                                     @PathVariable(name="coin_no") Long coin_no) {
+    List<Deal> list = dealService.find_deal_by_member_coin(member_no, coin_no);
+   
+    return list;
+  }
 }

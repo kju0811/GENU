@@ -294,4 +294,9 @@ public class DealService {
         throw new IllegalArgumentException("오류가 발생했습니다.");
     }
   }
+  
+  /** 멤버가 해당 코인에 주문한 거래내역 날짜 내림차 순 반환 */
+  public List<Deal> find_deal_by_member_coin(Long member_no, Long coin_no) {
+    return dealRepository .findDealsByMemberCoin(member_no, coin_no);
+  }
 }
