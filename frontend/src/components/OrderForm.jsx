@@ -155,6 +155,39 @@ export default function OrderForm({ coin_no, defaultPrice }) {
 
   }, [jwt, side])
 
+  // 거래내역에서 취소 시
+  const handleCancel = (dealNo, dealTpye) => {
+    let endpoint = '';
+    console.log("deal_no -> ", dealNo);
+    console.log("dealTpye -> ", dealTpye);
+    if (confirm('정말 해당 매매주문을 취소하시겠습니까?')) {
+      if (dealTpye === 3) { // 매수 주문일 시
+        endpoint = `http://${getIP()}:9093/deal/buydeal/cancel/${dealNo}`;
+      } else if (dealTpye === 4) { // 매도 주문일 시
+        endpoint = `http://${getIP()}:9093/deal/selldeal/cancel/${dealNo}`;
+      }
+
+      fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          Authorization: jwt,
+        },
+      })
+      .then(res => {
+        if (res.ok) {
+          alert("주문이 취소되었습니다.");
+          window.location.reload()
+        } else {
+          throw new Error("주문 취소 실패!");
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert("거래 취소 중 오류가 발생했습니다.");
+      });
+    }
+  };
+
 
   return (
     <form onSubmit={handleSubmit} className="bg-white dark:bg-[#1E2028] rounded-lg p-4 shadow space-y-4">
@@ -233,22 +266,34 @@ export default function OrderForm({ coin_no, defaultPrice }) {
           <button type="submit" className="w-full py-2 bg-green-500 text-white rounded font-medium">{side === 'buy' ? '매수' : '매도'} 주문</button>
         </>
       ) : (
-        <>
-          <div className="text-gray-400 text-sm">
-              🧾 주문 내역 탭입니다. 여기에 내역 리스트 UI가 들어갈 수 있습니다.
-          </div>
-          <div style={{ textAlign: "center" }}>
-            <h5>거래 내역</h5>
-            <div className="flex flex-col gap-4 items-center">
-              <ul>
-                {myDealList.length > 0 ? myDealList.map((item, idx) => (
-                  <li key={idx}>  
-                  {item.deal_type === 3 ? "매수" : "매도"} / 예상 수수료:{item.deal_fee.toLocaleString()} / {item.deal_price.toLocaleString()}누렁 / {item.deal_cnt}개</li>
-                )) : <p>거래 내역이 없습니다.</p>}
-              </ul>
-            </div>
-          </div>
-        </>
+<>
+  <div className="text-gray-400 text-sm">
+    🧾 주문 내역 탭입니다. 여기에 내역 리스트 UI가 들어갈 수 있습니다.
+  </div>
+  <div style={{ textAlign: "center" }}>
+    <h5>거래 내역</h5>
+    <div className="flex flex-col gap-4 items-center">
+      <ul>
+        {myDealList.length > 0 ? myDealList.map((item, idx) => (
+          <li key={idx} className="flex justify-between items-center w-[400px] border-b py-2">
+            <span>
+              {item.deal_type === 3 ? "매수" : "매도"} / 
+              예상 수수료: {item.deal_fee.toLocaleString()} / 
+              {item.deal_price.toLocaleString()}누렁 / 
+              {item.deal_cnt}개
+            </span>
+            <button
+              className="ml-4 text-red-500 hover:text-red-700 font-bold"
+              onClick={() => handleCancel(item.deal_no, item.deal_type)}
+            >
+              ❌
+            </button>
+          </li>
+        )) : <p>거래 내역이 없습니다.</p>}
+      </ul>
+    </div>
+  </div>
+</>
       )}
     </form>
   )
