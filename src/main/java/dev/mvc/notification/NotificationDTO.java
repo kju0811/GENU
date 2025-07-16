@@ -12,4 +12,5 @@ public class NotificationDTO {
   private String notification_text;
   private String notification_nametype;
   private Member member;
+  private Long notification_targetno; 
 }
