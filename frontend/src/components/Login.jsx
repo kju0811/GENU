@@ -86,7 +86,7 @@ export default function Login({ isOpen, onClose }) {
     }
   };
 
-  const test = () => { setId('admin'); setPassword('1234'); };
+  const test = () => { setId('minjun@noye.net'); setPassword('1234'); };
 
   if (!isOpen) return null;
 
