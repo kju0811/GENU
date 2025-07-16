@@ -3,6 +3,8 @@ import { getIP } from '../components/Tool';
 import { Link, useSearchParams } from 'react-router-dom';
 import Pagination from 'react-js-pagination';
 import load from "../images/로딩.gif";
+import basic from "../images/profile.png"
+import { jwtDecode } from 'jwt-decode';
 
 export default function NewsFind() {
   const [data, setData] = useState([]);
@@ -13,6 +15,15 @@ export default function NewsFind() {
   const [word, setWord] = useState(wordParam);
   const size = 6;
   const [loading,setLoading] = useState(false);
+  const jwt = sessionStorage.getItem('jwt');
+  let userInfo = null;
+  if (jwt != null) {
+    try {
+      userInfo = jwtDecode(jwt);
+    } catch (err) {
+      console.error("JWT 디코딩 오류:", err);
+    }
+  } 
 
   useEffect(() => {
     const url = word
@@ -21,7 +32,10 @@ export default function NewsFind() {
     setLoading(true);
     fetch(url)
       .then(res => res.json())
-      .then(result => setData(result))
+      .then(result => { 
+        setData(result)
+        console.log("결과: ",result)
+      })
       .catch(err => console.error(err))
       .finally(() => setLoading(false));
   }, [word]);
@@ -45,9 +59,11 @@ export default function NewsFind() {
 
   return (
     <>
-      <Link to="/" className="text-indigo-600 hover:underline">메인 메뉴로</Link>
+      {userInfo?.role == "ADMIN" && (
+      <Link to="/ai/news" className="text-indigo-600 hover:underline">뉴스 생성하기</Link>
+      )}
 
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-6" style={{marginTop:'2%'}}>
         <input
           type="search"
           placeholder="Search..."
@@ -65,7 +81,7 @@ export default function NewsFind() {
             className="rounded-xl overflow-hidden bg-gray-50 dark:bg-[#252731] transition-transform hover:scale-[1.02]"
           >
             <img
-              src={item.news_img_url || 'https://cdn.startupful.io/img/app_logo/no_img2.png'}
+              src={item.file1 ? `http://${getIP()}:9093/home/storage/${item.file1}.jpg` : 'https://cdn.startupful.io/img/app_logo/no_img2.png'}
               alt={item.title}
               className="w-full h-48 object-cover"
             />
@@ -90,12 +106,12 @@ export default function NewsFind() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <img
-                    src={item.author_avatar || 'https://cdn.startupful.io/img/app_logo/no_img.png'}
-                    alt={item.author_name || 'Admin'}
+                    src={item.member.member_img ? `http://${getIP()}:9093/home/storage/${item.member.member_img}`: `${basic}`}
+                    alt={item.member.member_name}
                     className="w-8 h-8 rounded-full"
                   />
                   <span className="text-sm text-black dark:text-white">
-                    {item.author_name || 'Admin'}
+                    {item.member.member_nick}
                   </span>
                 </div>
                 <Link to={`/ai/read/${item.news_no}`}>  
