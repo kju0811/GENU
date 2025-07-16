@@ -14,19 +14,35 @@ export default function CoinDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('chart');
+  const [selectedPrice, setSelectedPrice] = useState(null);
+
+  // CoinDetail.jsx (요청 확인용)
+  const handleSelectPrice = price => {
+    console.log('Parent received price:', price);
+    setSelectedPrice(price);
+  };
 
   useEffect(() => {
-    fetch(`http://${getIP()}:9093/coin/${coin_no}`)
-      .then(res => res.json())
-      .then(data => {
-        setDetail(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error(err);
-        setError(err);
-        setLoading(false);
-      });
+    // 1) 데이터를 가져오는 함수로 분리
+    const fetchDetail = () => {
+      fetch(`http://${getIP()}:9093/coin/${coin_no}`)
+        .then(res => res.json())
+        .then(data => {
+          setDetail(data);
+          setLoading(false);
+          setSelectedPrice(data.coin_price);
+        })
+        .catch(err => {
+          console.error(err);
+          setError(err);
+          setLoading(false);
+        });
+    };
+  
+    fetchDetail();                         // 마운트 직후 1회 호출
+    const intervalId = setInterval(fetchDetail, 60000);  // 폴링방식채택 (소켓사용?몰루)
+  
+    return () => clearInterval(intervalId); // 언마운트 시 타이머 해제
   }, [coin_no]);
 
   if (loading) return <p>Loading...</p>;
@@ -41,7 +57,8 @@ export default function CoinDetail() {
   ];
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="w-[90%] mx-auto p-4">
+      {/* 헤더 */}
       <header className="flex items-center space-x-4 mb-6">
         <img
           src={`http://${getIP()}:9093/home/storage/${coin_img}`}
@@ -61,6 +78,7 @@ export default function CoinDetail() {
         </div>
       </header>
 
+      {/* 탭 메뉴 */}
       <nav className="flex space-x-4 border-b mb-4">
         {tabs.map(tab => (
           <button
@@ -80,17 +98,24 @@ export default function CoinDetail() {
       <div>
         {activeTab === 'chart' && (
           <div className="flex flex-col md:flex-row gap-4">
+            {/* 차트 */}
             <div className="w-full md:w-1/2">
-              <h3 className="text-lg font-semibold mb-2">ApexChart</h3>
               <ApexChart coin_no={coin_no} />
             </div>
+            {/* 호가창: 클릭 시 주문 가격을 상위로 전달 */}
             <div className="w-full md:w-1/3">
-              <h3 className="text-lg font-semibold mb-2">OrderBook</h3>
-              <OrderBook coin_no={coin_no} />
+              <OrderBook
+                coin_no={coin_no}
+                currentPrice={selectedPrice}
+                onSelectPrice={handleSelectPrice}
+              />
             </div>
+            {/* 주문 폼: defaultPrice로 선택된 가격 전달 */}
             <div className="w-full md:w-1/5">
-              <h3 className="text-lg font-semibold mb-2">주문</h3>
-              <OrderForm coin_no={coin_no} />
+              <OrderForm
+                coin_no={coin_no}
+                defaultPrice={selectedPrice}
+              />
             </div>
           </div>
         )}
