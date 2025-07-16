@@ -7,11 +7,13 @@ import basic from "../images/profile.png"
 export default function NewsRead() {
   const [data, setData] = useState("");
   const [reply,setReply] = useState("");
+  const [fixReply,setFixReply] = useState("");
   const [showReply,setShowReply] = useState([]);
   const [userReply,setUserReply] = useState([]);
   const [user,setUser] = useState([]);
   const [userData,setUserData] = useState([]);
   const [member,setMember] = useState([]);
+  const [editingReplyNo, setEditingReplyNo] = useState(null);
   const { news_no } = useParams();
 
   const filteredUserData = userData.filter(reply => reply.news.news_no == news_no);
@@ -117,12 +119,54 @@ useEffect(() => {
     }
   }
 
+  const deleteReply =(replyNo)=> {
+    if (window.confirm("댓글을 삭제하시겠습니까?")) {
+      fetch(`http://${getIP()}:9093/newsreply/delete/${replyNo}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': jwt
+        },
+      })
+        .then(response => {
+          if (response.ok) {
+            alert('댓글이 성공적으로 삭제 되었습니다');
+            fetchReplies();
+          } else {
+            alert('삭제에 실패하였습니다');
+          }
+        })
+    }
+  }
+
+  const updateReply =(editingReplyNo)=> {
+      let newsreply_no = editingReplyNo;
+      fetch(`http://${getIP()}:9093/newsreply/update/${newsreply_no}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': jwt
+        },
+        body: JSON.stringify({ "newsreply_content":fixReply })
+      })
+        .then(response => {
+          if (response.ok) {
+            setEditingReplyNo(null);
+            fetchReplies();
+          } else {
+            alert('수정에 실패하였습니다');
+          }
+        })
+  }
+
   return (
     <div className="w-[90%] mx-auto p-4">
-
       {/* 기사 */}
       <div className="bg-gray-50 rounded-xl overflow-hidden w-full">
         <div className="flex flex-col p-4 gap-4">
+          <div className="flex justify-end mt-2">
+            <button  onClick={() => history.back()}>이전으로</button>
+          </div>
           {/* 제목 & 날짜 */}
           <div className="w-[90%] mx-auto p-4">
             <div className="space-y-2">
@@ -150,18 +194,6 @@ useEffect(() => {
             <div className="space-y-2">
               <span>{data.content}</span>
             </div>
-            {/* 이전/다음 기사 */}
-            <div className="flex items-center gap-3 mt-2">
-              <button 
-                className="text-xs text-gray-500 dark:text-gray-400 hover:text-indigo-500">
-                답글
-              </button>
-              <button 
-                className="text-xs text-gray-500 dark:text-gray-400 hover:text-indigo-500">
-                답글
-              </button>
-            </div>
-
           </div>
         </div>
       </div>
@@ -173,7 +205,7 @@ useEffect(() => {
           {/* Comment Section */}
           <div className="space-y-6">
             {/* 본 댓글 */}
-            {filteredUser.map((member_no,index) => (
+            {filteredUser.map((memberno, index) => (
             <div key={index}>
             <div className="border-b dark:border-gray-700 pb-6">
               <div className="flex gap-4">
@@ -203,6 +235,62 @@ useEffect(() => {
                   <p className="text-sm text-black dark:text-white mb-3">
                     {filteredShowReply[index]}
                   </p>
+                  {(() => {
+                      const matchedMember = member.find(
+                        (m) => m.member_no === userData[index]?.member?.member_no
+                      );
+                      const replyNo = filteredUserData[index]?.newsreply_no;
+                      if (userInfo?.role === 'ADMIN' && replyNo) {
+                        return (
+                          <span style={{ fontSize: '13px', cursor: 'pointer' }} onClick={() => deleteReply(replyNo)}>
+                            댓글 삭제
+                          </span>
+                        );
+                      }
+                      if (userInfo?.member_no === matchedMember?.member_no && replyNo) {
+                        return (
+                          <span style={{ fontSize: '13px', cursor: 'pointer' }} onClick={() => deleteReply(replyNo)}>
+                            댓글 삭제
+                          </span>
+                        );
+                      }
+                      return null;
+                    })()}
+                  {(() => {
+                    const matchedMember = userData[index]?.member;
+                    const replyNo = filteredUserData[index]?.newsreply_no;
+                    return userInfo?.member_no === matchedMember?.member_no && replyNo ? (
+                      <span style={{fontSize: '13px',cursor:'pointer'}} onClick={() => setEditingReplyNo(replyNo)}> / 댓글 수정</span>
+                    ) : null;
+                  })()}
+                  
+                  {editingReplyNo === filteredUserData[index]?.newsreply_no && (
+                    <div className="mt-2">
+                      <textarea
+                        className="w-full p-3 text-sm bg-gray-50 dark:bg-[#252731] text-black dark:text-white rounded-lg border border-gray-200 dark:border-gray-700 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                        style={{ resize: "none" }}
+                        onChange={(e) => setFixReply(e.target.value)} 
+                        defaultValue={filteredShowReply[index]}
+                        rows={3}
+                      />
+
+                      {/* 버튼 영역 */}
+                      <div className="flex justify-end gap-2 mt-2">
+                        <button
+                          className="px-3 py-1 text-sm text-gray-500 hover:text-gray-700"
+                          onClick={() => setEditingReplyNo(null)} // 취소
+                        >
+                          취소
+                        </button>
+                        <button
+                          className="px-4 py-1 text-sm bg-indigo-500 text-white rounded hover:bg-indigo-600"
+                          onClick={() => updateReply(editingReplyNo)} // 등록 함수 호출
+                        >
+                          수정
+                        </button>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Action Buttons */}
                   {/* <div className="flex gap-4 items-center"> */}
@@ -262,7 +350,16 @@ useEffect(() => {
             {userInfo?.role == "USER" || userInfo?.role == "ADMIN" ? (
             <div className="flex gap-4 items-start pt-4">
               <img
-                src="https://cdn.startupful.io/img/app_logo/no_img.png"
+                src={
+                    (() => {
+                      const matchedMember = member.find(
+                        (m) => m.member_no === userInfo?.member_no
+                      );
+                      return matchedMember?.member_img
+                        ? `http://${getIP()}:9093/home/storage/${matchedMember.member_img}`
+                        : basic; // 기본 이미지
+                    })()
+                  }
                 alt="MemberImg"
                 className="w-8 h-8 rounded-full"
               />
@@ -284,7 +381,7 @@ useEffect(() => {
                     댓글
                   </button>
                   {userInfo?.role === 'ADMIN' && (
-                  <button onClick={deleteNews}>뉴스 삭제하기</button>
+                  <button className="btn btn-warning" onClick={deleteNews}>뉴스 삭제하기</button>
                   )}
                 </div>
               </div>
