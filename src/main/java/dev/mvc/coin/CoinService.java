@@ -241,6 +241,7 @@ public class CoinService {
           NotificationDTO notificationDTO = new NotificationDTO(); // DTO 생성
           notificationDTO.setNotification_text(msg);
           notificationDTO.setNotification_nametype("금액알림");
+          notificationDTO.setNotification_targetno(coin.getCoin_no());
           notificationDTO.setMember(getn.getMember());
           
           if (getn.getNotice_type() == 1) { // 알림 금액이 변동된 현재가 보다 상승해야함
