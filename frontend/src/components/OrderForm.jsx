@@ -47,8 +47,8 @@ export default function OrderForm({ coin_no, defaultPrice }) {
 
     console.log({ coin_no, side, type, price, quantity });
     const dto = {
-      coin: {"coin_no": coin_no},
-      member: {"member_no": memberNo},
+      coin: { "coin_no": coin_no },
+      member: { "member_no": memberNo },
       price: type === 'market'
         ? defaultPrice
         : parseInt(price, 10),
@@ -57,26 +57,26 @@ export default function OrderForm({ coin_no, defaultPrice }) {
     console.log("dto -> ", dto)
 
     try {
-      if (side == "buy"){
+      if (side == "buy") {
         fetch(`http://${getIP()}:9093/deal/buydeal`, {
           method: 'POST',
-          headers : { 
-            'Authorization' : jwt ,
+          headers: {
+            'Authorization': jwt,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(dto)
         }).then(result => result.json())
-        .then(data => {
-          console.log("date -> ", data)
-          if (data.deal_no > 0) {
-            alert('매수 주문 완료!');
-            window.location.reload();
-          } else {
-            alert('매수 주문 실패. 다시 시도하세요.');
-          }
+          .then(data => {
+            console.log("date -> ", data)
+            if (data.deal_no > 0) {
+              alert('매수 주문 완료!');
+              window.location.reload();
+            } else {
+              alert('매수 주문 실패. 다시 시도하세요.');
+            }
 
-        })
-        .catch(err => console.error(err))
+          })
+          .catch(err => console.error(err))
 
       } else if (side == "sell") {
 
@@ -84,23 +84,23 @@ export default function OrderForm({ coin_no, defaultPrice }) {
 
         fetch(`http://${getIP()}:9093/deal/selldeal`, {
           method: 'POST',
-          headers : { 
-            'Authorization' : jwt ,
+          headers: {
+            'Authorization': jwt,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(dto)
         }).then(result => result.json())
-        .then(data => {
-          console.log("date -> ", data)
-          if (data.deal_no > 0) {
-            alert('매도 주문 완료!');
-            window.location.reload();
-          } else {
-            alert('매도 주문 실패. 다시 시도하세요.');
-          }
+          .then(data => {
+            console.log("date -> ", data)
+            if (data.deal_no > 0) {
+              alert('매도 주문 완료!');
+              window.location.reload();
+            } else {
+              alert('매도 주문 실패. 다시 시도하세요.');
+            }
 
-        })
-        .catch(err => console.error(err))
+          })
+          .catch(err => console.error(err))
 
       }
     } catch (err) {
@@ -110,7 +110,7 @@ export default function OrderForm({ coin_no, defaultPrice }) {
 
 
   };
-  
+
 
   useEffect(() => {
     try {
@@ -119,22 +119,22 @@ export default function OrderForm({ coin_no, defaultPrice }) {
       const decodedMemberNo = decoded.member_no;
       setMemberNo(decoded.member_no);
 
-      
-      const endpoint = side === 'buy' 
-      ? `http://${getIP()}:9093/pay/my/${decodedMemberNo}` 
-      : `http://${getIP()}:9093/deal/get_total_cnt/${decodedMemberNo}/${coin_no}`;
+
+      const endpoint = side === 'buy'
+        ? `http://${getIP()}:9093/pay/my/${decodedMemberNo}`
+        : `http://${getIP()}:9093/deal/get_total_cnt/${decodedMemberNo}/${coin_no}`;
       fetch(endpoint, {
         method: 'GET',
-        headers : { 'Authorization' : jwt }
+        headers: { 'Authorization': jwt }
 
       })
-      .then(result => result.json())
-      .then(data => {
-        console.log("돈date -> ", data)
-        setMyprice(data);
+        .then(result => result.json())
+        .then(data => {
+          console.log("돈date -> ", data)
+          setMyprice(data);
 
-      })
-      .catch(err => console.error(err))
+        })
+        .catch(err => console.error(err))
 
     } catch (err) {
       console.error("Invalid token:", err.message);
@@ -148,81 +148,83 @@ export default function OrderForm({ coin_no, defaultPrice }) {
     <form onSubmit={handleSubmit} className="bg-white dark:bg-[#1E2028] rounded-lg p-4 shadow space-y-4">
       {/* 매수/매도/내역 탭 */}
       <div className="flex space-x-4">
-        <button type="button" onClick={() => setSide('buy')} className={`${side==='buy'? 'bg-blue-500 text-white':'bg-gray-100 dark:bg-[#2A2C36] text-gray-500'} flex-1 py-2 rounded`}>매수</button>
-        <button type="button" onClick={() => setSide('sell')} className={`${side==='sell'? 'bg-red-500 text-white':'bg-gray-100 dark:bg-[#2A2C36] text-gray-500'} flex-1 py-2 rounded`}>매도</button>
-        <button type="button" onClick={() => setSide('list')} className={`${side==='list'? 'bg-red-500 text-white':'bg-gray-100 dark:bg-[#2A2C36] text-gray-500'} flex-1 py-2 rounded`}>내역</button>
+        <button type="button" onClick={() => setSide('buy')} className={`${side === 'buy' ? 'bg-red-500 text-white' : 'bg-gray-100 dark:bg-[#2A2C36] text-gray-500'} flex-1 py-2 rounded`}>매수</button>
+        <button type="button" onClick={() => setSide('sell')} className={`${side === 'sell' ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-[#2A2C36] text-gray-500'} flex-1 py-2 rounded`}>매도</button>
+        <button type="button" onClick={() => setSide('list')} className={`${side === 'list' ? 'bg-green-500 text-white' : 'bg-gray-100 dark:bg-[#2A2C36] text-gray-500'} flex-1 py-2 rounded`}>내역</button>
       </div>
 
-      {/* 주문 유형 선택 */}
-      <div className="flex space-x-2">
-        <button type="button" onClick={() => setType('limit')} className={`${type==='limit'? 'font-medium':'text-gray-500'} text-sm`}>지정가</button>
-        <button type="button" onClick={() => setType('market')} className={`${type==='market'? 'font-medium':'text-gray-500'} text-sm`}>시장가</button>
-      </div>
+      {side !== 'list' ? (
+        <>
+          {/* 주문 유형 선택 */}
+          <div className="flex space-x-2">
+            <button type="button" onClick={() => setType('limit')} className={`${type === 'limit' ? 'font-medium' : 'text-gray-500'} text-sm`}>지정가</button>
+            <button type="button" onClick={() => setType('market')} className={`${type === 'market' ? 'font-medium' : 'text-gray-500'} text-sm`}>시장가</button>
+          </div>
 
-      <div>
-        {side === 'buy' && (
           <div>
-            보유금액 : {
-              typeof myprice === 'object'
-                ? (myprice.message || JSON.stringify(myprice))
-                : Number(myprice).toLocaleString()
-            } 누렁
-          </div>
-        )}
+            {side === 'buy' && (
+              <div>
+                보유금액 : {
+                  typeof myprice === 'object'
+                    ? (myprice.message || JSON.stringify(myprice))
+                    : Number(myprice).toLocaleString()
+                } 누렁
+              </div>
+            )}
 
-        {side === 'sell' && (
+            {side === 'sell' && (
+              <div>
+                매도 가능 수량 : {myprice} 개
+              </div>
+            )}
+          </div>
+
+          {/* 가격 입력 (지정가일 때만 표시) */}
           <div>
-            매도 가능 수량 : {myprice} 개
+            <label className="block text-xs text-gray-500">가격</label>
+            {type === 'limit' ? (
+              <input
+                type="number"
+                value={price}
+                onChange={e => setPrice(e.target.value)}
+                className="w-full mt-1 p-2 border rounded bg-gray-50 dark:bg-[#2A2C36]"
+              />
+            ) : (
+              <div className="w-full mt-1 p-2 border rounded bg-gray-50 dark:bg-[#2A2C36] text-gray-500">
+                시장가{side === 'buy' ? '로 매수' : '로 매도'}
+              </div>
+            )}
           </div>
-        )}
 
-        {side === 'list' && (
+          {/* 수량 입력 */}
           <div>
-            최근 거래 내역을 확인하세요.
+            <label className="block text-xs text-gray-500">수량</label>
+            <input
+              type="number"
+              value={quantity}
+              onChange={e => setQuantity(e.target.value)}
+              className="w-full mt-1 p-2 border rounded bg-gray-50 dark:bg-[#2A2C36]"
+              placeholder="0.0" />
+            {/* 수량 비율 버튼 */}
+            <div className="flex space-x-2 mt-1">
+              {[10, 25, 50, 100].map(p => (
+                <button key={p} type="button" onClick={() => handlePercent(p)} className="flex-1 text-xs py-1 bg-gray-100 dark:bg-[#2A2C36] rounded">{p}%</button>
+              ))}
+            </div>
           </div>
-        )}
-      </div>
 
-      {/* 가격 입력 (지정가일 때만 표시) */}
-      <div>
-        <label className="block text-xs text-gray-500">가격</label>
-        {type === 'limit' ? (
-          <input
-            type="number"
-            value={price}
-            onChange={e => setPrice(e.target.value)}
-            className="w-full mt-1 p-2 border rounded bg-gray-50 dark:bg-[#2A2C36]"
-          />
-        ) : (
-          <div className="w-full mt-1 p-2 border rounded bg-gray-50 dark:bg-[#2A2C36] text-gray-500">
-            시장가{side === 'buy' ? '로 매수' : '로 매도'}
+          {/* 총 주문 금액 */}
+          <div className="text-right text-sm text-gray-500">
+            총 주문 금액: <span className="font-medium">{total}</span> 원
           </div>
-        )}
-      </div>
-
-      {/* 수량 입력 */}
-      <div>
-        <label className="block text-xs text-gray-500">수량</label>
-        <input 
-          type="number" 
-          value={quantity} 
-          onChange={e=>setQuantity(e.target.value)} 
-          className="w-full mt-1 p-2 border rounded bg-gray-50 dark:bg-[#2A2C36]" 
-          placeholder="0.0" />
-        {/* 수량 비율 버튼 */}
-        <div className="flex space-x-2 mt-1">
-          {[10,25,50,100].map(p => (
-            <button key={p} type="button" onClick={()=>handlePercent(p)} className="flex-1 text-xs py-1 bg-gray-100 dark:bg-[#2A2C36] rounded">{p}%</button>
-          ))}
+          {/* 주문 버튼 */}
+          <button type="submit" className="w-full py-2 bg-green-500 text-white rounded font-medium">{side === 'buy' ? '매수' : '매도'} 주문</button>
+        </>
+      ) : (
+        <div className="text-gray-400 text-sm">
+          🧾 주문 내역 탭입니다. 여기에 내역 리스트 UI가 들어갈 수 있습니다.
         </div>
-      </div>
-
-      {/* 총 주문 금액 */}
-      <div className="text-right text-sm text-gray-500">
-        총 주문 금액: <span className="font-medium">{total}</span> 원
-      </div>
-
-      <button type="submit" className="w-full py-2 bg-green-500 text-white rounded font-medium">{side==='buy'?'매수':'매도'} 주문</button>
+      )}
     </form>
   )
 }
