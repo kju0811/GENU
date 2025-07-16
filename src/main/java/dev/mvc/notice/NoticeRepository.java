@@ -15,7 +15,8 @@ public interface NoticeRepository extends JpaRepository<Notice, Long>{
   @Query("SELECT n "
       + "FROM Notice n "
       + "WHERE n.member.member_no = :member_no "
-      + "AND n.coin.coin_no = :coin_no")
+      + "AND n.coin.coin_no = :coin_no "
+      + "AND n.notice_status = 0")
   List<Notice> getMemberCoinNotice(@Param("member_no") Long member_no, @Param("coin_no") Long coin_no);
   
   @Query("SELECT n "
