@@ -176,7 +176,7 @@ export default function OrderForm({ coin_no, defaultPrice }) {
       .then(res => {
         if (res.ok) {
           alert("주문이 취소되었습니다.");
-          window.location.reload()
+          setMyDealList(prev => prev.filter(item => item.deal_no !== dealNo));
         } else {
           throw new Error("주문 취소 실패!");
         }
