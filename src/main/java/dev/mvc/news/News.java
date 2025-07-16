@@ -79,10 +79,6 @@ public class News {
   @Column(name = "news_content", nullable = false, columnDefinition = "CLOB")
   private String content = "";
   
-  // 뉴스 추천
-  @Column(name = "news_like", nullable = false, columnDefinition = "NUMBER(7)")
-  private Integer news_like = 0;
-  
   // 뉴스 조회수
   @Column(name = "news_cnt", nullable = false, columnDefinition = "NUMBER(7)")
   private  Integer news_cnt = 0;
