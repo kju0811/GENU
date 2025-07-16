@@ -49,6 +49,10 @@ public class Notification {
   @Column(name = "notification_nametype", length = 10, nullable = false)
   private String notification_nametype;
   
+  /** 타켓의 번호를 저장 */
+  @Column(name = "notification_targetno", nullable = false)
+  private Long notification_targetno;
+  
   /** 알림 생성일 */
   @JsonFormat(pattern = "yyyy-MM-dd HH:MM")
   @Column(name = "notification_date", columnDefinition = "DATE", nullable = false)
