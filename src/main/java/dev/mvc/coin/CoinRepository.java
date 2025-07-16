@@ -11,7 +11,8 @@ public interface CoinRepository extends JpaRepository<Coin, Long> {
 
   @Query("SELECT c FROM Coin c WHERE "
       + "LOWER(c.coin_name) LIKE LOWER(CONCAT('%', :keyword, '%')) "
-      + "OR c.coin_info LIKE %:keyword%")
+      + "OR c.coin_info LIKE %:keyword% "
+      + "ORDER BY c.coin_name DESC")
   List<Coin> searchCoinNameOrInfo (@Param("keyword") String keyword);
 
 }
