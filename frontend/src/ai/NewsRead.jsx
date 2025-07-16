@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { getIP } from "../components/Tool";
 import { jwtDecode } from "jwt-decode";
+import basic from "../images/profile.png"
 
 export default function NewsRead() {
   const [data, setData] = useState("");
@@ -10,6 +11,7 @@ export default function NewsRead() {
   const [userReply,setUserReply] = useState([]);
   const [user,setUser] = useState([]);
   const [userData,setUserData] = useState([]);
+  const [member,setMember] = useState([]);
   const { news_no } = useParams();
 
   const filteredUserData = userData.filter(reply => reply.news.news_no == news_no);
@@ -73,6 +75,17 @@ useEffect(() => {
   fetchReplies();
 }, []);
 
+useEffect(() => {
+  fetch(`http://${getIP()}:9093/member/list`, {
+      method: 'GET'
+    })
+      .then(result => result.json()) // 응답
+      .then(result => {
+        setMember(result);
+      })
+    .catch(err => console.error(err))
+}, []);
+
   useEffect(() => {
     fetch(`http://${getIP()}:9093/news/read/${news_no}`, {
       method: 'GET'
@@ -96,8 +109,7 @@ useEffect(() => {
         .then(response => {
           if (response.ok) {
             alert('뉴스가 성공적으로 삭제 되었습니다');
-            const query = `?page=${page}${word ? `&word=${encodeURIComponent(word)}` : ''}`;
-            window.location.href = `/ai/newsfind${query}`;
+            history.back();
           } else {
             alert('삭제에 실패하였습니다');
           }
@@ -167,7 +179,16 @@ useEffect(() => {
               <div className="flex gap-4">
                 {/* Avatar */}
                 <img
-                  src="https://cdn.startupful.io/img/app_logo/no_img.png"
+                  src={
+                    (() => {
+                      const matchedMember = member.find(
+                        (m) => m.member_no === userData[index]?.member?.member_no
+                      );
+                      return matchedMember?.member_img
+                        ? `http://${getIP()}:9093/home/storage/${matchedMember.member_img}`
+                        : basic; // 기본 이미지
+                    })()
+                  }
                   alt="MemberImg"
                   className="w-8 h-8 rounded-full mt-1"
                 />
@@ -238,6 +259,7 @@ useEffect(() => {
             ))}
 
             {/* 댓글 입력 */}
+            {userInfo?.role == "USER" || userInfo?.role == "ADMIN" ? (
             <div className="flex gap-4 items-start pt-4">
               <img
                 src="https://cdn.startupful.io/img/app_logo/no_img.png"
@@ -261,13 +283,23 @@ useEffect(() => {
                   >
                     댓글
                   </button>
+                  {userInfo?.role === 'ADMIN' && (
+                  <button onClick={deleteNews}>뉴스 삭제하기</button>
+                  )}
                 </div>
               </div>
-            </div>
+            </div>) : <textarea
+                        className="w-full p-3 text-sm bg-gray-50 dark:bg-[#252731] text-black dark:text-white rounded-lg border border-gray-200 dark:border-gray-700 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                        placeholder="로그인 후 이용해주세요"
+                        style={{ resize: "none" }}
+                        disabled
+                        value={reply} 
+                        rows={3}
+                      />}
           </div>
         </div>
-      </div>
 
+      </div>
     </div>
   );
 }

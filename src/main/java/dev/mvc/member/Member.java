@@ -119,7 +119,7 @@ public class Member {
     	grade_str = "GUEST";
     }
     
-    System.out.println("-> Employee.java grade_str:" + grade_str);
+    //System.out.println("-> Employee.java grade_str:" + grade_str);
     
     return grade_str;
   }
