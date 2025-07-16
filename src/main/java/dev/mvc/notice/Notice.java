@@ -40,7 +40,7 @@ public class Notice {
   
   /** 원하는 금액이 현재가 이하인지0 이상인지1.  */
   @Column(name = "notice_type", nullable = false, columnDefinition = "NUMBER(1)")
-  private int notice_type;
+  private int notice_type=0;
   
   /** 생성일 */
   @Column(name = "notice_date", nullable = false)
