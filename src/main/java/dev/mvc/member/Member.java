@@ -93,6 +93,10 @@ public class Member {
   @Column(name = "member_birth", nullable = false, length = 8)
   private String memberBirth="";  
   
+  /** 멤버 심리 분석 */
+  @Column(name = "member_mind", nullable = false, columnDefinition = "VARCHAR2(500 CHAR)")
+  private String memberMind="심리가 분석되지 않았습니다";  
+  
   @PrePersist
   public void prePersist() {
     if (this.memberDate == null) {
