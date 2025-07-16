@@ -7,6 +7,7 @@ import RelatedNews from '../components/RelatedNews';
 import CommunityFeed from '../components/CommunityFeed';
 import OrderForm from '../components/OrderForm';
 import ApexChart from '../components/ApexChart';
+import NoticeModal from '../components/NoticeModal'
 
 export default function CoinDetail() {
   const { coin_no } = useParams();
@@ -14,6 +15,8 @@ export default function CoinDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('chart');
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     fetch(`http://${getIP()}:9093/coin/${coin_no}`)
@@ -60,6 +63,14 @@ export default function CoinDetail() {
           </p>
         </div>
       </header>
+
+      <button
+        onClick={() => setIsModalOpen(true)}
+        className="mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        금액알림
+      </button>
+      {isModalOpen && <NoticeModal coin_no={coin_no} onClose={() => setIsModalOpen(false)} />}
 
       <nav className="flex space-x-4 border-b mb-4">
         {tabs.map(tab => (
