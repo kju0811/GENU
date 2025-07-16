@@ -31,14 +31,17 @@ export default function OrderForm({ coin_no, defaultPrice }) {
   // 수량 비율 설정 핸들러
   const handlePercent = percent => {
     // TODO: 사용자의 잔고 기반으로 수량 계산
-    const qty = ((percent / 100) * /* availableBalance */ 0).toFixed(4);
+    const qty = Math.floor(((myBalance * percent) / 100) / price);
+    console.log("qty -> ", qty)
     setQuantity(qty);
   };
 
   let [memberNo, setMemberNo] = useState(null);
   const jwt = sessionStorage.getItem("jwt");
   // const token = localStorage.getItem('token');
-  const [myprice, setMyprice] = useState(0);
+  const [myBalance, setMyBalance] = useState(0);       // buy
+  const [myAmount, setMyAmount] = useState(0);         // sell
+  const [myDealList, setMyDealList] = useState([]);    // list
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -79,9 +82,6 @@ export default function OrderForm({ coin_no, defaultPrice }) {
           .catch(err => console.error(err))
 
       } else if (side == "sell") {
-
-
-
         fetch(`http://${getIP()}:9093/deal/selldeal`, {
           method: 'POST',
           headers: {
@@ -119,26 +119,38 @@ export default function OrderForm({ coin_no, defaultPrice }) {
       const decodedMemberNo = decoded.member_no;
       setMemberNo(decoded.member_no);
 
+      let endpoint = '';
+      let stateSetter;
 
-      const endpoint = side === 'buy'
-        ? `http://${getIP()}:9093/pay/my/${decodedMemberNo}`
-        : `http://${getIP()}:9093/deal/get_total_cnt/${decodedMemberNo}/${coin_no}`;
-      fetch(endpoint, {
-        method: 'GET',
-        headers: { 'Authorization': jwt }
+      if (side === 'buy') {
+        endpoint = `http://${getIP()}:9093/pay/my/${decodedMemberNo}`;
+        stateSetter = setMyBalance;
+      } else if (side === 'sell') {
+        endpoint = `http://${getIP()}:9093/deal/get_total_cnt/${decodedMemberNo}/${coin_no}`
+        stateSetter = setMyAmount;
+      } else if (side === 'list') {
+        endpoint = `http://${getIP()}:9093/deal/find_deal_by_member_coin/${decodedMemberNo}/${coin_no}`
+        stateSetter = setMyDealList;
+      }
 
-      })
-        .then(result => result.json())
-        .then(data => {
-          console.log("돈date -> ", data)
-          setMyprice(data);
-
+      if (endpoint) {
+        fetch(endpoint, {
+          method: 'GET',
+          headers: { 'Authorization': jwt }
         })
-        .catch(err => console.error(err))
+          .then(result => result.json())
+          .then(data => {
+            console.log("받은 데이터 -> ", data);
+            stateSetter(data);
+          })
+          .catch(err => console.error(err));
+      }
 
     } catch (err) {
       console.error("Invalid token:", err.message);
-      setMyprice(0);
+      setMyBalance(0);
+      setMyAmount(0);
+      setMyDealList([]);
     }
 
   }, [jwt, side])
@@ -165,16 +177,16 @@ export default function OrderForm({ coin_no, defaultPrice }) {
             {side === 'buy' && (
               <div>
                 보유금액 : {
-                  typeof myprice === 'object'
-                    ? (myprice.message || JSON.stringify(myprice))
-                    : Number(myprice).toLocaleString()
+                  typeof myBalance === 'object'
+                    ? (myBalance.message || JSON.stringify(myBalance))
+                    : Number(myBalance).toLocaleString()
                 } 누렁
               </div>
             )}
 
             {side === 'sell' && (
               <div>
-                매도 가능 수량 : {myprice} 개
+                매도 가능 수량 : {myAmount} 개
               </div>
             )}
           </div>
@@ -204,7 +216,7 @@ export default function OrderForm({ coin_no, defaultPrice }) {
               value={quantity}
               onChange={e => setQuantity(e.target.value)}
               className="w-full mt-1 p-2 border rounded bg-gray-50 dark:bg-[#2A2C36]"
-              placeholder="0.0" />
+              placeholder="0" />
             {/* 수량 비율 버튼 */}
             <div className="flex space-x-2 mt-1">
               {[10, 25, 50, 100].map(p => (
@@ -221,9 +233,22 @@ export default function OrderForm({ coin_no, defaultPrice }) {
           <button type="submit" className="w-full py-2 bg-green-500 text-white rounded font-medium">{side === 'buy' ? '매수' : '매도'} 주문</button>
         </>
       ) : (
-        <div className="text-gray-400 text-sm">
-          🧾 주문 내역 탭입니다. 여기에 내역 리스트 UI가 들어갈 수 있습니다.
-        </div>
+        <>
+          <div className="text-gray-400 text-sm">
+              🧾 주문 내역 탭입니다. 여기에 내역 리스트 UI가 들어갈 수 있습니다.
+          </div>
+          <div style={{ textAlign: "center" }}>
+            <h5>거래 내역</h5>
+            <div className="flex flex-col gap-4 items-center">
+              <ul>
+                {myDealList.length > 0 ? myDealList.map((item, idx) => (
+                  <li key={idx}>  
+                  {item.deal_type === 3 ? "매수" : "매도"} / 예상 수수료:{item.deal_fee.toLocaleString()} / {item.deal_price.toLocaleString()}누렁 / {item.deal_cnt}개</li>
+                )) : <p>거래 내역이 없습니다.</p>}
+              </ul>
+            </div>
+          </div>
+        </>
       )}
     </form>
   )
