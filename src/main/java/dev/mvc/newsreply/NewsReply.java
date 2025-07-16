@@ -2,6 +2,8 @@ package dev.mvc.newsreply;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import dev.mvc.member.Member;
 import dev.mvc.news.News;
 import jakarta.persistence.Column;
@@ -51,6 +53,7 @@ public class NewsReply {
   
   // 댓글 작성일
   @Column(name = "newsreply_date", nullable = false, columnDefinition = "DATE")
+  @JsonFormat(pattern = "yyyy-MM-dd HH:MM")
   private LocalDateTime newsreplyDate;
   
   // 회원테이블 외래키
