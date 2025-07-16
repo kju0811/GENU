@@ -18,6 +18,11 @@ export default function OrderForm({ coin_no, defaultPrice }) {
   const [price, setPrice] = useState(defaultPrice || '');
   const [quantity, setQuantity] = useState('');
 
+  // defaultPrice가 바뀔 때마다 price를 업데이트
+  useEffect(() => {
+    setPrice(defaultPrice ?? '');
+  }, [defaultPrice]);
+
   // 총 주문 금액 계산
   const total = type === 'market'
     ? '시가' // TODO: 시장가일 경우 시가 데이터 바인딩
@@ -44,8 +49,10 @@ export default function OrderForm({ coin_no, defaultPrice }) {
     const dto = {
       coin: {"coin_no": coin_no},
       member: {"member_no": memberNo},
-      price: parseInt(price),
-      cnt: parseInt(quantity),  
+      price: type === 'market'
+        ? defaultPrice
+        : parseInt(price, 10),
+      cnt: parseInt(quantity, 10),
     };
     console.log("dto -> ", dto)
 
@@ -103,12 +110,6 @@ export default function OrderForm({ coin_no, defaultPrice }) {
 
 
   };
-
-
-    // defaultPrice가 바뀔 때마다 price를 업데이트
-    useEffect(() => {
-      setPrice(defaultPrice ?? '');
-    }, [defaultPrice]);
   
 
   useEffect(() => {
@@ -161,17 +162,21 @@ export default function OrderForm({ coin_no, defaultPrice }) {
       </div>
 
       {/* 가격 입력 (지정가일 때만 표시) */}
-      {type === 'limit' && (
-        <div>
-          <label className="block text-xs text-gray-500">가격</label>
+      <div>
+        <label className="block text-xs text-gray-500">가격</label>
+        {type === 'limit' ? (
           <input
             type="number"
             value={price}
             onChange={e => setPrice(e.target.value)}
             className="w-full mt-1 p-2 border rounded bg-gray-50 dark:bg-[#2A2C36]"
           />
+        ) : (
+          <div className="w-full mt-1 p-2 border rounded bg-gray-50 dark:bg-[#2A2C36] text-gray-500">
+            시장가{side === 'buy' ? '로 매수' : '로 매도'}
+          </div>
+        )}
       </div>
-      )}
 
       {/* 수량 입력 */}
       <div>
