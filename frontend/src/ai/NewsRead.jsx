@@ -3,6 +3,8 @@ import { useParams, useSearchParams } from "react-router-dom";
 import { getIP } from "../components/Tool";
 import { jwtDecode } from "jwt-decode";
 import basic from "../images/profile.png"
+import like from "../images/like.png"
+import notlike from "../images/notlike.png"
 
 export default function NewsRead() {
   const [data, setData] = useState("");
@@ -26,12 +28,9 @@ export default function NewsRead() {
   if (jwt != null) {
     try {
       userInfo = jwtDecode(jwt);
-      console.log("토큰있음");
     } catch (err) {
       console.error("JWT 디코딩 오류:", err);
     }
-  } else {
-    console.log("토큰없음");
   }
 
   const member_no = userInfo?.member_no;
@@ -159,6 +158,10 @@ useEffect(() => {
         })
   }
 
+  const newsLike =()=> {
+
+  }
+
   return (
     <div className="w-[90%] mx-auto p-4">
       {/* 기사 */}
@@ -195,6 +198,10 @@ useEffect(() => {
               <span>{data.content}</span>
             </div>
           </div>
+          <div style={{marginLeft:'6%',marginTop:'-1.5%',display:'flex'}}>
+          <img src={notlike} style={{width:'1.5%'}} />&nbsp;&nbsp;
+          <span style={{fontSize:'15px',marginTop:'0.2%'}}>좋아요</span>
+          </div>
         </div>
       </div>
 
@@ -218,7 +225,7 @@ useEffect(() => {
                       );
                       return matchedMember?.member_img
                         ? `http://${getIP()}:9093/home/storage/${matchedMember.member_img}`
-                        : basic; // 기본 이미지
+                        : `${basic}`; // 기본 이미지
                     })()
                   }
                   alt="MemberImg"
@@ -230,7 +237,9 @@ useEffect(() => {
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-sm font-medium text-black dark:text-white">{filteredUserReply[index]}</span>
                     <span className="text-sm text-gray-500 dark:text-gray-400">•</span>
-                    <span className="text-sm text-gray-500 dark:text-gray-400">{filteredUserData[index]?.newsreplyDate}</span>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                      {userData[index]?.newsreplyDate}
+                      </span>
                   </div>
                   <p className="text-sm text-black dark:text-white mb-3">
                     {filteredShowReply[index]}
@@ -357,7 +366,7 @@ useEffect(() => {
                       );
                       return matchedMember?.member_img
                         ? `http://${getIP()}:9093/home/storage/${matchedMember.member_img}`
-                        : basic; // 기본 이미지
+                        : `${basic}`; // 기본 이미지
                     })()
                   }
                 alt="MemberImg"
