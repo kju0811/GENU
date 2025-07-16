@@ -8,12 +8,14 @@ import dev.mvc.member.Member;
 import dev.mvc.news.News;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -53,7 +55,7 @@ public class NewsReply {
   
   // 댓글 작성일
   @Column(name = "newsreply_date", nullable = false, columnDefinition = "DATE")
-  @JsonFormat(pattern = "yyyy-MM-dd HH:MM")
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
   private LocalDateTime newsreplyDate;
   
   // 회원테이블 외래키
@@ -74,5 +76,10 @@ public class NewsReply {
       this.newsreplyDate = LocalDateTime.now();
     }
   }
+  
+  @PreUpdate
+  public void preUpdate() {
+	     this.newsreplyDate = LocalDateTime.now();
+	  }
   
 }
