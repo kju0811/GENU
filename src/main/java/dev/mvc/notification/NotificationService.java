@@ -68,6 +68,7 @@ public class NotificationService {
     Notification notification = Notification.builder()
         .notification_text(dto.getNotification_text())
         .notification_nametype(dto.getNotification_nametype())
+        .notification_targetno(dto.getNotification_targetno())
         .member(dto.getMember())
         .build();
     
