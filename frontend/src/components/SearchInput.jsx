@@ -1,18 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
-
+import { getIP } from "../components/Tool";
 /**
  * sampleData
  * - 실제 백엔드 연동 시 해당 부분을 API 호출 결과로 대체 필요
  */
 const sampleData = [
-  { id: 1, name: 'React Components', category: 'Frontend', popularity: 98 },
-  { id: 2, name: 'Vue.js Templates', category: 'Frontend', popularity: 95 },
-  { id: 3, name: 'Angular Modules', category: 'Frontend', popularity: 92 },
-  { id: 4, name: 'Tailwind CSS', category: 'CSS Framework', popularity: 97 },
-  { id: 5, name: 'Node.js Basics', category: 'Backend', popularity: 94 },
-  { id: 6, name: 'MongoDB Tutorial', category: 'Database', popularity: 91 },
-  { id: 7, name: 'GraphQL API', category: 'API', popularity: 89 },
-  { id: 8, name: 'TypeScript Guide', category: 'Language', popularity: 93 }
+  // { id: 1, name: 'React Components', category: 'Frontend', popularity: 98 },
+  // { id: 2, name: 'Vue.js Templates', category: 'Frontend', popularity: 95 },
+  // { id: 3, name: 'Angular Modules', category: 'Frontend', popularity: 92 },
+  // { id: 4, name: 'Tailwind CSS', category: 'CSS Framework', popularity: 97 },
+  // { id: 5, name: 'Node.js Basics', category: 'Backend', popularity: 94 },
+  // { id: 6, name: 'MongoDB Tutorial', category: 'Database', popularity: 91 },
+  // { id: 7, name: 'GraphQL API', category: 'API', popularity: 89 },
+  // { id: 8, name: 'TypeScript Guide', category: 'Language', popularity: 93 }
 ];
 
 
@@ -67,27 +67,39 @@ export default function SearchInput() {
   /**
    * 입력값 변경 시: 디바운스(300ms) 후 데이터 필터링
    */
-  useEffect(() => {
-    if (input === '') {
-      setResults([]);
-      setNoResults(false);
-      return;
-    }
+useEffect(() => {
+  if (input === '') {
+    setResults([]);
+    setNoResults(false);
+    return;
+  }
 
-    const timer = setTimeout(() => {
-      setLoading(true);
-      // sampleData에서 이름 또는 카테고리에 검색어 포함 여부로 필터링
-      const filtered = sampleData.filter(item =>
-        item.name.toLowerCase().includes(input.toLowerCase()) ||
-        item.category.toLowerCase().includes(input.toLowerCase())
-      );
-      setResults(filtered);
-      setNoResults(filtered.length === 0);
-      setLoading(false);
-    }, 300);
+  const timer = setTimeout(() => {
+    setLoading(true);
 
-    return () => clearTimeout(timer);
-  }, [input]);
+    const url = `http://${getIP()}:9093/coin/find_by_name_or_info?keyword=${encodeURIComponent(input)}`;
+
+    fetch(url, {
+      method: 'GET'
+    })
+      .then(res => res.json())
+      .then(data => {
+        setResults(data); // ← 백엔드 응답 데이터로 검색 결과 설정
+        setNoResults(data.length === 0);
+        setLoading(false);
+        console.log("검색data -> ", data)
+      })
+      .catch(err => {
+        console.error(err);
+        setLoading(false);
+        setResults([]);
+        setNoResults(true);
+      });
+  }, 300);
+
+  return () => clearTimeout(timer);
+}, [input]);
+
 
   /**
    * 검색 결과 선택 시 호출
@@ -208,9 +220,9 @@ export default function SearchInput() {
             <ul className="max-h-64 overflow-auto pb-1">
               {/* 필터링된 결과 리스트 */}
               {results.map(result => (
-                <li key={result.id}>
+                <li key={result.coin_no}>
                   <button
-                    onClick={() => selectResult(result.name)}
+                    onClick={() => selectResult(result.coin_name)}
                     className="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-between group"
                   >
                     {/* 아이콘 및 결과 텍스트 영역 */}
@@ -221,8 +233,8 @@ export default function SearchInput() {
                         </svg>
                       </div>
                       <div>
-                        <div className="text-sm font-medium text-black dark:text-white">{result.name}</div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">{result.category}</div>
+                        <div className="text-sm font-medium text-black dark:text-white">{result.coin_name}</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">{result.coin_cate}</div>
                       </div>
                     </div>
                     {/* 우측 매칭률 및 화살표 (호버 시 표시) */}
