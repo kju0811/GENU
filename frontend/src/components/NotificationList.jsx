@@ -21,7 +21,6 @@ export default function NotificationDropdown({ notifications: initialNotificatio
   useEffect(() => {
     try {
       const decoded = jwtDecode(jwt);
-      console.log(decoded);
       const decodedMemberNo = decoded.member_no;
       // setMemberNo(decoded.member_no);
       if (typeof jwt === 'string' && jwt.length > 0) {
