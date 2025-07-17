@@ -20,15 +20,14 @@ def newsinsert(title, content, emotion,coin_cate,member_no):
     news_no = cursor.fetchone()[0]  # 하나의 숫자 값 추출
     
     sql_news = '''
-    INSERT INTO news (news_no, emotion, news_cnt, news_content, news_like, news_rdate, news_replycnt, news_title, news_word, summary, visible, member_no) 
-    VALUES (:news_no, :emotion, :news_cnt, :news_content, :news_like, sysdate, :news_replycnt, :news_title, :news_word, :summary, :visible, :member_no)
+    INSERT INTO news (news_no, emotion, news_cnt, news_content, news_rdate, news_replycnt, news_title, news_word, summary, visible, member_no) 
+    VALUES (:news_no, :emotion, :news_cnt, :news_content, sysdate, :news_replycnt, :news_title, :news_word, :summary, :visible, :member_no)
     ''' 
     news = {
         'news_no': news_no,
         'emotion': emotion,
         'news_cnt': 0,
         'news_content': content,
-        'news_like': 0,
         'news_replycnt': 0,
         'news_title': title,
         'news_word': '경제,뉴스',
