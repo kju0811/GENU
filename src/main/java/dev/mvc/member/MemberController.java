@@ -201,4 +201,18 @@ public class MemberController {
         }
         return ResponseEntity.notFound().build();
     }
+    
+    /** 권한 수정 */
+    @PutMapping("/role/{member_no}")
+    public ResponseEntity<Member> role(@PathVariable("member_no") Long member_no,
+    								   @RequestBody Member updated) {
+    	return memberService.findByMemberNoOptional(member_no)
+    			.map(role -> {
+    				role.setMember_grade(updated.getMember_grade());
+    				Member saved = memberService.save(role);
+    				return ResponseEntity.ok(saved);
+    			})
+    			.orElseGet(() -> ResponseEntity.notFound().build());
+    }
+    
 }
