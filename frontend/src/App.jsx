@@ -29,7 +29,6 @@ import NotificationLog from "./components/NotificationLog";
 import "react-chatbot-kit/build/main.css";
 import "./style/chat.css";
 import NotFound from "./pages/NotFound";
-import Summary from "./ai/NewsSummary";
 
 function App() {
   const { close, hideNavbar,hideChatbot } = useGlobal();
@@ -41,7 +40,6 @@ function App() {
         <Route path="/" element={<Home />} /> {/* <Link to="/"> */}
         <Route path="/SignUp" element={<SignUp />} /> 
         <Route path="/ai/news" element={<News />} />
-        <Route path="/ai/summary" element={<Summary />} />
         <Route path="/ai/newsfind" element={<NewsFind/>} />
         <Route path="/ai/read/:newsno" element={<NewsRead/>} />
         {/* <Route path="/attendance/:attendance_no" element={<Attendance/>} /> */}
