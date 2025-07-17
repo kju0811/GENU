@@ -19,6 +19,8 @@ export default function NewsRead() {
   const [editingReplyNo, setEditingReplyNo] = useState(null);
   const [like,setLike] = useState([]);
   const [loading,setLoading] = useState(false);
+  const [sloading, setSLoading] = useState(false);
+  const [summary,setSummary] = useState('');
   const { newsno } = useParams();
   
   const filteredUserData = newsno != null ? userData.filter(reply => reply.news.newsno == newsno) : [];
@@ -105,10 +107,11 @@ useEffect(() => {
       .then(result => result.json()) // 응답
       .then(result => {
         setData(result);
+        setSummary(result.summary)
       })
       .catch(err => console.error(err))
     .finally(() => setLoading(false));
-  }, [newsno]);
+  }, [newsno,summary]);
 
   const deleteNews = () => {
     if (window.confirm("뉴스를 삭제하시겠습니까?")) {
@@ -209,7 +212,7 @@ useEffect(() => {
   }
 
   useEffect(() => {
-  likestate(); // ✅ 컴포넌트 마운트 시 좋아요 상태 가져오기
+  likestate(); 
 }, []);
 
   const likestate =() => {
@@ -223,7 +226,36 @@ useEffect(() => {
       })
       .catch(err => console.error(err))
   }
-  
+
+  const Summary =()=> {
+    if(summary == "요약이 되지않았습니다") {
+    setSLoading(true);
+    fetch(`http://${getIP()}:9093/news/summary`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': jwt
+      },
+      body: JSON.stringify({ 
+        "result":data.content, 
+        "news_no": newsno
+      }),
+    })
+    .then((response) => {
+      if (!response.ok) {
+        alert("요약에 실패하였습니다");
+      }
+      return response.json();
+    })
+    .then(data => {
+      setSummary(data.summary);
+    })
+    .catch((err) => console.error(err))
+    .finally(() => setSLoading(false));
+  } else {
+    alert("이미 요약된 내용입니다");
+  }
+  }
 
   return (
     <div className="w-[90%] mx-auto p-4">
@@ -252,7 +284,7 @@ useEffect(() => {
             {/* 요약 내용 */}
             <div className="border-l-2 border-gray-200 dark:border-gray-700 pl-4 space-y-2">
               <span className="text-gray-500 dark:text-orange-400">
-                {data.summary}
+                {summary}
                 </span>
               {/* @패딩 주기 */}
             </div>
@@ -471,7 +503,11 @@ useEffect(() => {
                     댓글
                   </button>
                   {userInfo?.role === 'ADMIN' && (
+                  <div>
+                  <button className="bg-indigo-500 hover:bg-indigo-600 text-white" style={{margin:'1.5px',height:'50px'}} onClick={Summary}>뉴스 요약하기</button>
+                  {sloading && <span className="loading loading-bars loading-xl"></span>}
                   <button className="btn btn-warning" onClick={deleteNews}>뉴스 삭제하기</button>
+                  </div>
                   )}
                 </div>
               </div>
