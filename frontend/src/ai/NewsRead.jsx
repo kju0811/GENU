@@ -5,6 +5,7 @@ import { jwtDecode } from "jwt-decode";
 import basic from "../images/profile.png"
 import likeimg from "../images/like.png"
 import notlikeimg from "../images/notlike.png"
+import load from "../images/로딩.gif";
 
 export default function NewsRead() {
   const [data, setData] = useState("");
@@ -17,14 +18,15 @@ export default function NewsRead() {
   const [member,setMember] = useState([]);
   const [editingReplyNo, setEditingReplyNo] = useState(null);
   const [like,setLike] = useState([]);
-  const { news_no } = useParams();
+  const [loading,setLoading] = useState(false);
+  const { newsno } = useParams();
   
-  const filteredUserData = userData.filter(reply => reply.news.news_no == news_no);
-  const filteredUser = user.filter((_, index) => userData[index]?.news.news_no == news_no);
-  const filteredUserReply = userReply.filter((_, index) => userData[index]?.news.news_no == news_no);
-  const filteredShowReply = showReply.filter((_, index) => userData[index]?.news.news_no == news_no);
-  const filteredLikes = like.filter(l => l.news?.news_no == news_no);
-
+  const filteredUserData = newsno != null ? userData.filter(reply => reply.news.newsno == newsno) : [];
+  const filteredUser = newsno != null ? user.filter((_, index) => userData[index]?.news.newsno == newsno) : [];
+  const filteredUserReply = newsno != null ? userReply.filter((_, index) => userData[index]?.news.newsno == newsno) : [];
+  const filteredShowReply = newsno != null ? showReply.filter((_, index) => userData[index]?.news.newsno == newsno) : [];
+  const filteredLikes = newsno != null ? like.filter(l => l.news?.newsno == newsno) : [];
+    
   const jwt = sessionStorage.getItem('jwt');
   let userInfo = null;
   if (jwt != null) {
@@ -39,7 +41,7 @@ export default function NewsRead() {
   const matchedLike = like.find(
   (l) =>
     l.member?.member_no === Number(member_no) &&
-    l.news?.news_no === Number(news_no)
+    l.news?.newsno === Number(newsno)
   );
 
   const newslike_no = matchedLike?.newslike_no;
@@ -54,7 +56,7 @@ export default function NewsRead() {
       body: JSON.stringify({ 
         "newsreply_content":reply,
         "member":{"member_no" : member_no},
-        "news":{ "news_no" : news_no }
+        "news":{ "newsno" : newsno }
       }),
     })
     .then((res) => {
@@ -96,7 +98,8 @@ useEffect(() => {
 }, []);
 
   useEffect(() => {
-    fetch(`http://${getIP()}:9093/news/read/${news_no}`, {
+    setLoading(true);
+    fetch(`http://${getIP()}:9093/news/read/${newsno}`, {
       method: 'GET'
     })
       .then(result => result.json()) // 응답
@@ -104,11 +107,12 @@ useEffect(() => {
         setData(result);
       })
       .catch(err => console.error(err))
-  }, [news_no]);
+    .finally(() => setLoading(false));
+  }, [newsno]);
 
   const deleteNews = () => {
     if (window.confirm("뉴스를 삭제하시겠습니까?")) {
-      fetch(`http://${getIP()}:9093/news/delete/${news_no}`, {
+      fetch(`http://${getIP()}:9093/news/delete/${newsno}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -176,7 +180,7 @@ useEffect(() => {
       },
       body: JSON.stringify({ 
         "member":{"member_no" : member_no},
-        "news":{ "news_no" : news_no }
+        "news":{ "newsno" : newsno }
       }),
     })
     .then(response => {
@@ -258,7 +262,7 @@ useEffect(() => {
             </div>
           </div>
           
-          {like.some(l => l.member?.member_no === Number(member_no) && l.news?.news_no === Number(news_no)) ? (
+          {like.some(l => l.member?.member_no === Number(member_no) && l.news?.newsno === Number(newsno)) ? (
             <div style={{ marginLeft: '6%', marginTop: '-1.5%', display: 'flex', width: '6.3%', cursor: 'pointer' }} onClick={() => cancelLike(newslike_no)}>
               <img src={likeimg} style={{ width: '23%', height: '3%' }} />&nbsp;
               <span style={{ fontSize: '15px', marginTop: '0.2%' }}>좋아요</span>&nbsp;
@@ -481,7 +485,12 @@ useEffect(() => {
                       />}
           </div>
         </div>
-
+        {loading ? (
+              <div>
+                <img src={load}/><br />
+                기사들 물어오는 중 ...
+              </div>) : null
+              } 
       </div>
     </div>
   );

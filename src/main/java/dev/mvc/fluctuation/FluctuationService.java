@@ -49,7 +49,7 @@ public class FluctuationService {
     List<Fluctuation> list = fluctuationRepository.findByRdatePeriod(coin_no);
     // 엔티티 -> DTO
     List<FluctuationDTO> result = list.stream()
-        .map(f -> new FluctuationDTO(f.getFluctuation_no(), f.getNews().getNews_no()))
+        .map(f -> new FluctuationDTO(f.getFluctuation_no(), f.getNews().getNewsno()))
         .collect(Collectors.toList());
     return result; 
   }

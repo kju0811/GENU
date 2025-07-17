@@ -31,6 +31,7 @@ public class NewsreplyService {
 		
 	// 댓글 삭제
 	public void delete(Long id) {
+		repository.deleteByNews_Newsno(id);
 		repository.deleteById(id);
 	}
 	
