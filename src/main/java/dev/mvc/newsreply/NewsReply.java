@@ -2,7 +2,9 @@ package dev.mvc.newsreply;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import dev.mvc.member.Member;
 import dev.mvc.news.News;

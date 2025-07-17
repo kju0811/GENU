@@ -2,6 +2,9 @@ package dev.mvc.newslike;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import dev.mvc.member.Member;
 import dev.mvc.news.News;
 import jakarta.persistence.Column;

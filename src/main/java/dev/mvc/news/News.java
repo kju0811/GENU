@@ -7,9 +7,12 @@ import java.util.List;
 import org.hibernate.annotations.ColumnDefault;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import dev.mvc.fluctuation.Fluctuation;
 import dev.mvc.member.Member;
+import dev.mvc.newslike.NewsLike;
+import dev.mvc.newsreply.NewsReply;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -68,7 +71,8 @@ public class News {
   @NotNull
   @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="news_seq")
   @SequenceGenerator(name="news_seq", sequenceName="NEWS_SEQ", allocationSize=1)
-  private Long news_no;
+  @Column(name = "news_no")
+  private Long newsno;
   
   // 뉴스 타이틀
   @Column(name = "news_title",nullable = false, columnDefinition = "VARCHAR2(200)")
@@ -153,5 +157,13 @@ public class News {
   
   @OneToMany(mappedBy = "news", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Fluctuation> fluctuations = new ArrayList<>();
+  
+//  @OneToMany(mappedBy = "news", cascade = CascadeType.ALL, orphanRemoval = true)
+//  @JsonManagedReference
+//  private List<NewsLike> like = new ArrayList<>();
+//  
+//  @OneToMany(mappedBy = "news", cascade = CascadeType.ALL, orphanRemoval = true)
+//  @JsonManagedReference
+//  private List<NewsReply> reply = new ArrayList<>();
   
 }
