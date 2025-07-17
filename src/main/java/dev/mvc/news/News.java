@@ -96,7 +96,7 @@ public class News {
   private String news_word = "";
   
   // 뉴스 등록일
-  @JsonFormat(pattern = "yyyy-MM-dd HH:MM")
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
   @Column(name = "news_rdate", nullable = false, columnDefinition = "DATE")
   private LocalDateTime newsrdate;
   
