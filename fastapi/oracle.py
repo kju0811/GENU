@@ -71,7 +71,7 @@ def newsinsert(title, content, emotion,coin_cate,member_no):
     
     return insert
     
-def newssummary(summary):
+def newssummary(summary,newsno):
     
     #Oracle Connection 
     try:
@@ -82,8 +82,11 @@ def newssummary(summary):
     conn = cx_Oracle.connect('team4/69017000@1.201.18.85:1521/XE')
     cursor = conn.cursor()
     
-    cursor.execute("SELECT MAX(news_no) FROM news")
-    news_no = cursor.fetchone()[0]
+    if newsno == 0:
+        cursor.execute("SELECT MAX(news_no) FROM news")
+        news_no = cursor.fetchone()[0]
+    else:
+        news_no = newsno    
 
     # 수정
     sql='''
