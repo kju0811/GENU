@@ -81,7 +81,7 @@ const jwt = sessionStorage.getItem('jwt');
     <>
     <Link to="/">메인 메뉴로</Link>
     <Link to="/ai/newsfind">기사 보러가기</Link>
-    <button className="btn btn-accent" onClick={() => setNews({ res: '' }  && setSummary({ res: ''}))}>지우기</button>
+    <button className="btn btn-accent" onClick={() => setNews({ res: '' })  && setSummary({ res: ''})}>지우기</button>
 
     <div style={{marginRight:'60%'}}>
       <h2>‼️기사 생성시‼️</h2>
