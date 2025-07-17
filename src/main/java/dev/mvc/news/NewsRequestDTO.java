@@ -10,4 +10,5 @@ public class NewsRequestDTO {
     private String option2;
     private String option3;
     private String result;
+    private int news_no;
 }
