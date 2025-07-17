@@ -74,6 +74,7 @@ public class NewsService {
     // 요청 바디에 담을 데이터
     Map<String, Object> body = new HashMap<>();
     body.put("result", src.get("result"));
+    body.put("news_no", src.get("news_no"));
     
     // HttpEntity로 헤더 + 바디 묶기
     HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
