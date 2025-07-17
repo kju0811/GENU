@@ -143,6 +143,7 @@ async def summary(request:Request):
     
     data = await request.json()
     result = data.get("result")
+    newsno = data.get("news_no")
     
     #print('넘어온 데이터:',result)
     
@@ -156,13 +157,13 @@ async def summary(request:Request):
     if role == "ADMIN":
         # 2) 출력 스키마 & 출력 파서 설정
         response_schemas = [
-            ResponseSchema(name="res", description="{'500자이하로 요약된 내용'}")
+            ResponseSchema(name="res", description="{'500글자이하로 요약된 내용'}")
         ]
         output_parser = StructuredOutputParser.from_response_schemas(response_schemas)
         format_instructions = output_parser.get_format_instructions()
         prompt = PromptTemplate.from_template(
             "{system}\n"
-            "{result}의 내용을 500자이하로 요약해줘"
+            "{result}의 내용을 500글자이하로 요약해줘"
             "{format_instructions}"
         )
 
@@ -177,7 +178,8 @@ async def summary(request:Request):
         summary = summary['res'].strip()
         
         oracle.newssummary(
-            summary
+            summary,
+            newsno
         )
         
         print("-> result", summary)
