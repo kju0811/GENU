@@ -131,7 +131,7 @@ async def news(request:Request):
             member_no
         )
         
-        #makeimg(content, title)
+        makeimg(content, title)
     else:
         result = "정상적이지 않습니다"
     
