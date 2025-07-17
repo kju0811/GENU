@@ -3,8 +3,8 @@ import { useParams, useSearchParams } from "react-router-dom";
 import { getIP } from "../components/Tool";
 import { jwtDecode } from "jwt-decode";
 import basic from "../images/profile.png"
-import like from "../images/like.png"
-import notlike from "../images/notlike.png"
+import likeimg from "../images/like.png"
+import notlikeimg from "../images/notlike.png"
 
 export default function NewsRead() {
   const [data, setData] = useState("");
@@ -16,12 +16,14 @@ export default function NewsRead() {
   const [userData,setUserData] = useState([]);
   const [member,setMember] = useState([]);
   const [editingReplyNo, setEditingReplyNo] = useState(null);
+  const [like,setLike] = useState([]);
   const { news_no } = useParams();
-
+  
   const filteredUserData = userData.filter(reply => reply.news.news_no == news_no);
   const filteredUser = user.filter((_, index) => userData[index]?.news.news_no == news_no);
   const filteredUserReply = userReply.filter((_, index) => userData[index]?.news.news_no == news_no);
   const filteredShowReply = showReply.filter((_, index) => userData[index]?.news.news_no == news_no);
+  const filteredLikes = like.filter(l => l.news?.news_no == news_no);
 
   const jwt = sessionStorage.getItem('jwt');
   let userInfo = null;
@@ -34,9 +36,15 @@ export default function NewsRead() {
   }
 
   const member_no = userInfo?.member_no;
+  const matchedLike = like.find(
+  (l) =>
+    l.member?.member_no === Number(member_no) &&
+    l.news?.news_no === Number(news_no)
+  );
+
+  const newslike_no = matchedLike?.newslike_no;
 
   const createReply=(reply)=> {
-    console.log("댓글: ",reply);
     fetch(`http://${getIP()}:9093/newsreply/create`, {
       method: 'POST',
       headers: {
@@ -159,8 +167,59 @@ useEffect(() => {
   }
 
   const newsLike =()=> {
-
+    if (userInfo?.role == "USER" || userInfo?.role == "ADMIN" ) {
+    fetch(`http://${getIP()}:9093/newslike/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': jwt,
+      },
+      body: JSON.stringify({ 
+        "member":{"member_no" : member_no},
+        "news":{ "news_no" : news_no }
+      }),
+    })
+    .then(response => {
+      if (response.ok) {
+        likestate();
+      }
+    })
+  } else {
+    alert("로그인후 이용해주세요");
   }
+  }
+
+  const cancelLike =(newslike_no)=> {
+      fetch(`http://${getIP()}:9093/newslike/delete/${newslike_no}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': jwt
+        },
+      })
+      .then(response => {
+        if (response.ok) {  
+          likestate();
+        }
+      })
+  }
+
+  useEffect(() => {
+  likestate(); // ✅ 컴포넌트 마운트 시 좋아요 상태 가져오기
+}, []);
+
+  const likestate =() => {
+    fetch(`http://${getIP()}:9093/newslike/liked`, {
+      method: 'GET'
+    })
+      .then(result => result.json()) // 응답
+      .then(result => {
+        setLike(result)
+        console.log("좋아요 관리: ",result);
+      })
+      .catch(err => console.error(err))
+  }
+  
 
   return (
     <div className="w-[90%] mx-auto p-4">
@@ -168,7 +227,7 @@ useEffect(() => {
       <div className="bg-gray-50 rounded-xl overflow-hidden w-full">
         <div className="flex flex-col p-4 gap-4">
           <div className="flex justify-end mt-2">
-            <button  onClick={() => history.back()}>이전으로</button>
+            <button onClick={() => history.back()}>이전으로</button>
           </div>
           {/* 제목 & 날짜 */}
           <div className="w-[90%] mx-auto p-4">
@@ -198,10 +257,28 @@ useEffect(() => {
               <span>{data.content}</span>
             </div>
           </div>
-          <div style={{marginLeft:'6%',marginTop:'-1.5%',display:'flex'}}>
-          <img src={notlike} style={{width:'1.5%'}} />&nbsp;&nbsp;
-          <span style={{fontSize:'15px',marginTop:'0.2%'}}>좋아요</span>
-          </div>
+          
+          {like.some(l => l.member?.member_no === Number(member_no) && l.news?.news_no === Number(news_no)) ? (
+            <div style={{ marginLeft: '6%', marginTop: '-1.5%', display: 'flex', width: '6.3%', cursor: 'pointer' }} onClick={() => cancelLike(newslike_no)}>
+              <img src={likeimg} style={{ width: '23%', height: '3%' }} />&nbsp;
+              <span style={{ fontSize: '15px', marginTop: '0.2%' }}>좋아요</span>&nbsp;
+              {filteredLikes.length > 0 ? (
+                <span>{filteredLikes.length}개</span>
+              ) : (
+                <span>0개</span>
+              )}
+            </div>
+          ) : (
+            <div style={{ marginLeft: '6%', marginTop: '-1.5%', display: 'flex', width: '6.3%', cursor: 'pointer' }} onClick={() => newsLike()}>
+              <img src={notlikeimg} style={{ width: '23%', height: '3%' }} />&nbsp;
+              <span style={{ fontSize: '15px', marginTop: '0.2%' }}>좋아요</span>&nbsp;
+              {filteredLikes.length > 0 ? (
+                <span>{filteredLikes.length}개</span>
+              ) : (
+                <span>0개</span>
+              )}
+            </div>
+          )}
         </div>
       </div>
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useGlobal } from '../components/GlobalContext';
 import { getIP } from '../components/Tool';
+import { jwtDecode } from 'jwt-decode';
 
 // 포커스 이동
 function enter_chk(event, nextTag){
@@ -74,11 +75,55 @@ export default function Login({ isOpen, onClose }) {
       // 2) “Bearer ” 앞부분을 제외한 실제 토큰만 떼어도 되고, 필요한 형태로 저장하세요.
       const token = authHeader; // 이미 "Bearer eyJ..." 형태라면 그대로 써도 됩니다.
       // const token = authHeader.substring(7); // 순수 토큰만 필요하면 이렇게
-  
+      
       // 3) 로그인 성공 처리
       sessionStorage.setItem('jwt', token);
-      setSw(true);
-      onClose();
+      const jwt = sessionStorage.getItem('jwt');
+      let userInfo = null;
+        if (jwt != null) {
+          try {
+            userInfo = jwtDecode(jwt);
+          } catch (err) {
+            console.error("JWT 디코딩 오류:", err);
+          }
+        } 
+
+      let role = userInfo?.role;
+
+      if (role == "USER" || role == "ADMIN") {
+        setSw(true);
+        onClose();
+      } else if ( role == "STOP") {
+        sessionStorage.removeItem('jwt');
+        setSw(false);
+        alert("현재 관리자에 의해 정지된 계정입니다 나중에 다시 시도해주세요");
+      } else if ( role == "CANCEL") {
+        const resignup =  window.confirm("탈퇴된 계정입니댜 다시 가입하시겠습니까?");
+        if (resignup) {
+          let member_no = userInfo?.member_no;
+          fetch(`http://${getIP()}:9093/member/role/${member_no}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': jwt
+            },
+            body: JSON.stringify({ "member_grade": 10 })
+          })
+          .then(response => {
+            if (response.ok) {
+              setSw(true);
+              onClose();
+              alert("재가입을 환영합니다!!");
+            } else {
+              alert('재가입에 실패하였습니다');
+            }
+          })
+        } else {
+          sessionStorage.removeItem('jwt');
+          setSw(false);
+          alert("재가입을 취소하였습니다");
+        }
+      }
   
     } catch (err) {
       console.error(err);
