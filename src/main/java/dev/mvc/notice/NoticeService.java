@@ -23,16 +23,24 @@ public class NoticeService {
   /** Create, INSERT~ */
   public Notice save(Notice notice) {
     Optional<Coin> optcoin = coinRepository.findById(notice.getCoin().getCoin_no()); // 프론트에서 coin_no만 넘김
+    
+    // 가격 중복 체크
+    int checkPrice = noticeRepository.existsCheckPrice(notice.getNotice_price(), notice.getMember().getMember_no()) ;
+//    System.out.println("checkPrice -> "+ checkPrice);
+    if (checkPrice == 1) {
+      throw new RuntimeException("해당 금액은 이미 알림된 금액입니다.");
+    }
+    
     if (optcoin.isPresent()) {
       Coin coin = optcoin.get();
       int wp = notice.getNotice_price();
       int cp = coin.getCoin_price();
   //    System.out.println("wp ->" +wp);
   //    System.out.println("cp ->" +cp);
-      if (wp < cp) { // 원하는 값이 이상이되면
+      if (wp < cp) { // 원하는 값이 이상이면
         notice.setNotice_type(1);
         
-      } else if (wp > cp) { // 원하는 값이 이하가되면
+      } else if (wp > cp) { // 원하는 값이 이하면
         notice.setNotice_type(0);
         
       } else {
