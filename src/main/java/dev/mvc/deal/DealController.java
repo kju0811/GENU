@@ -212,4 +212,18 @@ public class DealController {
    
     return list;
   }
+  
+  /** 하루치 매수량 조회 */
+  @GetMapping("/buy-total/{coin_no}")
+  public ResponseEntity<Integer> getTotalBuy(@PathVariable("coin_no") Long coin_no) {
+      Integer result = dealService.getTotalType1(coin_no);
+      return ResponseEntity.ok(result);
+  }
+
+  /** 하루치 매도량 조회 */
+  @GetMapping("/sell-total/{coin_no}")
+  public ResponseEntity<Integer> getTotalSell(@PathVariable("coin_no") Long coin_no) {
+      Integer result = dealService.getTotalType2(coin_no);
+      return ResponseEntity.ok(result);
+  }
 }
