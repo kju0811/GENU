@@ -23,11 +23,11 @@ export default function NewsRead() {
   const [summary,setSummary] = useState('');
   const { newsno } = useParams();
   
-  const filteredUserData = newsno != null ? userData.filter(reply => reply.news.newsno == newsno) : [];
-  const filteredUser = newsno != null ? user.filter((_, index) => userData[index]?.news.newsno == newsno) : [];
-  const filteredUserReply = newsno != null ? userReply.filter((_, index) => userData[index]?.news.newsno == newsno) : [];
-  const filteredShowReply = newsno != null ? showReply.filter((_, index) => userData[index]?.news.newsno == newsno) : [];
-  const filteredLikes = newsno != null ? like.filter(l => l.news?.newsno == newsno) : [];
+  const filteredUserData = userData.filter(reply => reply.news.newsno == newsno);
+  const filteredUser = user.filter((_, index) => userData[index]?.news.newsno == newsno);
+  const filteredUserReply = userReply.filter((_, index) => userData[index]?.news.newsno == newsno);
+  const filteredShowReply = showReply.filter((_, index) => userData[index]?.news.newsno == newsno);
+  const filteredLikes = like.filter(l => l.news?.newsno == newsno);
     
   const jwt = sessionStorage.getItem('jwt');
   let userInfo = null;
@@ -73,16 +73,16 @@ export default function NewsRead() {
   }
 
   const fetchReplies = () => {
-  fetch(`http://${getIP()}:9093/newsreply/findall`)
-    .then(res => res.json())
-    .then(data => {
-      setShowReply(data.map(item => item.newsreply_content));
-      setUserReply(data.map(item => item.member.member_nick));
-      setUser(data.map(item => item.member.member_no));
-      setUserData(data);
-    })
-    .catch(console.error);
-};
+    fetch(`http://${getIP()}:9093/newsreply/findall`)
+      .then(res => res.json())
+      .then(data => {
+        setShowReply(data.map(item => item.newsreply_content));
+        setUserReply(data.map(item => item.member.member_nick));
+        setUser(data.map(item => item.member.member_no));
+        setUserData(data);
+      })
+      .catch(console.error);
+  };
 
 useEffect(() => {
   fetchReplies();
@@ -325,8 +325,8 @@ useEffect(() => {
           {/* Comment Section */}
           <div className="space-y-6">
             {/* 본 댓글 */}
-            {filteredUser.map((memberno, index) => (
-            <div key={index}>
+            {filteredUserData.map((replyData, index) => (
+            <div key={replyData.newsreply_no}>
             <div className="border-b dark:border-gray-700 pb-6">
               <div className="flex gap-4">
                 {/* Avatar */}
@@ -334,7 +334,7 @@ useEffect(() => {
                   src={
                     (() => {
                       const matchedMember = member.find(
-                        (m) => m.member_no === userData[index]?.member?.member_no
+                        (m) => m.member_no === replyData.member?.member_no
                       );
                       return matchedMember?.member_img
                         ? `http://${getIP()}:9093/home/storage/${matchedMember.member_img}`
@@ -346,16 +346,22 @@ useEffect(() => {
                 />
 
                 {/* Comment Content */}
-                <div key={index} className="flex-1">
+                <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-sm font-medium text-black dark:text-white">{filteredUserReply[index]}</span>
                     <span className="text-sm text-gray-500 dark:text-gray-400">•</span>
+                    {replyData.member.member_grade !== 1? (
                     <span className="text-sm text-gray-500 dark:text-gray-400">
-                      {userData[index]?.newsreplyDate}
-                      </span>
+                      {replyData.newsreplyDate}
+                      </span>)
+                      :
+                      (<span className="text-sm text-gray-500 dark:text-gray-400">
+                      {replyData?.newsreplyDate} (관리자)
+                      </span>)
+                    }
                   </div>
                   <p className="text-sm text-black dark:text-white mb-3">
-                    {filteredShowReply[index]}
+                    {replyData.newsreply_content}
                   </p>
                   {(() => {
                       const matchedMember = member.find(
@@ -379,8 +385,8 @@ useEffect(() => {
                       return null;
                     })()}
                   {(() => {
-                    const matchedMember = userData[index]?.member;
-                    const replyNo = filteredUserData[index]?.newsreply_no;
+                    const matchedMember = replyData.member;
+                    const replyNo = replyData.newsreply_no;
                     return userInfo?.member_no === matchedMember?.member_no && replyNo ? (
                       <span style={{fontSize: '13px',cursor:'pointer'}} onClick={() => setEditingReplyNo(replyNo)}> / 댓글 수정</span>
                     ) : null;
