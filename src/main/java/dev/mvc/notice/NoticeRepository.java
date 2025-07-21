@@ -24,4 +24,9 @@ public interface NoticeRepository extends JpaRepository<Notice, Long>{
       + "WHERE n.notice_status = 0 AND n.coin.coin_no = :coin_no")
   List<Notice> getPending(@Param("coin_no") Long coin_no);
   
+  // 가격 중복체크
+  @Query(value = "SELECT COUNT(*) FROM notice n WHERE n.notice_price = :notice_price "
+      + "AND n.notice_status=0 AND n.member_no = :member_no", nativeQuery = true)
+  int existsCheckPrice(@Param("notice_price") int notice_price, @Param("member_no") Long member_no);
+
 }
