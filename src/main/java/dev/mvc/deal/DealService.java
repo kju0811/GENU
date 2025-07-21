@@ -72,13 +72,13 @@ public class DealService {
     return ownedCnt;
   }
   
-  /** 매수 체결된 코인갯수 반환 */
+  /** 매수 체결된 코인갯수 반환 + 기간 하루 치*/
   public Integer getTotalType1(Long coin_no) {
     System.out.println("-> getTotalType1 ok");
     return dealRepository.getTotalType1(coin_no);
   }
   
-  /** 매도 체결된 코인갯수 반환 */
+  /** 매도 체결된 코인갯수 반환 + 기간 하루 치 */
   public Integer getTotalType2(Long coin_no) {
     System.out.println("-> getTotalType2 ok");
     return dealRepository.getTotalType2(coin_no);
