@@ -23,14 +23,22 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
       + "AND (d.deal_type = 2 OR d.deal_type = 4)")
   Integer getSellbyCnt(@Param("member_no") Long member_no, @Param("coin_no") Long coin_no);
   
-  @Query("SELECT COALESCE(SUM(d.deal_cnt), 0) "
-      + "FROM Deal d "
-      + "WHERE d.deal_type = 1 AND d.coin.coin_no = :coin_no")
+  @Query(value = "SELECT COALESCE(SUM(d.deal_cnt), 0) "
+      + "FROM deal d "
+      + "WHERE d.deal_type = 1 "
+      + "AND d.coin_no = :coin_no "
+      + "AND d.deal_date BETWEEN "
+      + "(SYSTIMESTAMP AT TIME ZONE 'Asia/Seoul') - INTERVAL '1' DAY "
+      + "AND (SYSTIMESTAMP AT TIME ZONE 'Asia/Seoul')", nativeQuery = true)
   Integer getTotalType1(@Param("coin_no") Long coin_no);
-  
-  @Query("SELECT COALESCE(SUM(d.deal_cnt), 0) "
-      + "FROM Deal d "
-      + "WHERE d.deal_type = 2 AND d.coin.coin_no = :coin_no")
+
+  @Query(value = "SELECT COALESCE(SUM(d.deal_cnt), 0) "
+      + "FROM deal d "
+      + "WHERE d.deal_type = 2 "
+      + "AND d.coin_no = :coin_no "
+      + "AND d.deal_date BETWEEN "
+      + "(SYSTIMESTAMP AT TIME ZONE 'Asia/Seoul') - INTERVAL '1' DAY "
+      + "AND (SYSTIMESTAMP AT TIME ZONE 'Asia/Seoul')", nativeQuery = true)
   Integer getTotalType2(@Param("coin_no") Long coin_no);
   
   @Query("SELECT d "
