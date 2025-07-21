@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useGlobal } from '../components/GlobalContext';
-import { getIP } from '../components/Tool';
+import { getIP, socialLogin } from '../components/Tool';
 import { jwtDecode } from 'jwt-decode';
 
 // 포커스 이동
@@ -131,6 +131,11 @@ export default function Login({ isOpen, onClose }) {
     }
   };
 
+  // 소셜 로그인 클릭시
+  const handleSocialLogin = (provider) => {
+    socialLogin(provider);
+  };
+
   const test = () => { setId('minjun@noye.net'); setPassword('1234'); };
 
   if (!isOpen) return null;
@@ -144,15 +149,15 @@ export default function Login({ isOpen, onClose }) {
         <p className="text-sm text-gray-600 dark:text-gray-400 text-center mb-6">Welcome back! Please enter your details</p>
         {/* 소셜 로그인 버튼 */}
         <div className="space-y-3 mb-6">
-          <button className="w-full py-2 border border-gray-300 rounded-md flex items-center justify-center hover:bg-gray-100">
+          <button className="w-full py-2 border border-gray-300 rounded-md flex items-center justify-center hover:bg-gray-100" onClick={() => handleSocialLogin("google")}>
             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYMMskKN9Ql1Ep4wG_vEW01t98DUBVXeXE8A&s" 
                  alt="Google" 
                  className="w-5 h-5 mr-2" /> Continue with Google
           </button>
-          <button className="w-full py-2 border border-gray-300 rounded-md flex items-center justify-center hover:bg-gray-100">
+          <button className="w-full py-2 border border-gray-300 rounded-md flex items-center justify-center hover:bg-gray-100" onClick={() => handleSocialLogin("naver")}>
             <img src="https://images-eds-ssl.xboxlive.com/image?url=4rt9.lXDC4H_93laV1_eHHFT949fUipzkiFOBH3fAiZZUCdYojwUyX2aTonS1aIwMrx6NUIsHfUHSLzjGJFxxtZdWw6g4UwahLJywNYpykrE4ox0FBSnIc7culudXXPOT48oqy.15P4Xx4m193BKJ0ujsiUCiX_bGCXlpmoh0cs-&format=source" 
                  alt="Kakao" 
-                 className="w-5 h-5 mr-2" /> Continue with Kakao
+                 className="w-5 h-5 mr-2" /> Continue with Kakao 안됨 네이버임
           </button>
         </div>
         {/* 구분선 */}

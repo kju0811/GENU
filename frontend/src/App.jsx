@@ -26,6 +26,8 @@ import { useGlobal } from "./components/GlobalContext";
 import { ChatOpen } from "./components/chatCompnents";
 import NotificationLog from "./components/NotificationLog";
 
+import SocialLogin from "./components/SocialLogin"; // SNS 로그인용
+
 import "react-chatbot-kit/build/main.css";
 import "./style/chat.css";
 import NotFound from "./pages/NotFound";
@@ -55,6 +57,8 @@ function App() {
         <Route path="/deal/dealList/:member_no" element={<DealList/>} />
         <Route path="/notification/find_by_MemberNotification/:member_no" element={<NotificationLog/>} />
         <Route path="*" element={<NotFound/>} />
+
+        <Route path="/sociallogin" element={<SocialLogin />} /> {/* Backend 로그인후 실행, Backend: OAuthSuccessHandler.java */}
       </Routes>
       {!hideChatbot && (
         !close ? (
