@@ -60,7 +60,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         String nick = "";
         do {
           nick = generateUniqueNickName("user");
-        } while (memberRepository.existsCheckNick(nick));
+        } while (memberRepository.existsCheckNick(nick) > 0);
 
         if("naver".equals(registrationId)) {
         	socialType = "naver";

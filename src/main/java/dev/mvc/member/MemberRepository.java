@@ -38,7 +38,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 	Boolean existsByMemberId(String memberId);
 	
 	// 닉네임 중복체크
-	@Query(value = "SELECT EXISTS(SELECT 1 FROM member WHERE member_nick = :member_nick)", nativeQuery = true)
-	boolean existsCheckNick(@Param("member_nick") String member_nick);
+	@Query(value = "SELECT COUNT(*) FROM member WHERE member_nick = :member_nick", nativeQuery = true)
+  int existsCheckNick(@Param("member_nick") String member_nick);
 
 }
