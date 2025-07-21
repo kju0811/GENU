@@ -8,6 +8,7 @@ function Announce_read() {
     const [update,setUpdate] = useState(false);
     const [title,setTitle] = useState('');
     const [content,setContent] = useState('');
+    const [img, setImg] = useState(null);
     const { announce_no } = useParams();
     const jwt = sessionStorage.getItem('jwt');
     let userInfo = null;
@@ -28,6 +29,7 @@ function Announce_read() {
         setData(result);
         setTitle(result.announcetitle);
         setContent(result.announce_content);
+        setImg(result.file);
         })
         .catch(err => console.error(err));
     };
@@ -97,6 +99,11 @@ function Announce_read() {
 
     return (
         <>
+        { img && (
+            <img src={`http://${getIP()}:9093/home/storage/${data.file}`} />
+        ) 
+        }
+
         { update ? (
         <div>
         <span>제목</span>
