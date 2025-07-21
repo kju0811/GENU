@@ -34,7 +34,6 @@ export default function NewsFind() {
       .then(res => res.json())
       .then(result => { 
         setData(result)
-        console.log("결과: ",result)
       })
       .catch(err => console.error(err))
       .finally(() => setLoading(false));
