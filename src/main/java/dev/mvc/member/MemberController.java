@@ -253,22 +253,18 @@ public class MemberController {
         return ResponseEntity.ok("프로필 변경 성공");
     }
 
-    // 비밀번호 변경 (준수가 할거)
-//    @PostMapping("/change-pw")
-//    public ResponseEntity<?> changePassword(
-//        @AuthenticationPrincipal Member member,
-//        @RequestBody Map<String, String> req // oriPassword, newPassword
-//    ) {
-//        if (member == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 필요");
-//        String oriPassword = req.get("oriPassword");
-//        String newPassword = req.get("newPassword");
-//        // 기존 비번 검증
-//        if (!encode.matches(oriPassword, member.getMemberPw())) {
-//            return ResponseEntity.badRequest().body("현재 비밀번호 불일치");
-//        }
-//        member.setMemberPw(encode.encode(newPassword));
-//        memberService.save(member);
-//        return ResponseEntity.ok("비밀번호 변경 성공");
-//    }
+    // 비밀번호 변경
+    @PostMapping("/change-pw")
+    public ResponseEntity<?> changePassword(
+        @AuthenticationPrincipal Member member,
+        @RequestBody Map<String, String> req // oriPassword, newPassword
+    ) {
+        if (member == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 필요");
+        String oriPassword = req.get("oriPassword");
+        String newPassword = req.get("newPassword");
+        
+        memberService.changePassword(member, oriPassword, newPassword);
+        return ResponseEntity.ok("비밀번호 변경 성공");
+    }
     
 }
