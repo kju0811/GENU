@@ -107,17 +107,14 @@ public class MemberService {
       return imgPath;
   }
 
-  // 비밀번호 변경 (Member 객체만 활용) (준수가 할거)
-//  public void changePassword(Long member_no, String currentPw, String newPw) {
-//      Member member = memberRepository.findById(member_no)
-//              .orElseThrow(() -> new IllegalArgumentException("회원 없음"));
-//
-//      // 기존 비번 일치 확인
-//      if (!encode.matches(currentPw, member.getMemberPw())) {
-//          throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
-//      }
-//      member.setMemberPw(encode.encode(newPw));
-//      memberRepository.save(member);
-//  }
+  // 비밀번호 변경
+  public void changePassword(Member member, String currentPw, String newPw) {
+      // 기존 비번 일치 확인
+      if (!encode.matches(currentPw, member.getMemberPw())) {
+          throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
+      }
+      member.setMemberPw(encode.encode(newPw));
+      memberRepository.save(member);
+  }
 
 }
