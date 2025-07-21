@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -32,6 +33,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 	private MemberRepository memberRepository;
 	@Autowired
 	private PayService payService;
+ @Autowired
+  private PasswordEncoder encode;
 	
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -71,6 +74,9 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         	socialType = "google";
         }
         
+        // 더미 비밀번호 36자리 문자열 생성
+        String encodedPw = encode.encode(UUID.randomUUID().toString());
+        
         System.out.println("-> loadUser email: " +email);
         
         if(name == null) name = "";
@@ -91,7 +97,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
           System.out.println("-> 신규 소셜 사용자 등록: " + socialType);
           memberEntity = Member.builder()
               .memberId(memberId)
-              .memberPw("1234")
+              .memberPw(encodedPw)
               .member_name(name)
               .member_nick(nick)
               .member_tel("000-0000-0000")
