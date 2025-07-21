@@ -1,6 +1,9 @@
 package dev.mvc.member;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,6 +13,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.SequenceGenerator;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -34,6 +39,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity @Setter @Getter @ToString
+@Builder @Data
 public class Member {
   /**
    * 회원 번호 식별자, sequence 자동 생성됨.
@@ -92,6 +98,10 @@ public class Member {
   /** 멤버 생년월일(8자리 고정) */
   @Column(name = "member_birth", nullable = false, length = 8)
   private String memberBirth="";  
+  
+  /** SNS 로그인 확인*/
+  @Column(name = "auth_provider")
+  private String authProvider;
   
   /** 멤버 심리 분석 */
   @Column(name = "member_mind", nullable = false, columnDefinition = "VARCHAR2(500 CHAR)")
