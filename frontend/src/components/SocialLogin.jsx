@@ -17,7 +17,7 @@ const SocialLogin = () => {
 
   useEffect(() => {
     const jwt = getJwt();
-    console.log(jwt);
+    // console.log(jwt);
     if (!jwt) {
       // 토큰 없으면 로그인 페이지로
       navigate('/', { state: { from: location } });
