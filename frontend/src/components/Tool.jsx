@@ -28,4 +28,19 @@ function enter_chk(event, nextTag){
   }
 }
 
-export { getIP, getNowDate, enter_chk };
+// SNS 로그인
+const socialLogin = (provider) => {
+  const frontendUrl = window.location.protocol + "//" + window.location.host;
+  console.log("-> frontendUrl = " + frontendUrl);
+
+  // http://localhost:9103/oauth2/authorization/google?redirect_url=http://localhost:3000
+  window.location.href =
+    // "http://"+getIP()+":9093" +
+    "http://localhost:9093" + 
+    "/oauth2/authorization/" +
+    provider +
+    "?redirect_url=" +
+    frontendUrl;
+}
+
+export { getIP, getNowDate, enter_chk, socialLogin};
