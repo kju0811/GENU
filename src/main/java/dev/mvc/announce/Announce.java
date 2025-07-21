@@ -1,6 +1,10 @@
 package dev.mvc.announce;
 
+import java.time.LocalDateTime;
+
 import org.hibernate.annotations.ColumnDefault;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import dev.mvc.member.Member;
 import jakarta.persistence.Column;
@@ -10,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -46,15 +51,16 @@ public class Announce {
   
   // 공지사항 타이틀
   @Column(name = "announce_title",nullable = false, columnDefinition = "VARCHAR2(200)")
-  private String announce_title = "";
+  private String announcetitle = "";
   
   // 공지사항 타이틀
  @Column(name = "announce_content",nullable = false, columnDefinition = "CLOB")
  private String announce_content = "";
  
   // 공지사항 등록일
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
   @Column(name = "announce_date", nullable = false, columnDefinition = "DATE")
-  private String announce_date;
+  private LocalDateTime announcedate;
   
   // 출력모드
   @Column(name = "visible", nullable = false, columnDefinition = "CHAR(1)")
@@ -66,5 +72,12 @@ public class Announce {
   @JoinColumn(name = "member_no",nullable = false, referencedColumnName = "member_no",
               columnDefinition = "NUMBER(10)")
   private Member member;
+  
+  @PrePersist
+  public void prePersist() {
+	  if (announcedate == null) {
+		  announcedate = LocalDateTime.now();
+	  }
+  }
   
 }
