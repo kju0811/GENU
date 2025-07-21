@@ -30,7 +30,7 @@ import dev.mvc.team4.Home;
 @RequestMapping(value = "/coin")
 @RestController
 public class CoinController {
-  @Autowired
+
   private final CoinService coinService;
   
   private final Path storageLocation = Paths.get(Home.getUploadDir());
