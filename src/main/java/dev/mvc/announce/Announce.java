@@ -67,6 +67,9 @@ public class Announce {
   @ColumnDefault("'Y'")
   private String visible = "Y";
   
+  @Column(name = "file_img", columnDefinition = "VARCHAR2(20 char)")
+  private String file = "";
+  
   // 회원테이블 외래키
   @ManyToOne
   @JoinColumn(name = "member_no",nullable = false, referencedColumnName = "member_no",
