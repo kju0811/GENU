@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import dev.mvc.calendar.Calendar;
+import dev.mvc.fluctuation.FluctuationService;
 import dev.mvc.newslike.NewsLikeService;
 import dev.mvc.newsreply.NewsreplyService;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +39,7 @@ public class NewsController {
   private final NewsLikeService likeService;
   private final NewsService newsService;
   private final NewsreplyService replyService;
-  
+  private final FluctuationService fluctuationService;
   
   @PostMapping(value="/create")
   @ResponseBody
@@ -80,6 +81,8 @@ public class NewsController {
   @DeleteMapping(value="/delete/{newsno}") 
   public ResponseEntity<News> delete(@PathVariable("newsno") Long id) {
 	  if (newsService.find_by_id(id).isPresent()) { // Entity가 존재하면
+		  	// fluctuation삭제
+		  	fluctuationService.deleteEntity(id);
 		  	//reply삭제
 		  	replyService.delete(id);
 		  	//좋아요 삭제
