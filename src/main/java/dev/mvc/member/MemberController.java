@@ -219,25 +219,14 @@ public class MemberController {
     
     // 마이페이지 정보 조회 (JWT 인증 기반)
     @GetMapping("/mypage")
-    public ResponseEntity<?> getMyPage(@AuthenticationPrincipal Member member) {
-        if (member == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 필요");
-        // 그냥 Member Entity 전체 반환 (보안상 예민한 필드는 @JsonIgnore 붙이거나, 프론트에서 사용하지 않게!)
-        return ResponseEntity.ok(member);
+    public ResponseEntity<?> getMyPage(@PathVariable Long member_no) {
+        return ResponseEntity.ok(member_no);
     }
 
     // 마이페이지 정보 수정
     @PostMapping("/mypage")
-    public ResponseEntity<?> updateMyPage(@AuthenticationPrincipal Member member, @RequestBody Member update) {
-        if (member == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 필요");
-        // 예시: 닉네임, 전화번호, 주소 등만 업데이트 (비번/이미지/가입일 등은 무시)
-        member.setMember_name(update.getMember_name());
-        member.setMember_nick(update.getMember_nick());
-        member.setMember_tel(update.getMember_tel());
-        member.setZipcode(update.getZipcode());
-        member.setAddress1(update.getAddress1());
-        member.setAddress2(update.getAddress2());
-        // ... 추가적으로 수정 허용 필드만!
-        memberService.save(member);
+    public ResponseEntity<?> updateMyPage(@PathVariable Long member_no, @RequestBody Member update) {
+      Member member = memberService.updateMyPage(member_no, update);
         return ResponseEntity.ok(member);
     }
 
@@ -247,28 +236,23 @@ public class MemberController {
         @AuthenticationPrincipal Member member,
         @RequestPart MultipartFile file
     ) {
-        if (member == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 필요");
         // 파일 저장 및 member.setMember_img(경로) + save
         // ... 기존 로직 활용
         return ResponseEntity.ok("프로필 변경 성공");
     }
 
-    // 비밀번호 변경 (준수가 할거)
-//    @PostMapping("/change-pw")
-//    public ResponseEntity<?> changePassword(
-//        @AuthenticationPrincipal Member member,
-//        @RequestBody Map<String, String> req // oriPassword, newPassword
-//    ) {
-//        if (member == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 필요");
-//        String oriPassword = req.get("oriPassword");
-//        String newPassword = req.get("newPassword");
-//        // 기존 비번 검증
-//        if (!encode.matches(oriPassword, member.getMemberPw())) {
-//            return ResponseEntity.badRequest().body("현재 비밀번호 불일치");
-//        }
-//        member.setMemberPw(encode.encode(newPassword));
-//        memberService.save(member);
-//        return ResponseEntity.ok("비밀번호 변경 성공");
-//    }
+    // 비밀번호 변경
+    @PostMapping("/change-pw")
+    public ResponseEntity<?> changePassword(
+        @AuthenticationPrincipal Member member,
+        @RequestBody Map<String, String> req // oriPassword, newPassword
+    ) {
+        if (member == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 필요");
+        String oriPassword = req.get("oriPassword");
+        String newPassword = req.get("newPassword");
+        
+        memberService.changePassword(member, oriPassword, newPassword);
+        return ResponseEntity.ok("비밀번호 변경 성공");
+    }
     
 }
