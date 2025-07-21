@@ -1,117 +1,138 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { getIP } from "../components/Tool";
-import Pagination from 'react-js-pagination';
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
 function Announce_read() {
-      const [data,setData] = useState([]);
-      const [searchParams, setSearchParams] = useSearchParams();
-      const pageParam = parseInt(searchParams.get('page')) || 1;
-      const wordParam = searchParams.get('word') || '';
-      const [page, setPage] = useState(pageParam);
-      const [word, setWord] = useState(wordParam);
-      const size = 20;
+    const [data,setData] = useState([]);
+    const [update,setUpdate] = useState(false);
+    const [title,setTitle] = useState('');
+    const [content,setContent] = useState('');
+    const { announce_no } = useParams();
+    const jwt = sessionStorage.getItem('jwt');
+    let userInfo = null;
+    if (jwt != null) {
+        try {
+        userInfo = jwtDecode(jwt);
+        } catch (err) {
+        console.error("JWT 디코딩 오류:", err);
+        }
+    }
 
-      const jwt  = sessionStorage.getItem('jwt');
-          let userInfo = null;
-          if (jwt != null) {
-              try {
-              userInfo = jwtDecode(jwt);
-              } catch (err) {
-              console.error("JWT 디코딩 오류:", err);
-              }
-          } 
-    
-      const indexOfLastItem = page * size;
-      const indexOfFirstItem = indexOfLastItem - size;
-      const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
+    const role = userInfo?.role;
 
-     useEffect(() => { 
-      const url = word
-            ? `http://${getIP()}:9093/announce/find?word=${encodeURIComponent(word)}`
-            : `http://${getIP()}:9093/announce/find_all`;
-        fetch(url, {
+    const fetchAnnounce = () => {
+    fetch(`http://${getIP()}:9093/announce/read/${announce_no}`)
+        .then(res => res.json())
+        .then(result => {
+        setData(result);
+        setTitle(result.announcetitle);
+        setContent(result.announce_content);
+        })
+        .catch(err => console.error(err));
+    };
+
+    useEffect(() => {
+    fetchAnnounce();
+    }, [announce_no]);
+
+    useEffect(() => {
+        console.log("번호:",announce_no);
+        fetch(`http://${getIP()}:9093/announce/read/${announce_no}`, {
           method: 'GET'
         })
         .then(result => result.json()) // 응답
         .then(result => {
           setData(result);
+          setTitle(result.announcetitle);
+          setContent(result.announce_content);
           console.log(result);
         })
         .catch(err => console.error(err))
-      }, [word]); 
+    },[]);
 
-      const handlePageChange = (pageNumber) => {
-        setPage(pageNumber);
-        setSearchParams(word ? { page: pageNumber, word } : { page: pageNumber });
-      };
+    const deleteAnnounce =()=>{
+        const delcheck = window.confirm('공지사항을 삭제하시겠습니까?');
+        if (delcheck && jwt == "ADMIN") {
+        fetch(`http://${getIP()}:9093/announce/delete/${announce_no}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': jwt
+            },
+         })
+         .then(response => {
+            if(response.ok){
+                alert("공지사항을 삭제했습니다")
+                history.back()
+            } else{
+                alert("삭제에 실패하였습니다")
+            }
+         })
+        }
+    }
 
-      const handleSearchChange = (e) => {
-        const newWord = e.target.value;
-        setWord(newWord);
-        setPage(1);
-        setSearchParams(newWord ? { page: 1, word: newWord } : { page: 1 });
-      };
+    const updateAnnounce =(title,content)=> {
+        fetch(`http://${getIP()}:9093/announce/update/${announce_no}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': jwt
+            },
+            body: JSON.stringify({
+                "announcetitle" :title,
+                "announce_content":content
+            })
+            })
+            .then(response => {
+            if(response.ok){
+                alert("공지사항을 수정했습니다")
+                setUpdate(false)
+                fetchAnnounce()
+            } else{
+                alert("수정에 실패하였습니다")
+            }
+            })
+    }
 
-    return(
+    return (
         <>
-        {userInfo?.role == "ADMIN" && (
-              <Link to="/announce" className="text-indigo-600 hover:underline">공지사항 생성하기</Link>
-        )}
-
-        <h2> 공지사항 </h2>
-
-        <div className="flex justify-between items-center mb-6" style={{marginTop:'2%'}}>
-        <input
-          type="search"
-          placeholder="Search..."
-          value={word}
-          onChange={handleSearchChange}
-          className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        />
+        { update ? (
+        <div>
+        <span>제목</span>
+        <textarea value={title} style={{resize:'none',marginTop:"15%", border:'1px solid gray', borderRadius: '5px'}} onChange={(e) => setTitle(e.target.value)}></textarea> <br />
+        <span>본문</span>
+        <textarea value={content} style={{resize:'none', border:'1px solid gray', borderRadius: '5px'}} onChange={(e) => setContent(e.target.value)}></textarea>
         </div>
+        
+        )
+        :
+        (
+        <div>
+        <h1>{data.announcetitle}</h1>
+        <span>{data.announce_content}</span><br/>
+        <button onClick={()=>history.back()}>이전으로</button>
+        </div>
+        )
+        }
 
-            <div className="overflow-x-auto rounded-box border border-base-content/5 bg-base-100" style={{width:'60%'}}>
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>제목</th>
-                    <th>내용</th>
-                    <th>등록일 </th>
-                  </tr>
-                </thead>
-                <tbody>
-                {currentItems.map((item) => (
-                  <tr key={item.announce_no}>
-                    <th style={{width:'20%'}}>{item.announcetitle}</th>
-                    <td style={{width:'50%'}}> 
-                    {item.announce_content.length > 70
-                        ? `${item.announce_content.slice(0, 70)}...`
-                        : item.announce_content}
-                    </td>
-                    <td style={{width:'15%'}}>{item.announcedate}</td>
-                  </tr>
-                  ))}
-                </tbody>
-              </table>
+        {role === "ADMIN" && (
+        <>
+            {update ? (
+            <div>
+            <button onClick={() => updateAnnounce(title,content)}>수정하기</button>
+            <button onClick={() => setUpdate(false)}>수정취소</button>
             </div>
-
-            {/* Pagination */}
-            <div className="mt-8 py-5 flex justify-center gap-2">
-              <Pagination
-                innerClass="flex justify-center mt-4 gap-2"
-                itemClass="rounded-lg"
-                linkClass="w-10 h-10 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-200 text-sm rounded-lg"
-                activeClass="bg-sky-500 text-white border-sky-500 rounded-lg"
-                activePage={page}
-                itemsCountPerPage={size}
-                totalItemsCount={data.length}
-                pageRangeDisplayed={5}
-                onChange={handlePageChange}
-              />
+            ) : (
+            <div>
+            <button onClick={deleteAnnounce}>삭제하기</button>
+            <button onClick={() => setUpdate(true)}>수정하기</button>
             </div>
+            )}
+        </>
+        )}
         </>
     );
+
 }
 export default Announce_read;
