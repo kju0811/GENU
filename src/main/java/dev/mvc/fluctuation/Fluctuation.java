@@ -56,11 +56,4 @@ public class Fluctuation {
   @JoinColumn(name="coin_no", referencedColumnName = "coin_no", nullable = false)
   private Coin coin;
   
-//  /**
-//   * 해당 테이블에서 news_no만 가져오기
-//   */
-//  @Transactional(readOnly = true)
-//  public interface FluctuationNews_no {
-//    Long getNews_no();
-//  }
 }
