@@ -222,7 +222,6 @@ useEffect(() => {
       .then(result => result.json()) // 응답
       .then(result => {
         setLike(result)
-        console.log("좋아요 관리: ",result);
       })
       .catch(err => console.error(err))
   }
