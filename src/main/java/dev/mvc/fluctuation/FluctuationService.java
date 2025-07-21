@@ -24,6 +24,7 @@ public class FluctuationService {
   
   /** 코인변동 id에 해당하는 코인변동 삭제 */
   public void deleteEntity(Long id) {
+	fluctuationRepository.deleteByNews_Newsno(id);
     fluctuationRepository.deleteById(id);
   }
   
