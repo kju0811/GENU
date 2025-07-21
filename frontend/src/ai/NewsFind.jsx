@@ -77,7 +77,7 @@ export default function NewsFind() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {currentItems.map(item => (
           <article
-            key={item.news_no}
+            key={item.newsno}
             className="rounded-xl overflow-hidden bg-gray-50 dark:bg-[#252731] transition-transform hover:scale-[1.02]"
           >
             <img
@@ -114,7 +114,7 @@ export default function NewsFind() {
                     {item.member.member_nick}
                   </span>
                 </div>
-                <Link to={`/ai/read/${item.news_no}`}>  
+                <Link to={`/ai/read/${item.newsno}`}>  
                   <button className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">
                     뉴스 보러가기
                   </button>

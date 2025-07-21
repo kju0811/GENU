@@ -28,6 +28,9 @@ public class NewsLikeService {
   }
   
   public void delete(Long id ) {
+	  repository.deleteByNews_Newsno(id);
 	  repository.deleteById(id);
   }
+  
+  
 }
