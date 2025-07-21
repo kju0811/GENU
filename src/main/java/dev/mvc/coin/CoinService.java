@@ -70,23 +70,24 @@ public class CoinService {
   /** 시뮬레이션 로직 */
   public double calculateFluctuation(int buyVolume, int sellVolume, int newsSentiment) {
     // (1) 정규분포 기반 기본 변화율
-    double stdDev = 15.0;
+    double stdDev = 8.0;
     double baseChange = rand.nextGaussian() * stdDev;
     
     // (2) 순매수량 보정
     int netBuy = buyVolume - sellVolume;
+    System.out.println("netBuy -> "+netBuy);
     
     // * 20  -> 20% 보정최대 / 클수록 영향이큼  (조정필요)
     // tanh(x) 크면 결과가 +-1에 거의 수렴 -> 0.01를 곱해
     // 현재 1당 0.02% 적용중
-    double netBuyAdjustment = Math.tanh(netBuy * 0.001) * 20;
-    
+    double netBuyAdjustment = Math.tanh(netBuy * 0.001) * 10;
+
     // (3) 뉴스 감성 보정 (기사 분석 결과: 0 ~ 1) // 조정할수도?
-    double newsAdjustment = newsSentiment * 5.0;
+    double newsAdjustment = newsSentiment * 3.0;
     
     // (4) 최종 변화율
     double change = baseChange + netBuyAdjustment + newsAdjustment;
-    change = Math.max(-50, Math.min(50, change)); // -50% ~ +50% 제한
+    change = Math.max(-35, Math.min(35, change)); // -30% ~ +30% 제한
 
     // 출력 로그
     System.out.printf(
@@ -107,8 +108,7 @@ public class CoinService {
 //      System.out.println("1번 : "+fluDTO);
       
       for (FluctuationDTO dto : fluDTO) {
-//        News news = newsRepository.getReferenceById(dto.getNews().getNews_no());
-        News news = newsRepository.getReferenceById(dto.getNews_no());  // << 레포지토리 -> 서비스로 교체해야함
+        News news = newsRepository.getReferenceById(dto.getNews_no());
 //        News news = newsServic.
 //        System.out.println("2번 news -> "+ news);
         
@@ -118,7 +118,6 @@ public class CoinService {
           cnt--;
         }
       }
-      
 //      System.out.println("3번 cnt ->"+ cnt);
       
       // 해당 코인의 체결된 매수, 매도된 코인 개수(deal_cnt)로 변동 추가
@@ -127,7 +126,7 @@ public class CoinService {
 //      System.out.println("buy_cnt -> "+buy_cnt);
 //      System.out.println("sell_cnt -> "+sell_cnt);
       
-      double fluctuation = calculateFluctuation(buy_cnt, sell_cnt, cnt); // 예시 값
+      double fluctuation = calculateFluctuation(buy_cnt, sell_cnt, cnt);
       coin.setCoin_price((int)(coin.getCoin_price() * (1 + fluctuation / 100)));
       coin.setCoin_percentage(fluctuation);
       coinRepository.save(coin);
