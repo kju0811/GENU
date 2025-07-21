@@ -17,13 +17,18 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import dev.mvc.member.UserDetailsServiceImpl;
+import dev.mvc.sns.security.JwtAuthenticationFilter;
+import dev.mvc.sns.security.OAuthSuccessHandler;
+import dev.mvc.sns.security.RedirectUrlCookieFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -35,14 +40,25 @@ public class SecurityConfig {
     private final AuthenticationFilter authenticationFilter;
     private final AuthEntryPoint authEntryPoint;
 
+    // sns
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final OAuthSuccessHandler oAuthSuccessHandler;
+    private final RedirectUrlCookieFilter redirectUrlFilter;
+    
     public SecurityConfig(
             UserDetailsServiceImpl userDetailsService,
             AuthenticationFilter authenticationFilter,
-            AuthEntryPoint authEntryPoint
+            AuthEntryPoint authEntryPoint,
+            JwtAuthenticationFilter jwtAuthenticationFilter,
+            OAuthSuccessHandler oAuthSuccessHandler,
+            RedirectUrlCookieFilter redirectUrlFilter
     ) {
         this.userDetailsService = userDetailsService;
         this.authenticationFilter = authenticationFilter;
         this.authEntryPoint = authEntryPoint;
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.oAuthSuccessHandler = oAuthSuccessHandler;
+        this.redirectUrlFilter = redirectUrlFilter;
     }
 
     /**
@@ -64,18 +80,27 @@ public class SecurityConfig {
             .cors(withDefaults())
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // JWT일경우 무상태
             .authorizeHttpRequests(auth -> auth
-                // 로그인 엔드포인트 허용, JWT 체크 안함
-                .requestMatchers(HttpMethod.POST, "/member/login", "/member/create").permitAll()
-                // 기타 허용 필요 엔드포인트 추가, POST, PUT, DELETE 권한은 통신시에 OPTIONS 권한을 확인함으로 모두 허용
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                // JWT 체크 안함
-                .requestMatchers("/home/storage/*").permitAll()  
-                .requestMatchers(HttpMethod.GET, "/announce/*","/calendar/read","/news/find","/coin/find_all",
-                    "/news/find_all","/news/read/*","/member/page","/member/search","/member/create","/member/logout").permitAll()
-                .anyRequest().authenticated() // 로그인을 제외한 접근은 모두 인증된 사용자만 접근 가능
+                // 1) 인증이 필요한 경로 추가
+                // 예) 
+                .requestMatchers(HttpMethod.GET,  "/admin/**", "/user/profile/**", "/find_by_readtype0/*").authenticated()
+
+                // 2) 그 외 모든 요청은 인증 없이 허용
+                .anyRequest().permitAll()
             )
             // UserDetailsService + PasswordEncoder 를 사용하는 AuthenticationProvider 등록
             .authenticationProvider(daoAuthenticationProvider())
+            
+            // sns-------------------
+            .addFilterAfter(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            .oauth2Login(oauth2 -> oauth2
+                .successHandler(oAuthSuccessHandler)
+            )
+            .exceptionHandling(exception -> exception
+                .authenticationEntryPoint(new Http403ForbiddenEntryPoint())
+            )
+            .addFilterBefore(redirectUrlFilter, OAuth2AuthorizationRequestRedirectFilter.class)
+            // -------------------
+            
             // JWT 토큰 필터 등록
             .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
             // 인증 실패 핸들러
