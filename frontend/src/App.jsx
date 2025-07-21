@@ -12,7 +12,7 @@ import NewsRead from "./ai/NewsRead";
 import CoinCreate from "./components/CoinCreate";
 import CoinDetail from "./pages/CoinDetail";
 import SignUp from "./pages/SignUp";
-// import CoinList from "./pages/CoinList";
+import CoinList from "./pages/CoinList";
 import Schedule from "./pages/Calendar";
 import CoinUpdate from "./components/CoinUpdate";
 import OrderBook from "./components/OrderBook";
@@ -29,6 +29,7 @@ import NotificationLog from "./components/NotificationLog";
 import "react-chatbot-kit/build/main.css";
 import "./style/chat.css";
 import NotFound from "./pages/NotFound";
+import MyPage from "./pages/MyPage";
 
 function App() {
   const { close, hideNavbar,hideChatbot } = useGlobal();
@@ -44,12 +45,13 @@ function App() {
         <Route path="/ai/read/:newsno" element={<NewsRead/>} />
         {/* <Route path="/attendance/:attendance_no" element={<Attendance/>} /> */}
         <Route path="/coin/create" element={<CoinCreate/>} />
-        {/* <Route path="/coinlist" element={<CoinList />} /> */}
+        <Route path="/coinlist" element={<CoinList />} />
         <Route path="/coin/:coin_no" element={<CoinDetail/>} />
         <Route path="/calendar" element={<Schedule/>} />
         <Route path="/coin/update/:coin_no" element={<CoinUpdate/>} />
         <Route path="/coin/tickList/:coin_no" element={<OrderBook/>} />
         <Route path="/member" element={<MemberList />} />
+        <Route path="/mypage" element={<MyPage />} />
         <Route path="/deal/dealList/:member_no" element={<DealList/>} />
         <Route path="/notification/find_by_MemberNotification/:member_no" element={<NotificationLog/>} />
         <Route path="*" element={<NotFound/>} />
