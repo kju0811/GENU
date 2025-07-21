@@ -94,6 +94,7 @@ public class SecurityConfig {
             .addFilterAfter(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .oauth2Login(oauth2 -> oauth2
                 .successHandler(oAuthSuccessHandler)
+                .failureUrl("http://localhost:3000") // 취소시 메인으로
             )
             .exceptionHandling(exception -> exception
                 .authenticationEntryPoint(new Http403ForbiddenEntryPoint())
