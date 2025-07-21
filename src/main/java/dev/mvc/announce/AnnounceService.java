@@ -1,6 +1,7 @@
 package dev.mvc.announce;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -49,5 +50,21 @@ public class AnnounceService {
 				);
 		return repository.findByAnnouncetitleContainingIgnoreCase(word,pageable);
 	}
+	
+	/**
+	 * 공지사항번호 조회
+	 * @param id
+	 * @return
+	 */
+	public Optional<Announce> find_by_id(Long id) {
+		return repository.findById(id);
+	}
+	
+	/**
+	 * 삭제
+	 */
+	 public void delete(Long id){
+		  repository.deleteById(id);
+	  }
 	
 }
