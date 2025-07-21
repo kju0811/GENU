@@ -25,14 +25,20 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import dev.mvc.calendar.Calendar;
+import dev.mvc.newslike.NewsLikeService;
+import dev.mvc.newsreply.NewsreplyService;
+import lombok.RequiredArgsConstructor;
 
 
 @RequestMapping(value = "/news")
 @RestController
+@RequiredArgsConstructor
 public class NewsController {
   
-  @Autowired
-  private NewsService newsService;
+  private final NewsLikeService likeService;
+  private final NewsService newsService;
+  private final NewsreplyService replyService;
+  
   
   @PostMapping(value="/create")
   @ResponseBody
@@ -66,14 +72,19 @@ public class NewsController {
     return list;
   }
   
-  @GetMapping(value="/read/{id}")
-  public Optional<News> read(@PathVariable("id") Long id) {
+  @GetMapping(value="/read/{newsno}")
+  public Optional<News> read(@PathVariable("newsno") Long id) {
     return newsService.find_by_id(id);
   }
   
-	@DeleteMapping(value="/delete/{new_no}") 
-	public ResponseEntity<Calendar> delete(@PathVariable("new_no") Long id) {
-	    if (newsService.find_by_id(id).isPresent()) { // Entity가 존재하면
+  @DeleteMapping(value="/delete/{newsno}") 
+  public ResponseEntity<News> delete(@PathVariable("newsno") Long id) {
+	  if (newsService.find_by_id(id).isPresent()) { // Entity가 존재하면
+		  	//reply삭제
+		  	replyService.delete(id);
+		  	//좋아요 삭제
+		  	likeService.delete(id);
+		  	//뉴스 삭제	
 	    	newsService.deleteEntity(id); // 삭제
 	        return ResponseEntity.ok().build(); // 성공적으로 삭제된 경우 200 반환
 	      } else {
