@@ -43,7 +43,7 @@ function App() {
         <Route path="/SignUp" element={<SignUp />} /> 
         <Route path="/ai/news" element={<News />} />
         <Route path="/ai/newsfind" element={<NewsFind/>} />
-        <Route path="/ai/read/:news_no" element={<NewsRead/>} />
+        <Route path="/ai/read/:newsno" element={<NewsRead/>} />
         {/* <Route path="/attendance/:attendance_no" element={<Attendance/>} /> */}
         <Route path="/coin/create" element={<CoinCreate/>} />
         {/* <Route path="/coinlist" element={<CoinList />} /> */}
