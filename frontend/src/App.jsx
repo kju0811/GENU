@@ -25,6 +25,8 @@ import ActionProvider from "./ai/ActionProvider";
 import { useGlobal } from "./components/GlobalContext";
 import { ChatOpen } from "./components/chatCompnents";
 import NotificationLog from "./components/NotificationLog";
+import Announce from "./pages/Announce";
+import Announce_read from "./pages/Announce_read";
 
 import SocialLogin from "./components/SocialLogin"; // SNS 로그인용
 
@@ -54,6 +56,8 @@ function App() {
         <Route path="/coin/tickList/:coin_no" element={<OrderBook/>} />
         <Route path="/member" element={<MemberList />} />
         <Route path="/mypage" element={<MyPage />} />
+        <Route path="/announce" element={<Announce />} />
+        <Route path="/announce_read" element={<Announce_read />} />
         <Route path="/deal/dealList/:member_no" element={<DealList/>} />
         <Route path="/notification/find_by_MemberNotification/:member_no" element={<NotificationLog/>} />
         <Route path="*" element={<NotFound/>} />
