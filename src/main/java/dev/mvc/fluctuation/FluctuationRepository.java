@@ -3,8 +3,11 @@ package dev.mvc.fluctuation;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import jakarta.transaction.Transactional;
 
 public interface FluctuationRepository extends JpaRepository<Fluctuation, Long> {
   // 현재~1일전 까지의 뉴스를 찾아 리스트 반환
@@ -15,4 +18,9 @@ public interface FluctuationRepository extends JpaRepository<Fluctuation, Long> 
         AND f.coin_no = :coin_no
       """, nativeQuery = true)
   List<Fluctuation> findByRdatePeriod(@Param("coin_no") Long coin_no);
+  
+  @Transactional
+  @Modifying
+  void deleteByNews_Newsno(Long id);
+  
 }
