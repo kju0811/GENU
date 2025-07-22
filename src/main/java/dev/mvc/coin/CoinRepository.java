@@ -1,6 +1,7 @@
 package dev.mvc.coin;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,4 +16,9 @@ public interface CoinRepository extends JpaRepository<Coin, Long> {
       + "ORDER BY c.coin_name DESC")
   List<Coin> searchCoinNameOrInfo (@Param("keyword") String keyword);
 
+  @Query("SELECT c FROM Coin c WHERE c.coin_type = 1")
+  List<Coin> findAllbytype1();
+  
+  @Query("SELECT c.coin_type FROM Coin c WHERE c.coin_no = :coin_no")
+  Optional<Integer> findCoinType(@Param("coin_no") Long coin_no);
 }
