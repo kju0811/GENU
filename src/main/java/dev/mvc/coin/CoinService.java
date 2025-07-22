@@ -102,15 +102,12 @@ public class CoinService {
   @Transactional
   public void updateAllCoinPrices() {
     // 전체 코인을 조회해서 가격 업데이트
-    for (Coin coin : coinRepository.findAll()) {
+    for (Coin coin : coinRepository.findAllbytype1()) { // 타입이 1인 (진행중인 코인만)
       int cnt = 0;
       List<FluctuationDTO> fluDTO = fluctuationService.findByRdatePeriod(coin.getCoin_no());
-//      System.out.println("1번 : "+fluDTO);
       
       for (FluctuationDTO dto : fluDTO) {
         News news = newsRepository.getReferenceById(dto.getNews_no());
-//        News news = newsServic.
-//        System.out.println("2번 news -> "+ news);
         
         if (news.getEmotion() == 1) {
           cnt++;
@@ -118,17 +115,18 @@ public class CoinService {
           cnt--;
         }
       }
-//      System.out.println("3번 cnt ->"+ cnt);
       
       // 해당 코인의 체결된 매수, 매도된 코인 개수(deal_cnt)로 변동 추가
       int buy_cnt = dealService.getTotalType1(coin.getCoin_no());
       int sell_cnt = dealService.getTotalType2(coin.getCoin_no());
-//      System.out.println("buy_cnt -> "+buy_cnt);
-//      System.out.println("sell_cnt -> "+sell_cnt);
       
       double fluctuation = calculateFluctuation(buy_cnt, sell_cnt, cnt);
       coin.setCoin_price((int)(coin.getCoin_price() * (1 + fluctuation / 100)));
       coin.setCoin_percentage(fluctuation);
+      
+      if (coin.getCoin_price() <= 50) { // 50누렁 이하면 상장폐지
+        coin.setCoin_type(0);
+      }
       coinRepository.save(coin);
       
       Coinlog coinlog = new Coinlog();
@@ -174,7 +172,7 @@ public class CoinService {
   /** 변동시 예약 매수 확인 */
   @Transactional
   public void scheduledBuy() {
-    for (Coin coin : coinRepository.findAll()) {
+    for (Coin coin : coinRepository.findAllbytype1()) { // 진행중인 코인만 
       List<Deal> dealList = dealService.getType3(coin.getCoin_no());
       if (!dealList.isEmpty()) {
         for (Deal getd : dealList) {
@@ -196,7 +194,7 @@ public class CoinService {
   /** 변동시 예약 매도 확인 */
   @Transactional
   public void scheduledSell() {
-    for (Coin coin : coinRepository.findAll()) {
+    for (Coin coin : coinRepository.findAllbytype1()) { // 진행중인 코인만
       List<Deal> dealList = dealService.getType4(coin.getCoin_no());
       
       if (!dealList.isEmpty()) {
@@ -220,7 +218,7 @@ public class CoinService {
   /** 변동시 알림 확인 */
   @Transactional
   public void noticeCheck() {
-    for (Coin coin : coinRepository.findAll()) {
+    for (Coin coin : coinRepository.findAllbytype1()) { // 진행중인 코인만
       List<Notice> noticeList = noticeService.getPending(coin.getCoin_no());
       if (!noticeList.isEmpty()) {
         for (Notice getn : noticeList) {
@@ -325,8 +323,6 @@ public class CoinService {
     int rangeCnt = 10; // 위아래 10개
     int minp = cp - ts * rangeCnt;
     int maxp = cp + ts * rangeCnt;
-    System.out.println("minp -> "+ minp);
-    System.out.println("maxp -> "+ maxp);
     int cnt = 0;
 
     Map<Integer, Integer> data = new LinkedHashMap<>(); // LinkedHashMap 넣은 순서대로
@@ -337,7 +333,6 @@ public class CoinService {
     System.out.println("기본 data 값 -> " + data);
     
     List<DealDTO.OrderList> olist = dealService.getOrderList(coin_no);
-//  getRangeCnt(olist, cp, ts);
     System.out.println("olist 값 -> " + olist);
     
     minp = cp - ts * rangeCnt; // 값 초기화
@@ -345,10 +340,9 @@ public class CoinService {
       int price = ol.getDeal_price();
       int ol_cnt = ol.getTotal_cnt();
       int bucketPrice = 0;
-//      System.out.println("minp + ts -> " + (minp + ts));
+
       if (price < minp + ts) { // 호가창 최저가 이하
         int pv = data.get(minp);
-//        System.out.println("pv -> " + pv);
         data.put(minp, pv + ol_cnt); // 키가 최저가인 값에 이전값+ol_cnt 
         
       } else if (minp + ts <= price && price < cp) { // 밑에 주문 값 계산
