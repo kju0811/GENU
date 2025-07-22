@@ -21,4 +21,12 @@ public interface CoinRepository extends JpaRepository<Coin, Long> {
   
   @Query("SELECT c.coin_type FROM Coin c WHERE c.coin_no = :coin_no")
   Optional<Integer> findCoinType(@Param("coin_no") Long coin_no);
+  
+  // 진행중인 코인가격 내림차순
+  @Query("SELECT c FROM Coin c WHERE c.coin_type = 1 ORDER BY c.coin_price DESC")
+  List<Coin> findbytype1PriceD();
+  
+  // 진행중인 코인가격 등락률 내림차순
+  @Query("SELECT c FROM Coin c WHERE c.coin_type = 1 ORDER BY c.coin_percentage DESC")
+  List<Coin> findbytype1PercentageD();
 }

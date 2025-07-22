@@ -173,6 +173,16 @@ public class CoinService {
     return coinRepository.findAll();  // method/SQL 자동 생성
   }
   
+  /** 진행중인 코인가격 내림차순 레코드 출력 */
+  public List<Coin> findbytype1PriceD() {
+    return coinRepository.findbytype1PriceD();
+  }
+  
+  /** 진행중인 코인 등락률 내림차순 레코드 출력 */
+  public List<Coin> findbytype1PercentageD() {
+    return coinRepository.findbytype1PercentageD();
+  }
+  
   /** 변동시 예약 매수 확인 */
   @Transactional
   public void scheduledBuy() {
