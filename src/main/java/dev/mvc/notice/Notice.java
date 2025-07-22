@@ -14,6 +14,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.SequenceGenerator;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,6 +37,7 @@ public class Notice {
   
   /** 알림 금액 */
   @Column(name = "notice_price", nullable = false)
+  @Min(value = 50, message = "알림 금액은 50 누렁 이상이어야 합니다.")
   private Integer notice_price;
   
   /** 원하는 금액이 현재가 이하인지0 이상인지1.  */
