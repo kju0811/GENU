@@ -4,7 +4,7 @@ import { getIP } from '../components/Tool';
 import OrderBook from '../components/OrderBook';
 import CoinInfo from '../components/CoinInfo';
 import RelatedNews from '../components/RelatedNews';
-// import CommunityFeed from '../components/CommunityFeed';
+import CommunityFeed from '../components/CommunityFeed';
 import OrderForm from '../components/OrderForm';
 import ApexChart from '../components/ApexChart';
 import NoticeModal from '../components/NoticeModal'
@@ -56,36 +56,49 @@ export default function CoinDetail() {
     { id: 'chart', label: '차트 · 호가' },
     { id: 'info',  label: '종목 정보' },
     { id: 'coin',  label: '보유수량' },
-    // { id: 'community', label: '커뮤니티' }
+    { id: 'community', label: '커뮤니티' }
   ];
 
   return (
+    <div className="w-[100%] mx-auto p-4 bg-gray-100">
     <div className="w-[90%] mx-auto p-4">
       {/* 헤더 */}
-      <header className="flex items-center space-x-4 mb-6">
-        <img
-          src={`http://${getIP()}:9093/home/storage/${coin_img}`}
-          alt={coin_name}
-          className="w-16 h-16 rounded-full object-cover"
-        />
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {coin_name}
-          </h1>
-          <p className="text-lg text-gray-800 dark:text-gray-200">
-            {coin_price.toLocaleString()}원 {' '}
-            <span className={coin_percentage >= 0 ? 'text-red-600' : 'text-blue-600'}>
-              {coin_percentage >= 0 ? `+${coin_percentage}` : coin_percentage}%
-            </span>
-          </p>
+      <header className="flex items-center justify-between mb-6">
+        {/* 헤더 좌측 */}
+        <div className="flex flex-row items-center gap-4">
+          <img
+            src={`http://${getIP()}:9093/home/storage/${coin_img}`}
+            alt={coin_name}
+            className="w-16 h-16 rounded-full object-cover"
+          />
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              {coin_name}
+            </h1>
+            <p className="text-lg text-gray-800 dark:text-gray-200">
+              {coin_price.toLocaleString()}원 {' '}
+              <span className={coin_percentage >= 0 ? 'text-red-600' : 'text-blue-600'}>
+                {coin_percentage >= 0 ? `+${coin_percentage}` : coin_percentage}%
+              </span>
+            </p>
+          </div>
         </div>
-        {/* 금액알림 */}
-        <button
-        onClick={() => setIsModalOpen(true)}
-        className="mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-      >
-        금액알림
-      </button>
+        {/* 헤더 우측 */}
+        <div className="flex space-x-2">
+          {/* 좋아요 */}
+          <button
+            className="mb-4 px-4 py-2 bg-rose-100 text-white rounded hover:bg-red-600"
+          >
+            ❤️
+          </button>
+          {/* 금액알림 */}
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            금액알림
+          </button>
+        </div>
       </header>
 
       {/* 탭 메뉴 */}
@@ -144,13 +157,13 @@ export default function CoinDetail() {
           </section>
         )}
 
-        {/* {activeTab === 'community' && (
+        {activeTab === 'community' && (
           <section>
-            <h3 className="text-lg font-semibold mb-2">Community Feed</h3>
             <CommunityFeed coin_no={coin_no} />
           </section>
-        )} */}
+        )}
       </div>
+    </div>
     </div>
   );
 }
