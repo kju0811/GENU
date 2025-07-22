@@ -13,19 +13,28 @@ public interface CoinlogRepository extends JpaRepository<Coinlog, Long> {
 
   @Query(value = """
       SELECT DISTINCT
+          -- 날짜별로 그룹핑 (날짜만 추출: 시간 제외)
           TRUNC(cl.coinlog_time) as trade_date,
+          
+          -- 날짜별 최저가
           MIN(cl.coinlog_price) OVER (
           PARTITION BY TRUNC(cl.coinlog_time)
           ) AS low,
+          
+          -- 날짜별 첫 거래가 (open)
           FIRST_VALUE(cl.coinlog_price) OVER (
               PARTITION BY TRUNC(cl.coinlog_time) 
               ORDER BY cl.coinlog_time
           ) AS open,
+          
+          -- 날짜별 마지막 거래가 (close)
           LAST_VALUE(cl.coinlog_price) OVER (
               PARTITION BY TRUNC(cl.coinlog_time) 
               ORDER BY cl.coinlog_time 
               ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
           ) AS close,
+          
+          -- 날짜별 최고가
           MAX(cl.coinlog_price) OVER (
               PARTITION BY TRUNC(cl.coinlog_time)
           ) AS high
