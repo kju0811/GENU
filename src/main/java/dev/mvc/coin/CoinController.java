@@ -220,4 +220,5 @@ public class CoinController {
   public List<Coin> find_by_name_or_info(@RequestParam(name="keyword", defaultValue = "") String keyword) {
     return coinService.find_by_name_or_info(keyword);
   }
+  
 }
