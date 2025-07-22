@@ -10,7 +10,7 @@ function CoinList() {
   const [page, setPage] = useState(0); // 페이지 번호 (0, 1, 2, ...)
 
   useEffect(() => {
-    fetch(`http://${getIP()}:9093/coin/find_all`, {
+    fetch(`http://${getIP()}:9093/coin/find_price_desc`, {
       method: 'GET'
     })
     .then(result => result.json())
