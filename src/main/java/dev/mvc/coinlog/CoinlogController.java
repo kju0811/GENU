@@ -64,6 +64,12 @@ public class CoinlogController {
     }
   }
   
+  /**
+   * 코인 chart 기능
+   * @param coin_no
+   * @param days
+   * @return
+   */
   @GetMapping("/ohlc/{coin_no}")
   public List<Object[]> getDailyOhlcData(@PathVariable("coin_no") Long coin_no, 
                                                  @RequestParam(name = "days", defaultValue = "30" ) int days){
