@@ -23,7 +23,7 @@ public class MembermindService {
 	}
 	
 	/**
-	 * 저장
+	 * 심리분석 생성
 	 * @param membermind
 	 */
 	 public String create(MembermindRequestDTO dto, String jwt) {
