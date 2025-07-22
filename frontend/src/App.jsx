@@ -35,6 +35,7 @@ import "react-chatbot-kit/build/main.css";
 import "./style/chat.css";
 import NotFound from "./pages/NotFound";
 import MyPage from "./pages/MyPage";
+import Mindfind from "./ai/MindFind";
 
 function App() {
   const { close, hideNavbar,hideChatbot } = useGlobal();
@@ -59,6 +60,7 @@ function App() {
         <Route path="/mypage" element={<MyPage />} />
         <Route path="/announce" element={<Announce />} />
         <Route path="/announce_find" element={<Announce_find />} />
+        <Route path="/mindfind" element={<Mindfind/>} />
         <Route path="/announce_read/:announce_no" element={<Announce_read />} />
         <Route path="/deal/dealList/:member_no" element={<DealList/>} />
         <Route path="/notification/find_by_MemberNotification/:member_no" element={<NotificationLog/>} />

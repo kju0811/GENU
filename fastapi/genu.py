@@ -254,7 +254,11 @@ async def mind(request:Request):
     print("-> mind 함수")
     
     data = await request.json()
-    deal = data.get("deal")
+    cnt = data.get("cnt")
+    price = data.get("price")
+    percent = data.get("percent")
+    coin = data.get("coin")
+    name = data.get("name")
     
     #print('넘어온 데이터:',result)
     
@@ -275,10 +279,17 @@ async def mind(request:Request):
         format_instructions = output_parser.get_format_instructions()
         prompt = PromptTemplate.from_template(
             "{system}\n"
-            '''{deal}은 유저들의 거래 기록이야, 기록을 바탕으로 유저들의 아래의 등급표를 보고 투자 심리를 분석해줘,
+            '''
+            유저명:{name},
+            가격:{price},
+            등락률:{percent},
+            코인명:{coin},
+            매수갯수:{cnt}\n\n
+            '''
+            '''위에는 유저들의 거래 기록이야, 기록을 바탕으로 유저들의 아래의 등급표를 보고 투자 심리를 분석해줘,
             갯수가 많다고 공격적인게 아닌 가격과 갯수 모두 고려해서 심리를 분석해줘
             매수한 갯수가 많을수록 매수한 코인의가격이 높을수록 공격적으로 매수한 갯수가 적고 매수한 코인의 가격이 낮을수록 안정적으로 또 총 매수액이 높을수록 공격적 낮을수록 안정적으로 보고 분석해줘
-            평가는 코인마다 따로 평가하지말고 종합적으로 최종등급의 유저 결과를 분석해줘
+            평가는 코인마다 따로 평가하지말고 종합적으로 최종등급의 유저 결과를 분석해줘, 400글자이상 ~ 500글자미만으로 생성해줘
             \n\n
             '''
             '''
@@ -320,7 +331,11 @@ async def mind(request:Request):
 
         inputs = {
             "system": "투자 심리 분석 시스템",
-            "deal" : deal,
+            "cnt":cnt,
+            "price":price,
+            "percent":percent,
+            "coin":coin,
+            "name":name,
             "format_instructions": format_instructions
         }
         pipeline = prompt | llm | output_parser
