@@ -22,19 +22,23 @@ import lombok.Setter;
 @Setter
 public class Membermind {
 	
+	// mind번호
 	@Id
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="membermind_seq")
 	@SequenceGenerator(name="membermind_seq", sequenceName="MEMBERMIND_SEQ", allocationSize=1)
 	@Column(name = "mind_no", updatable = false)
 	private Long mindno;
 	
+	// 생성일
 	@Column(name = "mind_date", nullable = false,columnDefinition = "DATE")
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm")
 	private LocalDateTime minddate;
 	
+	// 분석 내용
 	@Column(name = "mind_content", nullable = false, columnDefinition = "VARCHAR2(500 char)")
 	private String mindcontent = "";
 	
+	//member외래키
 	@ManyToOne
 	@JoinColumn(name = "member_no",nullable = false, referencedColumnName = "member_no",
               	columnDefinition = "NUMBER(10)")
