@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import dev.mvc.coin.Coin;
 import dev.mvc.coinlike.CoinlikeRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -36,6 +37,7 @@ public class CoinlogService {
     return coinlogRepository.findAll();  // method/SQL 자동 생성
   }
   
+  /** 코인 chart */
   public List<Object[]> getDailyOhlcData(Long coin_no, int days) {
     // 최근 30일 데이터
     LocalDate endDate = LocalDate.now().plusDays(1); // 오늘부터
