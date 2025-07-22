@@ -16,6 +16,12 @@ public class MembermindCont {
 	
 	private final MembermindService service;
 	
+	/**
+	 * 심리분석 생성
+	 * @param dto
+	 * @param jwt
+	 * @return
+	 */
 	@PostMapping(value="/create")
 	@ResponseBody
 	public String create(@RequestBody MembermindRequestDTO dto, @RequestHeader("Authorization") String jwt) {
