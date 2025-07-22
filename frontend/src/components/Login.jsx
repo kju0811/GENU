@@ -145,19 +145,19 @@ export default function Login({ isOpen, onClose }) {
       <div className="absolute inset-0 bg-black opacity-50" onClick={onClose}></div>
       <div className="relative bg-white dark:bg-gray-800 rounded-xl shadow-lg w-full max-w-sm mx-4 p-6">
         <button onClick={onClose} className="absolute top-3 right-3 text-gray-500 hover:text-gray-700">×</button>
-        <h2 className="text-2xl font-semibold text-gray-900 dark:text-white text-center mb-4">Sign In</h2>
-        <p className="text-sm text-gray-600 dark:text-gray-400 text-center mb-6">Welcome back! Please enter your details</p>
+        <h2 className="text-2xl font-semibold text-gray-900 dark:text-white text-center mb-4">로그인</h2>
+        <p className="text-sm text-gray-600 dark:text-gray-400 text-center mb-6">반갑습니다!</p>
         {/* 소셜 로그인 버튼 */}
         <div className="space-y-3 mb-6">
           <button className="w-full py-2 border border-gray-300 rounded-md flex items-center justify-center hover:bg-gray-100" onClick={() => handleSocialLogin("google")}>
             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYMMskKN9Ql1Ep4wG_vEW01t98DUBVXeXE8A&s" 
                  alt="Google" 
-                 className="w-5 h-5 mr-2" /> Continue with Google
+                 className="w-5 h-5 mr-2" />Google로 로그인하기
           </button>
           <button className="w-full py-2 border border-gray-300 rounded-md flex items-center justify-center hover:bg-gray-100" onClick={() => handleSocialLogin("naver")}>
-            <img src="https://images-eds-ssl.xboxlive.com/image?url=4rt9.lXDC4H_93laV1_eHHFT949fUipzkiFOBH3fAiZZUCdYojwUyX2aTonS1aIwMrx6NUIsHfUHSLzjGJFxxtZdWw6g4UwahLJywNYpykrE4ox0FBSnIc7culudXXPOT48oqy.15P4Xx4m193BKJ0ujsiUCiX_bGCXlpmoh0cs-&format=source" 
+            <img src="https://i.namu.wiki/i/p_1IEyQ8rYenO9YgAFp_LHIAW46kn6DXT0VKmZ_jKNijvYth9DieYZuJX_E_H_4GkCER_sVKhMqSyQYoW94JKA.svg" 
                  alt="Kakao" 
-                 className="w-5 h-5 mr-2" /> Continue with Kakao 안됨 네이버임
+                 className="w-5 h-5 mr-2" />Naver로 로그인하기
           </button>
         </div>
         {/* 구분선 */}
@@ -169,7 +169,7 @@ export default function Login({ isOpen, onClose }) {
         {/* 이메일 로그인 폼 */}
         <form onSubmit={send} className="space-y-4">
           <div >
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">이메일</label>
             <input
               type="email"
               onKeyDown={e=>enter_chk(e,'passwd')} 
@@ -183,7 +183,7 @@ export default function Login({ isOpen, onClose }) {
           </div>
           {/* 비밀번호 입력 + 토글 아이콘 */}
           <div className="relative">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">비밀번호</label>
             <input
                 id="passwd"
                 type={showPswd ? 'text' : 'password'}
