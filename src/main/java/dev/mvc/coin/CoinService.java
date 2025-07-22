@@ -121,8 +121,12 @@ public class CoinService {
       int sell_cnt = dealService.getTotalType2(coin.getCoin_no());
       
       double fluctuation = calculateFluctuation(buy_cnt, sell_cnt, cnt);
-      coin.setCoin_price((int)(coin.getCoin_price() * (1 + fluctuation / 100)));
-      coin.setCoin_percentage(fluctuation);
+      int updatePrice = (int)(coin.getCoin_price() * (1 + fluctuation / 100));
+      coin.setCoin_price(updatePrice);
+      
+      // 코인의 변동은 오늘시작가->현재가 의 변동률이다
+      double ChangefromOpen = findFirstPriceToday(coin.getCoin_no(), updatePrice);
+      coin.setCoin_percentage(ChangefromOpen);
       
       if (coin.getCoin_price() <= 50) { // 50누렁 이하면 상장폐지
         coin.setCoin_type(0);
@@ -367,6 +371,21 @@ public class CoinService {
   /** 이름 or 정보로 검색 */
   public List<Coin> find_by_name_or_info(String keyword) {
     return coinRepository.searchCoinNameOrInfo(keyword);  // SQL 자동 생성
+  }
+  
+  /** 코인 변동률 표기를 위한 메서드 */
+  public double findFirstPriceToday(Long coin_no, Integer cp) {
+    // 오늘자 첫번째 가격
+    int openPrice = coinlogRepository.findFirstPriceToday(coin_no).orElse(0);
+    if (openPrice == 0) {
+      return 0.00;
+    }
+    
+    // 처음가 -> 현재가 : 변동률 계산: ((현재가 - 시가) / 시가) * 100
+    double changeRate = ((double)(cp - openPrice) / openPrice) * 100;
+    
+    // 소수점 둘째자리까지 반올림
+    return Math.round(changeRate * 100.0) / 100.0;
   }
   
 }
