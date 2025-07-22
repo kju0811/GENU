@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.mvc.deal.Deal;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RequestMapping(value = "/notice")
@@ -29,7 +30,7 @@ public class NoticeController {
    */
   @PostMapping(value="/create")
   @ResponseBody
-  public ResponseEntity<Notice> create(@RequestBody Notice notice) {
+  public ResponseEntity<Notice> create(@Valid @RequestBody Notice notice) {
     Notice nt = noticeService.save(notice);
     return ResponseEntity.ok(nt);
   }
