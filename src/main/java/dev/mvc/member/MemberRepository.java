@@ -40,5 +40,11 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 	// 닉네임 중복체크
 	@Query(value = "SELECT COUNT(*) FROM member WHERE member_nick = :member_nick", nativeQuery = true)
   int existsCheckNick(@Param("member_nick") String member_nick);
+	
+  // 아이디 찾기 (이름+전화번호+생년월일)
+  @Query("SELECT memberId FROM Member WHERE member_name = :name "
+      + "AND member_tel = :tel AND memberBirth = :birth")
+  Optional<String> findId(@Param("name") String name, @Param("tel") String tel, @Param("birth") String birth);
+
 
 }
