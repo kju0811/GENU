@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -105,4 +106,16 @@ public class MemberService {
       memberRepository.save(member);
   }
 
+  /** 아이디 찾기 */
+  public String findId(MemberDTO memberDTO) {
+    String name = memberDTO.getMember_name();
+    String tel = memberDTO.getMember_tel();
+    String birth = memberDTO.getMemberBirth();
+    
+    String find = memberRepository.findId(name, tel, birth)
+        .orElseThrow(() -> new EntityNotFoundException("입력하신 아이디가 존재하지 않습니다."));
+   
+    return find;
+  }
+  
 }
