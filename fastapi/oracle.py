@@ -139,3 +139,37 @@ def file (file1):
     conn.close()
     
     return updatefile
+
+def mindinsert(mind_content, member_no):
+    
+    try:
+        cx_Oracle.init_oracle_client(lib_dir="/Users/kimjiun/kd/instantclient_23_3")
+    except cx_Oracle.ProgrammingError:
+        # 이미 초기화된 경우 무시
+        pass
+
+    conn = cx_Oracle.connect('team4/69017000@1.201.18.85:1521/XE')
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT membermind_seq.NEXTVAL FROM dual")  # dual 테이블 사용, 시퀀스 2이상 증가 방지
+    mind_no = cursor.fetchone()[0]  # 하나의 숫자 값 추출
+    
+    sql_news = '''
+    INSERT INTO membermind (mind_no, mind_date, mind_content, member_no) 
+    VALUES (:mind_no, sysdate, :mind_content , :member_no)
+    ''' 
+    mind = {
+        'mind_no': mind_no,
+        'mind_content': mind_content,
+        'member_no': member_no
+    }
+    
+    insert = cursor.execute(sql_news, mind)
+    print("insert: ", insert)
+
+    conn.commit()
+    
+    cursor.close()
+    conn.close()
+    
+    return insert

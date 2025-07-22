@@ -264,7 +264,7 @@ async def mind(request:Request):
     payload = jwt.decode(jwtToken, SECRET_KEY, algorithms=["HS512"])
     
     role = payload.get("role")
-    
+    member_no = payload.get("member_no")
     
     if role == "ADMIN" or role == "USER":
         # 2) 출력 스키마 & 출력 파서 설정
@@ -278,6 +278,7 @@ async def mind(request:Request):
             '''{deal}은 유저들의 거래 기록이야, 기록을 바탕으로 유저들의 아래의 등급표를 보고 투자 심리를 분석해줘,
             갯수가 많다고 공격적인게 아닌 가격과 갯수 모두 고려해서 심리를 분석해줘
             매수한 갯수가 많을수록 매수한 코인의가격이 높을수록 공격적으로 매수한 갯수가 적고 매수한 코인의 가격이 낮을수록 안정적으로 또 총 매수액이 높을수록 공격적 낮을수록 안정적으로 보고 분석해줘
+            평가는 코인마다 따로 평가하지말고 종합적으로 최종등급의 유저 결과를 분석해줘
             \n\n
             '''
             '''
@@ -286,14 +287,12 @@ async def mind(request:Request):
             극도의 수익을 추구하며, 큰 손실도 감수할 수 있는 성향.
             •	한 번에 총 보유금액의 70% 이상을 특정 시점에 집중 매수
             •	하락장에서도 매수 강행, 급등 직후 추격 매수 패턴 존재
-            •	1~2종목에 몰빵하는 경향이 뚜렷함
             
             A등급
             공격형
             수익을 중시하며, 일정 수준의 손실을 감내할 수 있는 성향.
             •	보유 자금 중 40~70%를 단기 타이밍에 투입
             •	상대적으로 높은 가격에서도 매수
-            •	종목 수는 2~3개지만 비율이 불균형
             
             B등급
             적극형
@@ -325,17 +324,20 @@ async def mind(request:Request):
             "format_instructions": format_instructions
         }
         pipeline = prompt | llm | output_parser
-        mind = pipeline.invoke(inputs)
+        mind_content = pipeline.invoke(inputs)
+        mind_content = mind_content["res"].strip()
+        print("-> result", mind_content)
         
-        # oracle.newssummary(
-        #     summary
-        # )
+        oracle.mindinsert(
+            mind_content,
+            member_no
+        )
         
-        print("-> result", summary)
+        
     else:
-        mind="잘못된 형식의 토큰입니다"
+        mind_content="잘못된 형식의 토큰입니다"
         
-    return mind
+    return mind_content
     
 if __name__ == "__main__":
     # uvicorn.run("resort_auth:app", host="121.78.128.17", port=8000, reload=True) # Gabia 할당 불가
