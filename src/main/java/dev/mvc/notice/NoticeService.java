@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 
 import dev.mvc.coin.Coin;
 import dev.mvc.coin.CoinRepository;
+import dev.mvc.exception.DelistedCoinException;
 import dev.mvc.pay.Pay;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -22,35 +24,35 @@ public class NoticeService {
   }
   /** Create, INSERT~ */
   public Notice save(Notice notice) {
-    Optional<Coin> optcoin = coinRepository.findById(notice.getCoin().getCoin_no()); // 프론트에서 coin_no만 넘김
+    // 코인 정보 조회 (프론트에서 coin_no만 전달됨)
+    Coin coin = coinRepository.findById(notice.getCoin().getCoin_no())
+        .orElseThrow(() -> new EntityNotFoundException("해당 코인을 찾을 수 없습니다."));
+    
+    if (coin.getCoin_type()==0) {
+      throw new DelistedCoinException("해당 코인은 상장폐지되어 알림등록할 수 없습니다.");
+    }
     
     // 가격 중복 체크
     int checkPrice = noticeRepository.existsCheckPrice(notice.getNotice_price(), notice.getMember().getMember_no()) ;
-//    System.out.println("checkPrice -> "+ checkPrice);
-    if (checkPrice == 1) {
-      throw new RuntimeException("해당 금액은 이미 알림된 금액입니다.");
-    }
     
-    if (optcoin.isPresent()) {
-      Coin coin = optcoin.get();
-      int wp = notice.getNotice_price();
-      int cp = coin.getCoin_price();
-  //    System.out.println("wp ->" +wp);
-  //    System.out.println("cp ->" +cp);
-      if (wp < cp) { // 원하는 값이 이상이면
-        notice.setNotice_type(1);
-        
-      } else if (wp > cp) { // 원하는 값이 이하면
-        notice.setNotice_type(0);
-        
-      } else {
-        throw new RuntimeException("원하시는 금액과 현재가가 같습니다.");
-      }
-      Notice nt = noticeRepository.save(notice); 
-      return nt;
-    } else {
-      throw new IllegalArgumentException("해당 코인을 찾을 수 없습니다.");
+    if (checkPrice == 1) {
+      throw new IllegalStateException("해당 금액은 이미 등록된 알림 금액입니다.");
     }
+  
+    int desiredPrice = notice.getNotice_price(); // 내가 알림 받았으면 하는 가격
+    int currentPrice = coin.getCoin_price(); // 코인의 현재 가격
+  
+    if (desiredPrice < currentPrice) {
+        notice.setNotice_type(1); // 이상 시 알림
+    } else if (desiredPrice > currentPrice) {
+        notice.setNotice_type(0); // 이하 시 알림
+    } else {
+        throw new IllegalArgumentException("원하시는 금액과 현재가가 동일합니다.");
+    }
+  
+    notice.setCoin(coin); // 안전하게 연관관계 설정
+    return noticeRepository.save(notice);
+
   }
   
   /** 알림 id에 해당하는 정보 반환 */
