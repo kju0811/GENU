@@ -4,6 +4,15 @@ import ProfileDropdown from './ProfileDropdown';
 import SearchInput from './SearchInput';
 import NotificationDropdown from './NotificationList';
 
+const NAV_TABS = [
+  { id: "home", label: "홈", to: "/" },
+  { id: "coinlist", label: "코인 리스트", to: "/coinlist" },
+  { id: "newsfind", label: "기사", to: "/ai/newsfind" },
+  { id: "calendar", label: "캘린더", to: "/calendar" },
+  { id: "portfolio", label: "내 자산", to: "/portfolio" },
+  { id: "announce", label: "공지사항", to: "/announce_find" },
+];
+
 export default function Navbar() {
 
   const jwt = sessionStorage.getItem('jwt');
@@ -40,48 +49,22 @@ export default function Navbar() {
 
       {/* 하단 탭 메뉴: 중앙 정렬 및 스크롤 지원 */}
       <div className="flex justify-center overflow-x-auto whitespace-nowrap gap-6 mt-3 border-t pt-2">
-        <NavLink
-          to="/"
-          className={({ isActive }) =>
-            `px-3 py-1 rounded-xl font-medium transition ${
-              isActive ? 'text-blue-600 border-b-2 border-blue-600' : 'hover:text-blue-600'
-            }`
-          }
-        >
-          홈
-        </NavLink>
-        <NavLink
-          to="/ai/newsfind"
-          className={({ isActive }) =>
-            `px-3 py-1 rounded-xl font-medium transition ${
-              isActive ? 'text-blue-600 border-b-2 border-blue-600' : 'hover:text-blue-600'
-            }`
-          }
-        >
-          기사
-        </NavLink>
-        <NavLink
-          to="/calendar"
-          aria-label="캘린더"
-          className={({ isActive }) =>
-            `px-3 py-1 rounded-xl font-medium transition ${
-              isActive ? 'text-blue-600 border-b-2 border-blue-600' : 'hover:text-blue-600'
-            }`
-          }
-        >
-          캘린더
-        </NavLink>
-        <NavLink
-          to="/portfolio"
-          aria-label="내 자산"
-          className={({ isActive }) =>
-            `px-3 py-1 rounded-xl font-medium transition ${
-              isActive ? 'text-blue-600 border-b-2 border-blue-600' : 'hover:text-blue-600'
-            }`
-          }
-        >
-          내 자산
-        </NavLink>
+        {NAV_TABS.map((tab) => (
+          <NavLink
+            key={tab.id}
+            to={tab.to}
+            className={({ isActive }) =>
+              [
+                "px-3 py-1 font-medium transition-all duration-200",
+                isActive
+                  ? "text-blue-600 border-b-2 border-blue-600"
+                  : "hover:text-blue-600 text-gray-700"
+              ].join(' ')
+            }
+          >
+            {tab.label}
+          </NavLink>          
+        ))}
       </div>
     </nav>
   );

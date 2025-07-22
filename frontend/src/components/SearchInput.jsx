@@ -1,20 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { getIP } from "../components/Tool";
-/**
- * sampleData
- * - 실제 백엔드 연동 시 해당 부분을 API 호출 결과로 대체 필요
- */
-const sampleData = [
-  // { id: 1, name: 'React Components', category: 'Frontend', popularity: 98 },
-  // { id: 2, name: 'Vue.js Templates', category: 'Frontend', popularity: 95 },
-  // { id: 3, name: 'Angular Modules', category: 'Frontend', popularity: 92 },
-  // { id: 4, name: 'Tailwind CSS', category: 'CSS Framework', popularity: 97 },
-  // { id: 5, name: 'Node.js Basics', category: 'Backend', popularity: 94 },
-  // { id: 6, name: 'MongoDB Tutorial', category: 'Database', popularity: 91 },
-  // { id: 7, name: 'GraphQL API', category: 'API', popularity: 89 },
-  // { id: 8, name: 'TypeScript Guide', category: 'Language', popularity: 93 }
-];
-
 
 /**
  * SearchInput 컴포넌트
@@ -221,8 +207,9 @@ useEffect(() => {
               {/* 필터링된 결과 리스트 */}
               {results.map(result => (
                 <li key={result.coin_no}>
-                  <button
-                    onClick={() => selectResult(result.coin_name)}
+                  <Link
+                    to={`/coin/${result.coin_no}`}
+                    onClick={() => selectResult(result.coin_name)} // recentSearches 기록 등은 그대로 유지
                     className="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-between group"
                   >
                     {/* 아이콘 및 결과 텍스트 영역 */}
@@ -244,7 +231,7 @@ useEffect(() => {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
                       </svg>
                     </div>
-                  </button>
+                  </Link>
                 </li>
               ))}
             </ul>
