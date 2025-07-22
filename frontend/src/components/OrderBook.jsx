@@ -21,7 +21,7 @@ export default function OrderBook({ coin_no, currentPrice, onSelectPrice }) {
         .catch(console.error);
     }; 
     fetchData();                                  // 최초 호출
-    //
+
     // const id = setInterval(fetchData, 60000);     // 폴링방식채택 (소켓사용?몰루)
     // return () => clearInterval(id);
   }, [coin_no]);

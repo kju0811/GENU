@@ -259,6 +259,7 @@ export default function OrderForm({ coin_no, defaultPrice }) {
           </div>
 
           {/* 총 주문 금액 */}
+          <div className='text-right text-xs text-gray-500'>수수료: 총 주문 금액의 0.05% </div>
           <div className="text-right text-sm text-gray-500">
             총 주문 금액: <span className="font-medium">{total}</span> 원
           </div>
