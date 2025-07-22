@@ -221,4 +221,24 @@ public class CoinController {
     return coinService.find_by_name_or_info(keyword);
   }
   
+  /**
+   * 진행중인 코인가격 내림차순 레코드 출력
+   * http://localhost:9093/coin/find_price_desc
+   * @return
+   */
+  @GetMapping(value = "/find_price_desc")
+  public List<Coin> find_price_desc() {
+    return coinService.findbytype1PriceD();
+  }
+  
+  /**
+   * 진행중인 코인가격 내림차순 레코드 출력
+   * http://localhost:9093/coin/find_percentage_desc
+   * @return
+   */
+  @GetMapping(value = "/find_percentage_desc")
+  public List<Coin> find_percentage_desc() {
+    return coinService.findbytype1PercentageD();
+  }
+  
 }
