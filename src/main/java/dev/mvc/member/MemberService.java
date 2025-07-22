@@ -87,25 +87,13 @@ public class MemberService {
   }
 
   // 프로필 이미지 변경 (파일 저장 경로 맞게 조정)
-  public String changeProfileImage(Long member_no, MultipartFile file) {
-      Member member = memberRepository.findById(member_no)
-              .orElseThrow(() -> new IllegalArgumentException("회원 없음"));
-
-      String imgPath = "/default-profile.png";
-      if (file != null && !file.isEmpty()) {
-          String fileName = file.getOriginalFilename();
-          Path dest = Paths.get("업로드경로", fileName);
-          try {
-              file.transferTo(dest);
-              imgPath = "/uploads/" + fileName; // 실제 접근 URL 맞게 조정
-          } catch (IOException e) {
-              throw new RuntimeException("파일 저장 실패", e);
-          }
-      }
-      member.setMember_img(imgPath);
-      memberRepository.save(member);
-      return imgPath;
-  }
+  public String updateProfileImage(Long member_no, String fileName) {
+    Member member = memberRepository.findById(member_no)
+        .orElseThrow(() -> new IllegalArgumentException("회원 없음"));
+    member.setMember_img(fileName);
+    memberRepository.save(member);
+    return fileName;
+}
 
   // 비밀번호 변경
   public void changePassword(Member member, String currentPw, String newPw) {
