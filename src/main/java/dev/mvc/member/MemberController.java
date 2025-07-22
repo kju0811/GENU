@@ -247,7 +247,6 @@ public class MemberController {
       }
     }
 
-
     // 비밀번호 변경
     @PostMapping("/change-pw")
     public ResponseEntity<?> changePassword(
@@ -260,6 +259,17 @@ public class MemberController {
         
         memberService.changePassword(member, oriPassword, newPassword);
         return ResponseEntity.ok("비밀번호 변경 성공");
+    }
+    
+    /**
+     * 아이디 찾기 (이름+전화번호+생년월일)
+     * @param memberDTO
+     * @return
+     */
+    @PostMapping("/find_by_id")
+    public ResponseEntity<String> findbyid(@RequestBody MemberDTO memberDTO){
+      String id = memberService.findId(memberDTO);
+      return ResponseEntity.ok(id);
     }
     
 }
