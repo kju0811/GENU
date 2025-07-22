@@ -43,9 +43,10 @@ export default function CoinDetail() {
     };
   
     fetchDetail();                         // 마운트 직후 1회 호출
-    const intervalId = setInterval(fetchDetail, 60000);  // 폴링방식채택 (소켓사용?몰루)
-  
-    return () => clearInterval(intervalId); // 언마운트 시 타이머 해제
+
+    // 이거 비워
+    // const intervalId = setInterval(fetchDetail, 60000);  // 폴링방식채택 (소켓사용?몰루)
+    // return () => clearInterval(intervalId); // 언마운트 시 타이머 해제
   }, [coin_no]);
 
   if (loading) return <p>Loading...</p>;
