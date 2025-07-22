@@ -219,8 +219,8 @@ public class MemberController {
     
     // 마이페이지 정보 조회 (JWT 인증 기반)
     @GetMapping("/mypage")
-    public ResponseEntity<?> getMyPage(@PathVariable Long member_no) {
-        return ResponseEntity.ok(member_no);
+    public ResponseEntity<Member> findByMemberNoOptional(Long member_no) {
+      return ResponseEntity.ok().build();
     }
 
     // 마이페이지 정보 수정
@@ -230,16 +230,23 @@ public class MemberController {
         return ResponseEntity.ok(member);
     }
 
-    // 프로필 이미지 변경
-    @PostMapping(value = "/change-profileImage", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    // 이미지
+    @PostMapping("/change-profileImage/{member_no}")
     public ResponseEntity<?> changeProfileImage(
-        @AuthenticationPrincipal Member member,
-        @RequestPart MultipartFile file
-    ) {
-        // 파일 저장 및 member.setMember_img(경로) + save
-        // ... 기존 로직 활용
-        return ResponseEntity.ok("프로필 변경 성공");
+      @PathVariable Long member_no,
+      @RequestPart MultipartFile file) {
+      String fileName = file.getOriginalFilename();
+      Path dest = Paths.get("C:\\kd\\deploy\\team4_v2sbm3c\\home\\storage", fileName); // 경로 맞게!
+      try {
+          file.transferTo(dest);
+          // 서비스 레이어 통해 업데이트!
+          memberService.updateProfileImage(member_no, fileName);
+          return ResponseEntity.ok(fileName);
+      } catch (IOException e) {
+          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 저장 실패");
+      }
     }
+
 
     // 비밀번호 변경
     @PostMapping("/change-pw")

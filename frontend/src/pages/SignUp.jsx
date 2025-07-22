@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getIP, getNowDate } from '../components/Tool';
 
@@ -23,6 +23,22 @@ export default function SignUp() {
   const [nick, setNick] = useState('');
   const [avatar, setAvatar] = useState(null);
 
+  // Step1 input refs
+  const emailRef = useRef(null);
+  const pwRef = useRef(null);
+  const pwcRef = useRef(null);
+  const agreeRef = useRef(null);
+
+  // Step2 input refs
+  const nameRef = useRef(null);
+  const birthRef = useRef(null);
+  const telRef = useRef(null);
+  const zipRef = useRef(null);
+  const addr1Ref = useRef(null);
+  const addr2Ref = useRef(null);
+  const nickRef = useRef(null);
+  const avatarRef = useRef(null);
+
   // Move to Step2 after validating Step1
   const handleNext = () => {
     if (!id || !password || !confirmPw || password !== confirmPw || !agree) {
@@ -30,15 +46,13 @@ export default function SignUp() {
       return;
     }
     setStep(2);
+    setTimeout(() => nameRef.current?.focus(), 100); // Step2 진입 시 이름란 포커스
   };
 
   // Final submit with FormData
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    console.log("Birth: ", birth);
     const formattedBirth = birth.replace(/-/g, '');
-    console.log("formattedBirth: ", formattedBirth);
 
     const member = {
       memberId: id,
@@ -54,8 +68,8 @@ export default function SignUp() {
     };
 
     const formData = new FormData();
-    formData.append('member', new Blob([JSON.stringify(member)], { 
-      type: 'application/json' 
+    formData.append('member', new Blob([JSON.stringify(member)], {
+      type: 'application/json'
     }));
     if (avatar) formData.append('file', avatar);
 
@@ -77,17 +91,17 @@ export default function SignUp() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-white dark:bg-[#1E2028] text-black dark:text-white flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+    <div className="w-full min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+      <div className="w-full max-w-lg bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 md:p-10">
         {/* Progress */}
-        <div className="flex justify-between mb-6">
-          {['Account','Profile','Complete'].map((label, i) => (
-            <div key={i} className="flex-1 text-center">
-              <div className={`mx-auto w-8 h-8 rounded-full flex items-center justify-center mb-1 \
-                ${step-1 >= i ? 'bg-indigo-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-500'}`}>
-                {i+1}
+        <div className="flex justify-between items-center mb-8">
+          {['계정정보', '회원정보', '가입성공'].map((label, i) => (
+            <div key={i} className="flex-1 flex flex-col items-center">
+              <div className={`w-9 h-9 flex items-center justify-center rounded-full mb-2 text-base font-bold
+                ${step - 1 >= i ? 'bg-indigo-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-400'}`}>
+                {i + 1}
               </div>
-              <span className={`${step-1 >= i ? 'text-indigo-600' : 'text-gray-500 dark:text-gray-400'} text-xs`}>
+              <span className={`text-xs md:text-sm font-semibold ${step - 1 >= i ? 'text-indigo-600' : 'text-gray-500 dark:text-gray-400'}`}>
                 {label}
               </span>
             </div>
@@ -96,92 +110,166 @@ export default function SignUp() {
 
         {/* Step 1: Account */}
         {step === 1 && (
-          <div className="space-y-4">
+          <form
+            onSubmit={e => {
+              e.preventDefault();
+              handleNext();
+            }}
+            className="space-y-4"
+            autoComplete="off"
+          >
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">이메일</label>
               <input
+                ref={emailRef}
                 type="email"
                 value={id}
                 onChange={e => setId(e.target.value)}
                 className="w-full border rounded p-2"
-                placeholder="you@example.com"
+                placeholder="your@email.com"
                 required
+                onKeyDown={e => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    pwRef.current?.focus();
+                  }
+                }}
               />
             </div>
             <div className="relative">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">비밀번호</label>
               <input
+                ref={pwRef}
                 type={showPswd ? 'text' : 'password'}
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 pr-10"
                 required
-                minLength={8}
+                // minLength={8}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    pwcRef.current?.focus();
+                  }
+                }}
               />
-              <span
-                className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+              <div
+                style={{ userSelect: 'none' }}
+                className="absolute bottom-2 right-2 flex items-center cursor-pointer text-gray-500 hover:text-gray-700"
                 onMouseDown={() => setShowPswd(true)}
                 onMouseUp={() => setShowPswd(false)}
                 onMouseLeave={() => setShowPswd(false)}
-              >{showPswd ? '🙉' : '🙈'}</span>
+              >
+                {showPswd ? '🙉' : '🙈'}
+              </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Confirm Password</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">비밀번호 확인</label>
               <input
+                ref={pwcRef}
                 type="password"
                 value={confirmPw}
                 onChange={e => setConfirmPw(e.target.value)}
                 className="w-full border rounded p-2"
                 required
-                minLength={8}
+                // minLength={8}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    agreeRef.current?.focus();
+                  }
+                }}
               />
             </div>
             <div className="flex items-center">
               <input
+                ref={agreeRef}
                 type="checkbox"
                 checked={agree}
                 onChange={e => setAgree(e.target.checked)}
                 className="mr-2"
                 required
+                onKeyDown={e => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    // 약관 체크박스에서 엔터 시 바로 다음 단계로!
+                    handleNext();
+                  }
+                }}
               />
               <span className="text-sm">약관에 동의합니다</span>
             </div>
             <button
-              type="button"
-              onClick={handleNext}
+              type="submit"
               className="w-full py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
-            >Next</button>
-          </div>
+            >다음으로</button>
+          </form>
         )}
 
         {/* Step 2: Profile */}
         {step === 2 && (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div><label className="block text-sm">Name</label>
-              <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full border rounded p-2" required />
+          <form onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
+            <div>
+              <label className="block text-sm">이름*</label>
+              <input ref={nameRef} type="text" value={name} onChange={e => setName(e.target.value)}
+                className="w-full border rounded p-2" required
+                onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); birthRef.current?.focus(); } }}
+              />
             </div>
-            <div><label className="block text-sm">Birth</label>
-              <input type="date" value={birth} onChange={e => setBirth(e.target.value)} className="w-full border rounded p-2" required />
+            <div>
+              <label className="block text-sm">생년월일*</label>
+              <input ref={birthRef} type="date" value={birth} onChange={e => setBirth(e.target.value)}
+                className="w-full border rounded p-2" required
+                onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); telRef.current?.focus(); } }}
+              />
             </div>
-            <div><label className="block text-sm">Phone</label>
-              <input type="tel" value={tel} onChange={e => setTel(e.target.value)} className="w-full border rounded p-2" required />
+            <div>
+              <label className="block text-sm">핸드폰번호*</label>
+              <input ref={telRef} type="tel" value={tel} onChange={e => setTel(e.target.value)}
+                className="w-full border rounded p-2" required
+                onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); zipRef.current?.focus(); } }}
+              />
             </div>
-            <div><label className="block text-sm">Address</label>
+            <div>
+              <label className="block text-sm">주소</label>
               <div className="flex space-x-2">
-                <input type="text" value={zipcode} onChange={e => setZipcode(e.target.value)} placeholder="Zip" className="border rounded p-2 w-1/4" required />
-                <input type="text" value={address1} onChange={e => setAddress1(e.target.value)} placeholder="Address1" className="border rounded p-2 flex-1" required />
+                <input ref={zipRef} type="text" value={zipcode} onChange={e => setZipcode(e.target.value)}
+                  placeholder="우편번호" className="border rounded p-2 w-1/4"
+                  onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addr1Ref.current?.focus(); } }}
+                />
+                <input ref={addr1Ref} type="text" value={address1} onChange={e => setAddress1(e.target.value)}
+                  placeholder="주소" className="border rounded p-2 flex-1"
+                  onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addr2Ref.current?.focus(); } }}
+                />
               </div>
-              <input type="text" value={address2} onChange={e => setAddress2(e.target.value)} placeholder="Address2" className="mt-2 border rounded p-2 w-full" />
+              <input ref={addr2Ref} type="text" value={address2} onChange={e => setAddress2(e.target.value)}
+                placeholder="상세주소" className="mt-2 border rounded p-2 w-full"
+                onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); nickRef.current?.focus(); } }}
+              />
             </div>
-            <div><label className="block text-sm">Nickname</label>
-              <input type="text" value={nick} onChange={e => setNick(e.target.value)} className="w-full border rounded p-2" required />
+            <div>
+              <label className="block text-sm">닉네임*</label>
+              <input ref={nickRef} type="text" value={nick} onChange={e => setNick(e.target.value)}
+                className="w-full border rounded p-2" required
+                onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); avatarRef.current?.focus(); } }}
+              />
             </div>
-            <div><label className="block text-sm">Avatar</label>
-              <input type="file" accept="image/*" onChange={e => setAvatar(e.target.files[0])} className="w-full" />
+            <div>
+              <label className="block text-sm">프로필 이미지</label>
+              <input ref={avatarRef} type="file" accept="image/*"
+                onChange={e => setAvatar(e.target.files[0])} className="w-full"
+                onKeyDown={e => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    // 마지막 input: Submit로 이동 (form submit)
+                    // handleSubmit()은 자동 호출됨
+                  }
+                }}
+              />
             </div>
             <div className="flex justify-between">
-              <button type="button" onClick={() => setStep(1)} className="px-4 py-2 bg-gray-200 rounded">Prev</button>
-              <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded">Submit</button>
+              <button type="button" onClick={() => setStep(1)} className="px-4 py-2 bg-gray-200 rounded">이전으로</button>
+              <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded">계정생성</button>
             </div>
           </form>
         )}
