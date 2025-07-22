@@ -4,7 +4,7 @@ import { getIP } from '../components/Tool';
 import OrderBook from '../components/OrderBook';
 import CoinInfo from '../components/CoinInfo';
 import RelatedNews from '../components/RelatedNews';
-import CommunityFeed from '../components/CommunityFeed';
+// import CommunityFeed from '../components/CommunityFeed';
 import OrderForm from '../components/OrderForm';
 import ApexChart from '../components/ApexChart';
 import NoticeModal from '../components/NoticeModal'
@@ -43,9 +43,9 @@ export default function CoinDetail() {
     };
   
     fetchDetail();                         // 마운트 직후 1회 호출
-    const intervalId = setInterval(fetchDetail, 60000);  // 폴링방식채택 (소켓사용?몰루)
+    // const intervalId = setInterval(fetchDetail, 60000);  // 폴링방식채택 (소켓사용?몰루)
   
-    return () => clearInterval(intervalId); // 언마운트 시 타이머 해제
+    // return () => clearInterval(intervalId); // 언마운트 시 타이머 해제
   }, [coin_no]);
 
   if (loading) return <p>Loading...</p>;
@@ -55,8 +55,8 @@ export default function CoinDetail() {
   const tabs = [
     { id: 'chart', label: '차트 · 호가' },
     { id: 'info',  label: '종목 정보' },
-    { id: 'news',  label: '뉴스 · 공시' },
-    { id: 'community', label: '커뮤니티' }
+    { id: 'coin',  label: '보유수량' },
+    // { id: 'community', label: '커뮤니티' }
   ];
 
   return (
@@ -66,7 +66,7 @@ export default function CoinDetail() {
         <img
           src={`http://${getIP()}:9093/home/storage/${coin_img}`}
           alt={coin_name}
-          className="w-12 h-12 rounded-full object-cover"
+          className="w-16 h-16 rounded-full object-cover"
         />
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -79,15 +79,16 @@ export default function CoinDetail() {
             </span>
           </p>
         </div>
-      </header>
-
-      {/* 탭 메뉴 */}
-      <button
+        {/* 금액알림 */}
+        <button
         onClick={() => setIsModalOpen(true)}
         className="mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
       >
         금액알림
       </button>
+      </header>
+
+      {/* 탭 메뉴 */}
       {isModalOpen && <NoticeModal coin_no={coin_no} onClose={() => setIsModalOpen(false)} />}
       <nav className="flex space-x-4 border-b mb-4">
         {tabs.map(tab => (
@@ -132,7 +133,6 @@ export default function CoinDetail() {
 
         {activeTab === 'info' && (
           <section>
-            <h3 className="text-lg font-semibold mb-2">Coin Information</h3>
             <CoinInfo coin_no={coin_no} />
           </section>
         )}
@@ -140,16 +140,16 @@ export default function CoinDetail() {
         {activeTab === 'news' && (
           <section>
             <h3 className="text-lg font-semibold mb-2">Related News</h3>
-            <RelatedNews articles={detail.newsList} />
+            <RelatedNews coin_no={coin_no} />
           </section>
         )}
 
-        {activeTab === 'community' && (
+        {/* {activeTab === 'community' && (
           <section>
             <h3 className="text-lg font-semibold mb-2">Community Feed</h3>
-            <CommunityFeed posts={detail.communityList} />
+            <CommunityFeed coin_no={coin_no} />
           </section>
-        )}
+        )} */}
       </div>
     </div>
   );
