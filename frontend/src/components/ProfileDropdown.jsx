@@ -1,15 +1,14 @@
 import React, { useEffect, useRef, useState, useCallback, memo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Login from '../components/Login';
 import { useGlobal } from '../components/GlobalContext';
 import { getIP } from '../components/Tool';
 import { jwtDecode } from 'jwt-decode';
 import basic from "../images/profile.png"
 
-// 기본 메뉴 항목 배열에서 signout 아이템은 action만 담고 to 는 비워둡니다
 const defaultMenu = [
-  { id: 'dashboard', label: 'Dashboard', to: '/dashboard' },
-  { id: 'analytics', label: 'Analytics', to: '/analytics', badge: 'New' },
+  { id: 'coincreate', label: '코인 생성하기', to: '/coin/create' },
+  { id: 'mypage', label: '마이페이지', to: '/mypage' },
   { id: 'signout',   label: '로그아웃',   to: '/member/logout', danger: true },
 ];
 
@@ -23,22 +22,16 @@ const MenuItem = memo(({ item }) => (
     } rounded-md`}
   >
     {item.label}
-    {item.badge && (
-      <span className="ml-auto bg-purple-100 dark:bg-purple-800 text-purple-600 dark:text-purple-300 text-xs px-2 py-0.5 rounded-full">
-        {item.badge}
-      </span>
-    )}
   </Link>
 ));
-
-export default function ProfileDropdown({
-  menuItems = defaultMenu
-}) {
+  
+export default function ProfileDropdown({ menuItems = defaultMenu}) {
   const { sw, setSw } = useGlobal();
   const [isOpen, setIsOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
   const dropdownRef = useRef(null); 
   const [member,setMember] = useState([]);
+  const navigate = useNavigate();
 
   const toggleOpen = useCallback(() => setIsOpen(v => !v), []);
 
@@ -71,7 +64,7 @@ useEffect(() => {
   }
 }, [userInfo?.member_no]);
 
-// 2. 드롭다운 외부 클릭 감지
+// 외부 클릭 감지
 useEffect(() => {
   const handler = e => {
     if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -100,6 +93,7 @@ useEffect(() => {
         setSw(false);
         // sessionStorage.removeItem('sw'); // 굳이?
         sessionStorage.removeItem('jwt');
+        navigate('/');
       } else {
         alert('로그아웃에 실패했습니다. 다시 시도해주세요.');
       }
@@ -114,6 +108,7 @@ useEffect(() => {
   return (
     <div className="relative inline-block text-left" ref={dropdownRef}>
       {jwt != null ?(
+      // 로그인 하기전
       <button
         onClick={toggleOpen}
         aria-haspopup="true"
@@ -127,6 +122,7 @@ useEffect(() => {
         />
         <span className="text-sm font-medium text-gray-900 dark:text-white">{nick} 님</span>
       </button> ) : 
+      // 로그인 한 후 프로필
       <button
       onClick={() => setLoginOpen(true)}
       aria-haspopup="true"
@@ -135,13 +131,18 @@ useEffect(() => {
        > <span className="text-sm font-medium text-gray-900 dark:text-white">로그인이 필요합니다</span> </button> 
       }
 
-      {isOpen && (
-        <div className="absolute right-0 mt-3 w-64 z-50 bg-white dark:bg-[#1E2028] rounded-lg shadow-lg p-2 space-y-1">
-          {sw && (
-            <>
-              <div className="border-t border-gray-200 dark:border-gray-700" />
-              {menuItems.map(item =>
-                item.id === 'signout' ? (
+    {isOpen && (
+      <div className="absolute right-0 mt-3 w-64 z-50 bg-white dark:bg-[#1E2028] rounded-lg shadow-lg p-2 space-y-1">
+        {jwt && (
+          <>
+            <div className="border-t border-gray-200 dark:border-gray-700" />
+            {menuItems.map(item => {
+              // ADMIN만 코인생성 메뉴 노출
+              if (item.id === "coincreate" && userInfo?.role !== "ADMIN") {
+                return null;
+              }
+              if (item.id === 'signout') {
+                return (
                   <button
                     key={item.id}
                     onClick={handleLogout}
@@ -149,14 +150,14 @@ useEffect(() => {
                   >
                     {item.label}
                   </button>
-                ) : (
-                  <MenuItem key={item.id} item={item} />
-                )
-              )}
-            </>
-          )}
-        </div>
-      )}
+                );
+              }
+              return <MenuItem key={item.id} item={item} />;
+            })}
+          </>
+        )}
+      </div>
+    )}
 
       <Login isOpen={loginOpen} onClose={() => setLoginOpen(false)} />
     </div>
