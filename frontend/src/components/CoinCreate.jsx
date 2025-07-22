@@ -3,9 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { getIP, getNowDate } from '../components/Tool';
 import { Dropdown } from './coinComponents';
 
-/**
- * CoinCreate 페이지 컴포넌트
- */
 export default function CoinCreate() {
   const [step, setStep] = useState(1);
   const [name, setName] = useState('');
@@ -15,11 +12,6 @@ export default function CoinCreate() {
   const [info, setInfo] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
-
-  const categories = [
-    'NFT', '밈 코인', 'AI 코인', '플랫폼 코인', '스테이블 코인', '기모링 코인',
-    '게이밍 코인', '의료 코인', '기타 코인'
-  ];
 
   const handleNext = () => {
     if (name && cate && price && img) {
@@ -32,7 +24,6 @@ export default function CoinCreate() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 서버가 기대하는 형식: 'coin' JSON 블랍과 'file' multipart
     const coin = {
       coin_name: name,
       coin_cate: cate,
@@ -69,7 +60,7 @@ export default function CoinCreate() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto my-12 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+    <div className="min-w-[700px] min-h-[500px] my-12 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
       <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">새로운 코인 등록</h2>
 
       {/* Step 1: 기본 정보 */}
@@ -83,7 +74,6 @@ export default function CoinCreate() {
               placeholder="예: 제누코인"
               value={name}
               onChange={e => setName(e.target.value)}
-              required
             />
           </div>
 
@@ -98,9 +88,12 @@ export default function CoinCreate() {
               <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"/></svg>
             </button>
             {dropdownOpen && (
-              <ul className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md shadow-lg max-h-48 overflow-auto">
-                  <Dropdown/>
-              </ul>
+              <div className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md shadow-lg max-h-48 overflow-auto">
+                <Dropdown onSelect={cate => {
+                  setCate(cate);
+                  setDropdownOpen(false);
+                }} />
+              </div>
             )}
           </div>
 
@@ -112,7 +105,6 @@ export default function CoinCreate() {
               placeholder="50000"
               value={price}
               onChange={e => setPrice(e.target.value)}
-              required
             />
           </div>
 
@@ -123,9 +115,8 @@ export default function CoinCreate() {
               accept="image/*"
               onChange={e => setImg(e.target.files[0])}
               className="mt-1"
-              required
             />
-            {img && <p className="mt-2 text-sm text-green-600">{img.name} 선택됨</p>}
+            {img && <p className="mt-2 text-sm text-green-600">이미지 업로드 완료!</p>}
           </div>
 
           <div className="flex justify-end">
