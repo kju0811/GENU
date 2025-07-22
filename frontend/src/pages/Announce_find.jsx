@@ -60,8 +60,6 @@ function Announce_find() {
               <Link to="/announce" className="text-indigo-600 hover:underline">공지사항 생성하기</Link>
         )}
 
-        <h2> 공지사항 </h2>
-
         <div className="flex justify-between items-center mb-6" style={{marginTop:'2%'}}>
         <input
           type="search"
