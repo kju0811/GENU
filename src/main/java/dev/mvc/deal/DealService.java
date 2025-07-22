@@ -19,9 +19,11 @@ import dev.mvc.coin.Coin;
 import dev.mvc.coin.CoinRepository;
 import dev.mvc.coin.CoinService;
 import dev.mvc.coinlike.CoinlikeRepository;
+import dev.mvc.exception.DelistedCoinException;
 import dev.mvc.member.Member;
 import dev.mvc.pay.Pay;
 import dev.mvc.pay.PayService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -99,6 +101,15 @@ public class DealService {
   /** 매수 시 실행 */
   @Transactional
   public Deal buydeal(DealDTO.DealBuyPay request) {
+    // coin_no만 넘어와서 확인해야함
+    int coinType = coinRepository.findCoinType(request.getCoin().getCoin_no())
+        .orElseThrow(() -> new EntityNotFoundException("해당 코인이 존재하지 않습니다."));
+    System.out.println("코인 타입 -> "+coinType);
+    // 코인타입이 상장폐지이면
+    if (coinType==0) {
+      throw new DelistedCoinException("해당 코인은 상장폐지되어 거래할 수 없습니다.");
+    }
+    
     //돈 서비스 getMemberPay 호출해서 비교하고
     int wp = payService.getMemberPay(request.getMember().getMember_no()); // 보유 자산
     System.out.println("현자산: " + wp);
@@ -160,6 +171,15 @@ public class DealService {
   /** 매도 시 실행 */
   @Transactional
   public Deal selldeal(DealDTO.DealSellPay request) {
+    // coin_no만 넘어와서 확인해야함
+    int coinType = coinRepository.findCoinType(request.getCoin().getCoin_no())
+        .orElseThrow(() -> new EntityNotFoundException("해당 코인이 존재하지 않습니다."));
+    System.out.println("코인 타입 -> "+coinType);
+    // 코인타입이 상장폐지이면
+    if (coinType==0) {
+      throw new DelistedCoinException("해당 코인은 상장폐지되어 거래할 수 없습니다.");
+    }
+    
     // 가지고 있는 코인 갯수
     int ownedCnt = getTotalCnt(request.getMember().getMember_no(), request.getCoin().getCoin_no());
     if (ownedCnt <= 0) {

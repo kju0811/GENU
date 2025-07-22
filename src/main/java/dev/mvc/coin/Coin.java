@@ -59,6 +59,10 @@ public class Coin {
   @Column(name = "coin_img")
   private String coin_img="";
   
+  /** 코인 진행중1, 상장폐지0 구분 */
+  @Column(name = "coin_type", columnDefinition = "NUMBER(1)", nullable = false)
+  private int coin_type = 1;
+  
   /** 시간 자동으로 넣어준다. */
   @PrePersist
   public void prePersist() {
