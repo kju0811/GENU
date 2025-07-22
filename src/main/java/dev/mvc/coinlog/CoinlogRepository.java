@@ -2,6 +2,7 @@ package dev.mvc.coinlog;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -47,4 +48,15 @@ public interface CoinlogRepository extends JpaRepository<Coinlog, Long> {
   List<Object[]> getDailyOhlcData(@Param("coin_no") Long coin_no, 
                                  @Param("startDate") LocalDate startDate, 
                                  @Param("endDate") LocalDate endDate);
+  
+  // 오늘자 첫번째 금액
+  @Query(value = """
+      SELECT coinlog_price
+      FROM coinlog
+      WHERE TRUNC(coinlog_time) = TRUNC(SYSDATE) AND coin_no = :coin_no
+      ORDER BY coinlog_time ASC
+      FETCH FIRST 1 ROWS ONLY
+  """, nativeQuery = true)
+  Optional<Integer> findFirstPriceToday(@Param("coin_no") Long coin_no);
+  
 }
