@@ -46,6 +46,13 @@ const mind =() => {
                 "coin": coin,
                 "percent": percent
             }),
+        }).
+        then(() => {
+            return fetch(`http://${getIP()}:9093/mind/find_all`);
+        })
+        .then(res => res.json())
+        .then(result => {
+            setMindata(result);
         })
         .finally(() => setCloading(false))
     }

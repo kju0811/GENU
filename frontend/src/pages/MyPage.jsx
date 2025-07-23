@@ -18,9 +18,7 @@ export default function MyPage() {
   const [imgPreview, setImgPreview] = useState(null); // 미리보기 URL
   const [isUploading, setIsUploading] = useState(false);
   const [myNurung, setMyNurung] = useState(0);
-  const [mindResult, setMindResult] = useState(null);
   const { createmind,mindata,load } = mind();
-  console.log("ㅇㅇㅁㄴㅁㅇㄴ: ",mindata);
 
   // 예시
   // const { coin_no } = useParams(); // coin_no 파라미터 받아오기
@@ -34,10 +32,6 @@ export default function MyPage() {
     } catch (err) {}
   }
   const member_no = userInfo?.member_no;
-
-  useEffect(()=> {
-    mindata
-  },[mindata])
 
   useEffect(() => {
     if (!member_no) return;
