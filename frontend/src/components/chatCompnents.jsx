@@ -4,16 +4,22 @@ import imgsrc from "../images/send.png"
 import botimg from "../images/genu.png"
 import chatopen from "../images/genu.png";
 import { jwtDecode } from "jwt-decode";
+import { useState } from "react";
 
 const chatHeader = () => {
   const { close, setClose } = useGlobal();
+  const [chatKey, setChatKey] = useState(0);
+  const handleClose = () => {
+      setClose(true);
+      setChatKey(prev => prev + 1); // 컴포넌트를 새로 마운트
+    };
 
   return (
     <div className="myheader" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 10px'}}>
       💬 GENU 챗봇
       <span
         style={{ color: "white", cursor: "pointer", fontWeight: "bold", fontSize: "20px"}}
-        onClick={() => setClose(true)}
+        onClick={handleClose}
       >
         x
       </span>
@@ -64,4 +70,24 @@ const ChatOpen = () => {
   );
 }
 
-export { chatHeader, chatButton, botImg, ChatOpen };
+const loadSessionMessages = () => {
+  const userMessages = JSON.parse(sessionStorage.getItem("user") || "[]");
+  const botMessages = JSON.parse(sessionStorage.getItem("bot") || "[]");
+
+  // 메시지를 시간순으로 interleave해서 하나의 배열로 합치기
+  const allMessages = [];
+
+  const maxLength = Math.max(userMessages.length, botMessages.length);
+  for (let i = 0; i < maxLength; i++) {
+    if (userMessages[i]) {
+      allMessages.push({ type: "user", message: userMessages[i] });
+    }
+    if (botMessages[i]) {
+      allMessages.push(botMessages[i]); // 이미 chatbotMessage 형태임
+    }
+  }
+
+  return allMessages;
+};
+
+export { chatHeader, chatButton, botImg, ChatOpen, loadSessionMessages };
