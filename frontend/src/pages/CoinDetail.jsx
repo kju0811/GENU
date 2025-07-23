@@ -9,6 +9,8 @@ import OrderForm from '../components/OrderForm';
 import ApexChart from '../components/ApexChart';
 import NoticeModal from '../components/NoticeModal'
 
+import { useLikeToggle } from '../components/useLikeToggle';
+
 export default function CoinDetail() {
   const { coin_no } = useParams();
   const [detail, setDetail] = useState(null);
@@ -16,6 +18,9 @@ export default function CoinDetail() {
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('chart');
   const [selectedPrice, setSelectedPrice] = useState(null);
+
+  // useLikeToggle 훅 사용
+  const { liked, toggleLike } = useLikeToggle(coin_no);
 
   // CoinDetail.jsx (요청 확인용)
   const handleSelectPrice = price => {
@@ -85,12 +90,17 @@ export default function CoinDetail() {
         </div>
         {/* 헤더 우측 */}
         <div className="flex space-x-2">
-          {/* 좋아요 */}
-          <button
-            className="mb-4 px-4 py-2 bg-rose-100 text-white rounded hover:bg-red-600"
-          >
-            ❤️
-          </button>
+            {/* 좋아요 버튼 - liked 상태에 따라 스타일과 텍스트 변경 */}
+            <button
+              onClick={toggleLike}
+              className={`mb-4 px-4 py-2 rounded ${
+                liked
+                  ? 'bg-red-600 text-white hover:bg-red-700'
+                  : 'bg-rose-100 text-gray-700 hover:bg-rose-300'
+              }`}
+            >
+              {liked ? '❤️' : '🤍'}
+            </button>
           {/* 금액알림 */}
           <button
             onClick={() => setIsModalOpen(true)}
