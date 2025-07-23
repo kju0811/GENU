@@ -5,7 +5,9 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -34,7 +36,21 @@ public class CoinlikeService {
   }
   
   /** 멤버가 좋아요를 누른 코인 출력 */
-  public List<Coinlike> findByMemberCoinlike(Long member_no){
-    return coinlikeRepository.findByMemberCoinlike(member_no);
+  public List<Coinlike> findByMemberCoinlikeList(Long member_no){
+    return coinlikeRepository.findByMemberCoinlikeList(member_no);
+  }
+  
+  /** 멤버가 해당 코인에 좋아요를 눌렀는지 확인하는 메서드  */
+  public boolean isMemberCoinlike(Long member_no, Long coin_no){
+    return coinlikeRepository.isMemberCoinlike(member_no, coin_no).isPresent();
+  }
+  
+  /** 코인좋아요 삭제 */
+  @Transactional
+  public void deleteCoinlike(Long member_no, Long coin_no) {
+    Coinlike coinlike = coinlikeRepository.isMemberCoinlike(member_no, coin_no)
+    .orElseThrow(() -> new EntityNotFoundException("해당 정보는 존재하지 않는 정보입니다."));
+    
+    coinlikeRepository.delete(coinlike);
   }
 }
