@@ -52,7 +52,7 @@ function CoinList() {
           <div className="w-24"></div> {/* 이미지 칸 */}
           <div className="flex-1 font-semibold">종목</div>
           <div
-              onClick={() => { setSortType('price'); setPage(0); }}
+              onClick={() => { setSortType('price'); setPage(1); }}
               className={`flex-1 font-semibold ml-3 cursor-pointer select-none ${
                 sortType === 'price' ? 'text-blue-600 underline' : ''
               }`}
@@ -60,7 +60,7 @@ function CoinList() {
               현재가
             </div>
             <div
-              onClick={() => { setSortType('percentage'); setPage(0); }}
+              onClick={() => { setSortType('percentage'); setPage(1); }}
               className={`flex-1 font-semibold cursor-pointer select-none ${
                 sortType === 'percentage' ? 'text-blue-600 underline' : ''
               }`}
