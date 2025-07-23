@@ -36,11 +36,13 @@ import "./style/chat.css";
 import NotFound from "./pages/NotFound";
 import MyPage from "./pages/MyPage";
 import Mindfind from "./ai/MindFind";
-
 import FindId from "./components/FindId";
+
+import { loadSessionMessages } from "./components/chatCompnents";
 
 function App() {
   const { close, hideNavbar,hideChatbot } = useGlobal();
+  const loadedMessages = loadSessionMessages();
 
   return (
     <>
@@ -78,6 +80,7 @@ function App() {
             messageParser={MessageParser}
             actionProvider={ActionProvider}
             placeholderText="메세지를 입력해주세요"
+            messageHistory={loadedMessages}
           />
         ) : (
           <ChatOpen />
