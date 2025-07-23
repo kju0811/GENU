@@ -49,5 +49,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
   // 비밀번호 찾기를 위한 해당 로컬 멤버 정보 반환
   @Query("SELECT m FROM Member m WHERE m.authProvider IS NULL AND m.memberId = :memberId")
   Optional<Member> findByLocalMemberId(@Param("memberId") String memberId);
+  
+  @Query("SELECT m FROM Member m WHERE m.member_no = :member_no")
+  Optional<Member> findbyMember_no(@Param("member_no") Long member_no);
 
 }
