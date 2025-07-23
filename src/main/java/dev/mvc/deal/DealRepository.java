@@ -1,5 +1,6 @@
 package dev.mvc.deal;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,5 +77,14 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
       + "AND d.deal_type IN (3, 4) "
       + "ORDER BY deal_date DESC")
   List<Deal> findDealsByMemberCoin(@Param("member_no") Long member_no, @Param("coin_no") Long coin_no);
+  
+  // 멤버가 해당 코인에 주문한 2주간 거래내역 날짜 내림차 순 반환,
+  @Query("SELECT d FROM Deal d " +
+	       "WHERE d.member.member_no = :member_no " +
+	       "AND d.deal_type IN (3, 4) " +
+	       "AND d.deal_date >= :twoWeeksAgo " +
+	       "ORDER BY d.deal_date DESC")
+	List<Deal> findRecentDealsTwoweeks(@Param("member_no") Long memberNo,
+	                           @Param("twoWeeksAgo") LocalDateTime twoWeeksAgo);
   
 }
