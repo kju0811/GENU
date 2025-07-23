@@ -30,20 +30,18 @@ import Announce_find from "./pages/Announce_find";
 import Announce_read from "./pages/Announce_read";
 
 import SocialLogin from "./components/SocialLogin"; // SNS 로그인용
-
 import "react-chatbot-kit/build/main.css";
 import "./style/chat.css";
 import NotFound from "./pages/NotFound";
 import MyPage from "./pages/MyPage";
 import Mindfind from "./ai/MindFind";
-import FindId from "./components/FindId";
+import FindIdPw from "./pages/FindIdPw";
 
-import { loadSessionMessages } from "./components/chatCompnents";
+import { getInitialMessages } from "./components/chatCompnents";
 
 function App() {
   const { close, hideNavbar,hideChatbot } = useGlobal();
-  const loadedMessages = loadSessionMessages();
-
+  const getmsg = getInitialMessages();
   return (
     <>
       {!hideNavbar && <Navbar />}
@@ -68,7 +66,7 @@ function App() {
         <Route path="/announce_read/:announce_no" element={<Announce_read />} />
         <Route path="/deal/dealList/:member_no" element={<DealList/>} />
         <Route path="/notification/find_by_MemberNotification/:member_no" element={<NotificationLog/>} />
-        <Route path="/findid" element={<FindId/>} />
+        <Route path="/findidpw" element={<FindIdPw/>} />
         <Route path="*" element={<NotFound/>} />
 
         <Route path="/sociallogin" element={<SocialLogin />} /> {/* Backend 로그인후 실행, Backend: OAuthSuccessHandler.java */}
@@ -80,7 +78,7 @@ function App() {
             messageParser={MessageParser}
             actionProvider={ActionProvider}
             placeholderText="메세지를 입력해주세요"
-            messageHistory={loadedMessages}
+            messageHistory={getmsg}
           />
         ) : (
           <ChatOpen />
