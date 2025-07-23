@@ -1,76 +1,92 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
 
-export default function Footer() {
+const Footer = () => {
   return (
-    <footer className="bg-gradient-to-b from-white to-gray-300 shadow-md p-4 w-full" aria-label="Main footer">
-      <div className="max-w-7xl mx-auto px-4">
-        {/* Top Section */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-          {/* Logo */}
-          <div className="flex items-center mb-4 md:mb-0">
-            <img
-              src="nurung.png"
-              alt="GENU"
-              className="h-10 w-10 rounded-lg"
+    <footer className="w-full mt-auto bg-gray-700 text-gray-100 py-4">
+      <div className="flex items-center justify-between max-w-[1440px] mx-auto px-4">
+        {/* 좌측: 로고/저작권 */}
+        <div className="flex items-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            className="w-7 h-7 mr-2 text-yellow-300"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="9"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              fill="#fde047"
             />
-            <span className="ml-3 text-xl font-semibold text-gray-900 dark:text-white">
-              GENU
-            </span>
-          </div>
-          {/* Contact Info */}
-          <div className="space-y-2 text-sm">
-            <div className="flex items-center">
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-              <Link to="mailto:contact@startupful.io" className="hover:text-indigo-500">
-                nurung2@angimoring.com
-              </Link>
-            </div>
-            <div className="flex items-center">
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-              </svg>
-              <Link to="tel:+82021234567" className="hover:text-indigo-500">
-                +82 02-123-4567
-              </Link>
-            </div>
-            <div className="flex items-center">
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              <span>Seoul, Republic of Korea</span>
-            </div>
-          </div>
+            <path
+              d="M12 7v5l3 3"
+              stroke="#fbbf24"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              fill="none"
+            />
+          </svg>
+          <span className="text-base font-semibold">GENU © 2025</span>
         </div>
-
-        {/* Divider */}
-        <div className="border-t border-gray-200 dark:border-gray-700 my-4" />
-
-        {/* Bottom Section */}
-        <div className="flex flex-col md:flex-row justify-between items-center">
-          <div className="text-sm">© 2025 GENU. All rights reserved.</div>
-          <div className="flex space-x-4 mt-4 md:mt-0">
-            <Link to="/" aria-label="Twitter" className="hover:text-indigo-500">
-              <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675..." />
-              </svg>
-            </Link>
-            <Link to="/" aria-label="LinkedIn" className="hover:text-indigo-500">
-              <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M19 0h-14..." />
-              </svg>
-            </Link>
-            <Link to="/" aria-label="GitHub" className="hover:text-indigo-500">
-              <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2C6.477..." />
-              </svg>
-            </Link>
-          </div>
+        {/* 각자 깃허브 */}
+        <div className="flex gap-4">
+        <a
+            href="https://github.com/kju0811"
+            className="hover:text-yellow-300"
+            aria-label="김지운_깃허브"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.867 8.167 6.839 9.489.5.091.682-.217.682-.482 
+              0-.237-.009-.866-.014-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.155-1.109-1.463-1.109-1.463-.908-.62.069-.608.069-.608
+              1.004.071 1.532 1.032 1.532 1.032.892 1.528 2.341 1.087 2.91.832.091-.646.349-1.087.634-1.338-2.221-.253-4.555-1.113-4.555-4.951
+              0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.338
+              1.909-1.296 2.748-1.025 2.748-1.025.546 1.378.203 2.397.1 2.65.64.7 1.028 1.595 1.028 2.688 0 3.847-2.337 4.695-4.566 4.943.359.309.678.92.678 1.855
+              0 1.338-.012 2.419-.012 2.749 0 .267.18.577.688.48C19.135 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z" />
+            </svg>
+          </a>
+          <a
+            href="https://github.com/kiminjuny"
+            className="hover:text-yellow-300"
+            aria-label="김민준_깃허브"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.867 8.167 6.839 9.489.5.091.682-.217.682-.482 
+              0-.237-.009-.866-.014-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.155-1.109-1.463-1.109-1.463-.908-.62.069-.608.069-.608
+              1.004.071 1.532 1.032 1.532 1.032.892 1.528 2.341 1.087 2.91.832.091-.646.349-1.087.634-1.338-2.221-.253-4.555-1.113-4.555-4.951
+              0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.338
+              1.909-1.296 2.748-1.025 2.748-1.025.546 1.378.203 2.397.1 2.65.64.7 1.028 1.595 1.028 2.688 0 3.847-2.337 4.695-4.566 4.943.359.309.678.92.678 1.855
+              0 1.338-.012 2.419-.012 2.749 0 .267.18.577.688.48C19.135 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z" />
+            </svg>
+          </a>
+          <a
+            href="https://github.com/joonsoo1234"
+            className="hover:text-yellow-300"
+            aria-label="김준수_깃허브"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.867 8.167 6.839 9.489.5.091.682-.217.682-.482 
+              0-.237-.009-.866-.014-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.155-1.109-1.463-1.109-1.463-.908-.62.069-.608.069-.608
+              1.004.071 1.532 1.032 1.532 1.032.892 1.528 2.341 1.087 2.91.832.091-.646.349-1.087.634-1.338-2.221-.253-4.555-1.113-4.555-4.951
+              0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.338
+              1.909-1.296 2.748-1.025 2.748-1.025.546 1.378.203 2.397.1 2.65.64.7 1.028 1.595 1.028 2.688 0 3.847-2.337 4.695-4.566 4.943.359.309.678.92.678 1.855
+              0 1.338-.012 2.419-.012 2.749 0 .267.18.577.688.48C19.135 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z" />
+            </svg>
+          </a>
         </div>
       </div>
     </footer>
   );
-}
+};
+
+export default Footer;

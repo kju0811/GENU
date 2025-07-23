@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getIP } from '../components/Tool';
 import { jwtDecode } from 'jwt-decode';
+import mind from '../ai/Mind';
 
 const TABS = [
   { key: "info", label: "개인정보" },
@@ -17,13 +18,12 @@ export default function MyPage() {
   const [imgPreview, setImgPreview] = useState(null); // 미리보기 URL
   const [isUploading, setIsUploading] = useState(false);
   const [myNurung, setMyNurung] = useState(0);
-
+  const { getDeal,createmind,mindata,load,list,info } = mind();
 
   // 예시
   // const { coin_no } = useParams(); // coin_no 파라미터 받아오기
   const [activeTab, setActiveTab] = useState("info");
   const [detail, setDetail] = useState(null);
-
   const jwt = sessionStorage.getItem('jwt');
   let userInfo = null;
   if (jwt != null) {
@@ -32,6 +32,12 @@ export default function MyPage() {
     } catch (err) {}
   }
   const member_no = userInfo?.member_no;
+  const filtermember = mindata.find(item => item.member.member_no == member_no)
+
+  // 딜 정보 담기
+  useEffect(()=> {
+    getDeal()
+  },[])
 
   useEffect(() => {
     if (!member_no) return;
@@ -174,11 +180,19 @@ export default function MyPage() {
         )}
         {activeTab === "memberMind" && (
           <div className="flex flex-col">
+            <div>
+            {list()} <span className="text-gray-400" style={{marginLeft:'30%',fontSize:'15px'}}>📢 아래 주의사항 한번씩만 읽어주세요</span>
+            </div>
             <div className="bg-gray-300 rounded-xl shadow p-8 w-full min-w-[600px] min-h-[500px] flex flex-col">
               <div>
-                {/* {detail.coin_info} */}
-              </div>
+              {filtermember && (
+              <span>{mindata[0].mindcontent}</span>
+              )}
+              </div>  
             </div>
+              <button onClick={()=>createmind()}>심리분석 요청하기</button>
+              {load()}
+              {info()}
           </div>
         )}
       </main>

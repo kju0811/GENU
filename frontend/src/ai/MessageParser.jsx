@@ -5,14 +5,16 @@ class MessageParser {
     this.actionProvider = actionProvider;
     this.state = state;
   }
-
   parse(message) {
     console.log(message);
+    const jwt = sessionStorage.getItem('jwt');
     if (message.trim() != "") {
+    localStorage.setItem("chat_messages",message);
     fetch(`http://${getIP()}:9093/chatbot/talk`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization' : jwt
       },
       body: JSON.stringify( message ),
     })
@@ -24,6 +26,7 @@ class MessageParser {
         ...prev,
         messages: [...prev.messages, botMessage],
       }));
+      localStorage.setItem("chat_messages",JSON.stringify(botMessage));
     })
   } else {
     const userMessage = this.actionProvider.createClientMessage();
