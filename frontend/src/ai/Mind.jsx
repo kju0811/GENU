@@ -31,9 +31,12 @@ const mind =() => {
     const cnt = dealinfo.map(item => String(item.deal_cnt))
     const coin = dealinfo.map(item => item.coin.coin_name)
     const percent = dealinfo.map(item => String(item.coin.coin_percentage))
+    const [mindata,setMindata] = useState([]);
+    const userno = mindata.filter(item => item.member?.member_no === member_no);
 
     const createmind =()=> {
         setCloading(true)
+        if (userno.length >= 3) {
         fetch(`http://${getIP()}:9093/mind/create`,{
             method:'POST',
             headers: {
@@ -54,18 +57,21 @@ const mind =() => {
         .then(res => res.json())
         .then(result => {
             setMindata(result);
+            console.log(result)
         })
         .finally(() => setCloading(false))
+     } else {
+        alert("거래기록이 3회이상일떄부터 가능합니다")
+        setCloading(false)
+     }
     }
-
-    const [mindata,setMindata] = useState([]);
     useEffect(() => {
         fetch(`http://${getIP()}:9093/mind/find_all`, {
         method: 'GET',
         })
         .then(res =>res.json())
         .then(result => {
-        setMindata(result)
+            setMindata(result);
         })
     },[])
 
