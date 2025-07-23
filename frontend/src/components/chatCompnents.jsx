@@ -60,11 +60,11 @@ const ChatOpen = () => {
     <>
     {(userInfo?.role === "ADMIN" || userInfo?.role === "USER") ? (
       <div onClick={() => setClose(false)} style={{ cursor: 'pointer' }}>
-        <img src={chatopen} style={{ width: '6%', height: '10%', position: 'fixed', right: '2%', bottom: '3%' }} />
+        <img src={chatopen} style={{ width: '120px', height: '100px', position: 'fixed', right: '2%', bottom: '3%' }} />
         <span style={{ position: 'fixed', right: '1%', bottom: '13%' }}>AI 챗봇 NURUNG2입니다</span>
       </div>
     ) : <div style={{ cursor: 'not-allowed' }}>
-        <img src={chatopen} style={{ width: '6%', height: '10%', position: 'fixed', right: '2%', bottom: '3%', opacity: 0.5 }} />
+        <img src={chatopen} style={{ width: '120px', height: '100px', position: 'fixed', right: '2%', bottom: '3%', opacity: 0.5 }} />
         <span style={{ position: 'fixed', right: '1%', bottom: '13%' }}>로그인 후 이용해 주세요</span>
       </div>}
     </>
