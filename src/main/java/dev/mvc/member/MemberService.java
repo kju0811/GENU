@@ -140,8 +140,12 @@ public class MemberService {
     Auth auth = authRepository.checkAuthCode(member_no)
     .orElseThrow(() -> new IllegalArgumentException("토큰이 만료되었습니다."));
     
+    if (auth.getVerified()) {
+      throw new IllegalArgumentException("이미 인증이 완료된 인증번호입니다. 재발급 바랍니다.");
+    }
+    
     if (!auth.getAuthCode().equals(authCode)) {
-      throw new IllegalArgumentException("인증번호가 일치하지 않습니다");
+      throw new IllegalArgumentException("인증번호가 일치하지 않습니다.");
     }
     
     auth.setVerified(true);
