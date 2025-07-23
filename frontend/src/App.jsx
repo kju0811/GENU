@@ -30,7 +30,6 @@ import Announce_find from "./pages/Announce_find";
 import Announce_read from "./pages/Announce_read";
 
 import SocialLogin from "./components/SocialLogin"; // SNS 로그인용
-
 import "react-chatbot-kit/build/main.css";
 import "./style/chat.css";
 import NotFound from "./pages/NotFound";
@@ -38,12 +37,11 @@ import MyPage from "./pages/MyPage";
 import Mindfind from "./ai/MindFind";
 import FindId from "./components/FindId";
 
-import { loadSessionMessages } from "./components/chatCompnents";
+import { getInitialMessages } from "./components/chatCompnents";
 
 function App() {
   const { close, hideNavbar,hideChatbot } = useGlobal();
-  const loadedMessages = loadSessionMessages();
-
+  const getmsg = getInitialMessages();
   return (
     <>
       {!hideNavbar && <Navbar />}
@@ -80,7 +78,7 @@ function App() {
             messageParser={MessageParser}
             actionProvider={ActionProvider}
             placeholderText="메세지를 입력해주세요"
-            messageHistory={loadedMessages}
+            messageHistory={getmsg}
           />
         ) : (
           <ChatOpen />
