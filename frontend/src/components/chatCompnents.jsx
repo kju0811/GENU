@@ -5,6 +5,7 @@ import botimg from "../images/genu.png"
 import chatopen from "../images/genu.png";
 import { jwtDecode } from "jwt-decode";
 import { useState } from "react";
+import { createChatBotMessage } from "react-chatbot-kit";
 
 const chatHeader = () => {
   const { close, setClose } = useGlobal();
@@ -73,7 +74,7 @@ const ChatOpen = () => {
 const loadSessionMessages = () => {
   const userMessages = JSON.parse(sessionStorage.getItem("user") || "[]");
   const botMessages = JSON.parse(sessionStorage.getItem("bot") || "[]");
-
+  
   // 메시지를 시간순으로 interleave해서 하나의 배열로 합치기
   const allMessages = [];
 
@@ -90,4 +91,13 @@ const loadSessionMessages = () => {
   return allMessages;
 };
 
-export { chatHeader, chatButton, botImg, ChatOpen, loadSessionMessages };
+const getInitialMessages = () => {
+    const initialMessage = createChatBotMessage("안녕하세요! NURUNG2입니다!! 응답까지 2~3초이상 소요 될수있으니 잠시만 기다려주세요😊");
+    // 로드된 메시지가 없거나 첫 번째 메시지가 초기 인사말이 아닌 경우
+    if (!loadSessionMessages().length || loadSessionMessages()[0].message !== initialMessage.message) {
+      return [initialMessage, ...loadSessionMessages()];
+    }
+    return loadSessionMessages();
+};
+
+export { chatHeader, chatButton, botImg, ChatOpen, loadSessionMessages, getInitialMessages };
