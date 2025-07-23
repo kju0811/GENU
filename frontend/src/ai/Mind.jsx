@@ -61,7 +61,7 @@ const mind =() => {
         })
         .finally(() => setCloading(false))
      } else {
-        alert("거래기록이 3회이상일떄부터 가능합니다")
+        alert("거래기록이 3회이상일때부터 가능합니다")
         setCloading(false)
      }
     }
