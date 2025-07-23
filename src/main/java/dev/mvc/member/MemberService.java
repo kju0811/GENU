@@ -1,8 +1,5 @@
 package dev.mvc.member;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,13 +8,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import dev.mvc.auth.Auth;
 import dev.mvc.auth.AuthRepository;
 import dev.mvc.exception.MemberNotFoundException;
 import dev.mvc.tool.MailTool;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -135,7 +130,8 @@ public class MemberService {
   /** 메일로 온 인증번호 체크 메서드 */
   @Transactional
   public void checkAuthCode(String authCode, Long member_no) {
-    Auth auth = authRepository.checkAuthCode(member_no).orElseThrow(() -> new IllegalArgumentException("토큰이 만료되었습니다."));
+    Auth auth = authRepository.checkAuthCode(member_no)
+        .orElseThrow(() -> new IllegalArgumentException("토큰이 만료되었습니다."));
 
     if (auth.getVerified()) {
       throw new IllegalArgumentException("이미 인증이 완료된 인증번호입니다. 재발급 바랍니다.");
@@ -151,7 +147,6 @@ public class MemberService {
 
   /** 새로운 비밀번호로 변경하는 메서드 */
   public void new_member_pw(Long member_no, String new_pw) {
-    // 기존 비번 일치 확인
     Member member = memberRepository.findbyMember_no(member_no)
         .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 아이디 입니다."));
 
