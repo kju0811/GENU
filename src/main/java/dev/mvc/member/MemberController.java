@@ -297,8 +297,8 @@ public class MemberController {
      * @return
      */
     @PostMapping("/check_code/{member_no}")
-    public ResponseEntity<?> checkAuthCode(@RequestParam("authCode") String authCode,
-                                                        @PathVariable("member_no") Long member_no) {
+    public ResponseEntity<?> checkAuthCode(@PathVariable("member_no") Long member_no,
+                                                        @RequestParam("authCode") String authCode) {
         try {
             memberService.checkAuthCode(authCode, member_no);
             return ResponseEntity.ok("인증 성공");
@@ -307,6 +307,25 @@ public class MemberController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생");
         }
+    }
+    
+    /**
+     * 새로운 비밀번호를 입력받아 갱신
+     * @param member_no
+     * @param new_pw
+     * @return
+     */
+    @PostMapping("/new_pw/{member_no}")
+    public ResponseEntity<?> new_member_pw(@PathVariable("member_no") Long member_no,
+                                                          @RequestParam("new_pw") String new_pw){
+      try {
+        memberService.new_member_pw(member_no, new_pw);
+        return ResponseEntity.ok("새로운 비밀번호로 변경되었습니다.");
+      } catch (IllegalArgumentException e) {
+        return ResponseEntity.badRequest().body(e.getMessage()); // 사용자 입력 오류
+      } catch (Exception e) {
+          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생");
+      }
     }
     
 }
