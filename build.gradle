@@ -67,6 +67,12 @@ dependencies {
   implementation 'org.springframework.boot:spring-boot-starter-security'
   implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
   testImplementation 'org.springframework.security:spring-security-test'
+  
+  // Mail -밑엔 파일-
+  // https://mvnrepository.com/artifact/com.sun.mail/javax.mail
+  implementation 'com.sun.mail:javax.mail:1.6.2'
+  // https://mvnrepository.com/artifact/javax.activation/activation
+ 	// implementation 'javax.activation:activation:1.1.1'
 }
 
 tasks.named('test') {
