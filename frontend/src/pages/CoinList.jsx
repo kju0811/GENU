@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
 import { getIP } from '../components/Tool';
-import genuImg from '../images/genu.png';
+import Pagination from 'react-js-pagination';
 
 const PAGE_SIZE = 10;
 
 function CoinList() {
   const [data, setData] = useState(null);
-  const [page, setPage] = useState(0); // 페이지 번호 (0, 1, 2, ...)
+  const [page, setPage] = useState(1);
   const [sortType, setSortType] = useState('price'); // 'price' 또는 'percentage' 순으로 정렬
 
   useEffect(() => {
@@ -22,6 +22,11 @@ function CoinList() {
       .catch(err => console.error(err));
   }, [sortType]);
 
+  // 페이지 변경 핸들러
+  const handlePageChange = (pageNumber) => {
+    setPage(pageNumber);
+  };
+
   // 페이지 GLOBALCONTEXT사용
   useEffect(() => {
     sessionStorage.setItem('nextIndex', page);
@@ -30,7 +35,7 @@ function CoinList() {
   if (!data) return null;
 
   // 현재 페이지에 보여줄 데이터 슬라이스
-  const startIndex = page * PAGE_SIZE;
+  const startIndex = (page-1) * PAGE_SIZE;
   const endIndex = startIndex + PAGE_SIZE;
   const currentPageData = data.slice(startIndex, endIndex);
 
@@ -76,7 +81,7 @@ function CoinList() {
               className="w-20 h-20 rounded-full object-cover bg-gray-200"
               src={`http://${getIP()}:9093/home/storage/${item.coin_img}`}
               alt={item.coin_name}
-              onError={e => e.target.src = genuImg}
+              onError={e => e.target.src = '/nurung.png'}
             />
             {/* Content */}
             <div className="flex-1 flex flex-col gap-2">
@@ -99,23 +104,19 @@ function CoinList() {
           </div>
         ))}
 
-        {/* 페이징 버튼 */}
-        <div className="flex justify-center gap-2 mt-4">
-          <button
-            onClick={() => setPage(page - 1)}
-            disabled={page === 0}
-            className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100"
-          >
-            이전
-          </button>
-          <span className="px-4 py-1">{page + 1} / {totalPages}</span>
-          <button
-            onClick={() => setPage(page + 1)}
-            disabled={page + 1 >= totalPages}
-            className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100"
-          >
-            다음
-          </button>
+        {/* 페이징 */}
+        <div className="mt-8 py-5 flex justify-center gap-2">
+          <Pagination
+            innerClass="flex justify-center mt-4 gap-2"
+            itemClass="rounded-lg"
+            linkClass="w-10 h-10 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-200 text-sm rounded-lg"
+            activeClass="bg-sky-500 text-white border-sky-500 rounded-lg"
+            activePage={page}
+            itemsCountPerPage={PAGE_SIZE}
+            totalItemsCount={data.length}
+            pageRangeDisplayed={5}
+            onChange={handlePageChange}
+          />
         </div>
       </div>
     </div>
