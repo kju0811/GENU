@@ -3,12 +3,14 @@ import { Link } from 'react-router-dom';
 import { getIP } from '../components/Tool';
 import { jwtDecode } from 'jwt-decode';
 import mind from '../ai/Mind';
+import CoinLikeList from '../components/CoinLikeList';
 
 const TABS = [
   { key: "info", label: "개인정보" },
   { key: "changeInfo", label: "개인정보 수정" },
   { key: "changePw", label: "비밀번호 변경" },
   { key: "memberMind", label: "심리분석" },
+  { key: "coinlikelist", label: "좋아요목록" },
 ];
 
 export default function MyPage() {
@@ -193,6 +195,11 @@ export default function MyPage() {
               <button onClick={()=>createmind()}>심리분석 요청하기</button>
               {load()}
               {info()}
+          </div>
+        )}
+        {activeTab === "coinlikelist" && (
+          <div className="flex flex-col">
+            <CoinLikeList member_no={member_no} />
           </div>
         )}
       </main>
