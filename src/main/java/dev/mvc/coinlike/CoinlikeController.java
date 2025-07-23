@@ -3,6 +3,7 @@ package dev.mvc.coinlike;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.mvc.deal.Deal;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @RequestMapping(value = "/coinlike")
@@ -47,41 +49,21 @@ public class CoinlikeController {
     return coinlikeService.find_all();
   }
   
-  /**
-   * DELETE 요청을 처리하여 특정 ID를 가진 Entity 객체를 삭제
-   * http://localhost:9093/coinlike/21
-   * @param id
-   * @return
-   */
-  @DeleteMapping(value = "/{coinlike_no}")
-  public ResponseEntity<Void> deleteEntity(@PathVariable("coinlike_no") Long id) {
-    if (coinlikeService.find_by_id(id).isPresent()) { // Entity가 존재하면
-      coinlikeService.deleteEntity(id); // 삭제
-      return ResponseEntity.ok().build(); // 성공적으로 삭제된 경우 200 반환
-    } else {
-      return ResponseEntity.notFound().build(); // 찾지 못한 경우 404 반환
-    }
-  }
-  
-  /**
-   * 수정
-   * PUT 요청을 처리하여 특정 ID를 가진 Entity 객체를 업데이트
-   * http://localhost:9093/coinlike/21
-   * @param id
-   * @param entity
-   * @return
-   */
-  @PutMapping(path = "/{coinlike_no}")
-  public ResponseEntity<Coinlike> updateEntity(@PathVariable("coinlike_no") Long id, 
-                                                                @RequestBody Coinlike coinlike) {
-    // id를 이용한 레코드 조회 -> existingEntity 객체에 할당 -> {} 실행 값 저장 -> DBMS 저장 -> 상태 코드 200 출력
-    return coinlikeService.find_by_id(id).<ResponseEntity<Coinlike>>map(existingCoinlike -> {
-      existingCoinlike.setCoinlike_date(coinlike.getCoinlike_date());
-      
-      coinlikeService.save(existingCoinlike);
-      return ResponseEntity.ok().build(); // 200 반환
-    }).orElseGet(() -> ResponseEntity.notFound().build()); // 찾지 못한 경우 404 반환
-  }
+//  /**
+//   * DELETE 요청을 처리하여 특정 ID를 가진 Entity 객체를 삭제
+//   * http://localhost:9093/coinlike/21
+//   * @param id
+//   * @return
+//   */
+//  @DeleteMapping(value = "/{coinlike_no}")
+//  public ResponseEntity<Void> deleteEntity(@PathVariable("coinlike_no") Long id) {
+//    if (coinlikeService.find_by_id(id).isPresent()) { // Entity가 존재하면
+//      coinlikeService.deleteEntity(id); // 삭제
+//      return ResponseEntity.ok().build(); // 성공적으로 삭제된 경우 200 반환
+//    } else {
+//      return ResponseEntity.notFound().build(); // 찾지 못한 경우 404 반환
+//    }
+//  }
   
   /**
    * 멤버가 좋아요한 코인 출력
@@ -89,9 +71,45 @@ public class CoinlikeController {
    * http://localhost:9093/coinlike/findByMeberCoinlike
    * @return
    */
-  @GetMapping(value = "/findByMemberCoinlike")
-  public List<Coinlike> findByMemberCoinlike(@RequestParam("member_no") Long member_no) {
-    return coinlikeService.findByMemberCoinlike(member_no);
+  @GetMapping(value = "/findByMemberCoinlikeList")
+  public List<Coinlike> findByMemberCoinlikeList(@RequestParam("member_no") Long member_no) {
+    return coinlikeService.findByMemberCoinlikeList(member_no);
+  }
+  
+  /**
+   * 멤버가 해당 코인에 좋아요를 눌렀는지 확인
+   * @param member_no
+   * @param coin_no
+   * @return
+   */
+  @GetMapping(value = "/isMemberCoinlike/{member_no}/{coin_no}")
+  public ResponseEntity<Boolean> isMemberCoinlike(@PathVariable("member_no") Long member_no,
+                                            @PathVariable("coin_no") Long coin_no) {
+    try {
+      boolean result = coinlikeService.isMemberCoinlike(member_no, coin_no);
+      return ResponseEntity.ok(result);
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
+    }
+  }
+  
+  /**
+   * 코인좋아요 삭제
+   * @param member_no
+   * @param coin_no
+   * @return
+   */
+  @DeleteMapping(value = "/deleteCoinlike/{member_no}/{coin_no}")
+  public ResponseEntity<?> deleteCoinlike(@PathVariable("member_no") Long member_no,
+                                                     @PathVariable("coin_no") Long coin_no) {
+    try {
+      coinlikeService.deleteCoinlike(member_no, coin_no);
+      return ResponseEntity.ok().build();
+    } catch (EntityNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 에러");
+    }
   }
   
 }
