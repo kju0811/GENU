@@ -5,7 +5,7 @@ import "../style/chat.css";
 const config = {
   initialMessages: [
     createChatBotMessage(
-      "안녕하세요! NURUNG2입니다😊"
+      "안녕하세요! NURUNG2입니다!! 응답까지 2~3초이상 소요 될수있으니 잠시만 기다려주세요😊"
     ),
   ],
   customComponents: {
