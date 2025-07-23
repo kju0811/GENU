@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
+import dev.mvc.exception.MemberNotFoundException;
 import dev.mvc.pay.PayService;
 import dev.mvc.team4.Home;
 import dev.mvc.team4.JwtService;
@@ -270,6 +271,42 @@ public class MemberController {
     public ResponseEntity<String> findbyid(@RequestBody MemberDTO memberDTO){
       String id = memberService.findId(memberDTO);
       return ResponseEntity.ok(id);
+    }
+    
+    /**
+     * 비밀번호 찾기 -> 메일로 인증번호
+     * @param memberId
+     * @return
+     */
+    @PostMapping("/find_by_pw")
+    public ResponseEntity<?> findByPw(@RequestParam("memberId") String memberId) {
+        try {
+            memberService.findPw(memberId);  // 메일 전송 요청
+            return ResponseEntity.ok("인증번호가 메일로 발송되었습니다.");
+        } catch (MemberNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 에러가 발생했습니다.");
+        }
+    }
+    
+    /**
+     * 인증번호 체크 
+     * @param authCode
+     * @param member_no
+     * @return
+     */
+    @PostMapping("/check_code/{member_no}")
+    public ResponseEntity<?> checkAuthCode(@RequestParam("authCode") String authCode,
+                                                        @PathVariable("member_no") Long member_no) {
+        try {
+            memberService.checkAuthCode(authCode, member_no);
+            return ResponseEntity.ok("인증 성공");
+        } catch (IllegalArgumentException e) {
+          return ResponseEntity.badRequest().body(e.getMessage()); // 사용자 입력 오류
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생");
+        }
     }
     
 }

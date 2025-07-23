@@ -41,10 +41,13 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 	@Query(value = "SELECT COUNT(*) FROM member WHERE member_nick = :member_nick", nativeQuery = true)
   int existsCheckNick(@Param("member_nick") String member_nick);
 	
-  // 아이디 찾기 (이름+전화번호+생년월일)
+  // 아이디 찾기 (이름+전화번호+생년월일) 단. SNS 제외
   @Query("SELECT memberId FROM Member WHERE member_name = :name "
-      + "AND member_tel = :tel AND memberBirth = :birth")
+      + "AND member_tel = :tel AND memberBirth = :birth AND authProvider IS NULL")
   Optional<String> findId(@Param("name") String name, @Param("tel") String tel, @Param("birth") String birth);
 
+  // 비밀번호 찾기를 위한 해당 로컬 멤버 정보 반환
+  @Query("SELECT m FROM Member m WHERE m.authProvider IS NULL AND m.memberId = :memberId")
+  Optional<Member> findByLocalMemberId(@Param("memberId") String memberId);
 
 }
