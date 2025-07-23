@@ -83,12 +83,18 @@ async def news(request:Request):
     option3 = data.get("option3")
     
     jwtToken = request.headers.get("Authorization")
-    jwtToken = jwtToken.replace("Bearer ", "").strip()
-    
-    payload = jwt.decode(jwtToken, SECRET_KEY, algorithms=["HS512"])
-    
-    member_no = payload.get("member_no")
-    role = payload.get("role")
+    if jwtToken is not None:
+        jwtToken = jwtToken.replace("Bearer ", "").strip()
+        try:
+            payload = jwt.decode(jwtToken, SECRET_KEY, algorithms=["HS512"])
+            member_no = payload.get("member_no")
+            role = payload.get("role")
+        except jwt.ExpiredSignatureError:
+            return {"error": "토큰이 만료되었습니다"}, 401
+        except jwt.InvalidTokenError:
+            return {"error": "유효하지 않은 토큰입니다"}, 401
+    else:
+        return {"error": "토큰이 존재하지 않습니다"}, 401
     
     if role == "ADMIN":
         # 2) 출력 스키마 & 출력 파서 설정
@@ -148,11 +154,17 @@ async def summary(request:Request):
     #print('넘어온 데이터:',result)
     
     jwtToken = request.headers.get("Authorization")
-    jwtToken = jwtToken.replace("Bearer ", "").strip()
-    
-    payload = jwt.decode(jwtToken, SECRET_KEY, algorithms=["HS512"])
-    
-    role = payload.get("role")
+    if jwtToken is not None:
+        jwtToken = jwtToken.replace("Bearer ", "").strip()
+        try:
+            payload = jwt.decode(jwtToken, SECRET_KEY, algorithms=["HS512"])
+            role = payload.get("role")
+        except jwt.ExpiredSignatureError:
+            return {"error": "토큰이 만료되었습니다"}, 401
+        except jwt.InvalidTokenError:
+            return {"error": "유효하지 않은 토큰입니다"}, 401
+    else:
+        return {"error": "토큰이 존재하지 않습니다"}, 401
     
     if role == "ADMIN":
         # 2) 출력 스키마 & 출력 파서 설정
@@ -196,11 +208,18 @@ async def get_session_history(request: Request):
     print(message)
     
     jwtToken = request.headers.get("Authorization")
-    jwtToken = jwtToken.replace("Bearer ", "").strip()
+    if jwtToken is not None:
+        jwtToken = jwtToken.replace("Bearer ", "").strip()
+        try:
+            payload = jwt.decode(jwtToken, SECRET_KEY, algorithms=["HS512"])
+            role = payload.get("role")
+        except jwt.ExpiredSignatureError:
+            return {"error": "토큰이 만료되었습니다"}, 401
+        except jwt.InvalidTokenError:
+            return {"error": "유효하지 않은 토큰입니다"}, 401
+    else:
+        return {"error": "토큰이 존재하지 않습니다"}, 401
     
-    payload = jwt.decode(jwtToken, SECRET_KEY, algorithms=["HS512"])
-    
-    role = payload.get("role")
     if role == "ADMIN" or role == "USER":
         if member not in store:
             store[member] = InMemoryChatMessageHistory()
@@ -263,12 +282,18 @@ async def mind(request:Request):
     #print('넘어온 데이터:',result)
     
     jwtToken = request.headers.get("Authorization")
-    jwtToken = jwtToken.replace("Bearer ", "").strip()
-    
-    payload = jwt.decode(jwtToken, SECRET_KEY, algorithms=["HS512"])
-    
-    role = payload.get("role")
-    member_no = payload.get("member_no")
+    if jwtToken is not None:
+        jwtToken = jwtToken.replace("Bearer ", "").strip()
+        try:
+            payload = jwt.decode(jwtToken, SECRET_KEY, algorithms=["HS512"])
+            role = payload.get("role")
+            member_no = payload.get("member_no")
+        except jwt.ExpiredSignatureError:
+            return {"error": "토큰이 만료되었습니다"}, 401
+        except jwt.InvalidTokenError:
+            return {"error": "유효하지 않은 토큰입니다"}, 401
+    else:
+        return {"error": "토큰이 존재하지 않습니다"}, 401
     
     if role == "ADMIN" or role == "USER":
         # 2) 출력 스키마 & 출력 파서 설정
