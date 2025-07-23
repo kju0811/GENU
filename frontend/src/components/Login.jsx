@@ -213,9 +213,9 @@ export default function Login({ isOpen, onClose }) {
                      onChange={saveIdChange} />
               <span className="ml-2 text-gray-700 dark:text-gray-300">아이디 기억하기</span>
             </label>
-            <Link to="/forgotPassword" 
+            <Link to="/findidpw" 
                   onClick={onClose}
-                  className="text-indigo-600 hover:underline">비밀번호를 잊어버리셨나요?</Link>
+                  className="text-indigo-600 hover:underline">아이디/비밀번호찾기</Link>
           </div>
           <button
             type="submit"
