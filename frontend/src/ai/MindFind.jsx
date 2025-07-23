@@ -46,6 +46,7 @@ function Mindfind() {
 
     return (
         <>
+        <span style={{cursor:'pointer'}} onClick={()=>navigate('/mypage')}>↩️MyPage로 돌아가기</span>
         {jwt
             ? userno ? (
                 <div className="flex flex-wrap justify-center gap-4">
