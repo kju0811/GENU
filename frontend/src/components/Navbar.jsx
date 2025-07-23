@@ -18,7 +18,7 @@ export default function Navbar() {
   const jwt = sessionStorage.getItem('jwt');
 
   return (
-    <nav className="bg-white shadow-md p-4 w-full" aria-label="Main navigation">
+    <nav className="bg-gradient-to-t from-white to-gray-100 shadow-md p-4 w-full" aria-label="Main navigation">
       {/* 상단 바: 3단 레이아웃으로 중앙에 검색창 배치 */}
       <div className="relative grid grid-cols-3 items-center gap-4">
         {/* 좌측: 로고 */}
