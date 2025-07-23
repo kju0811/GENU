@@ -1,5 +1,7 @@
 package dev.mvc.deal;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -319,4 +321,11 @@ public class DealService {
   public List<Deal> find_deal_by_member_coin(Long member_no, Long coin_no) {
     return dealRepository .findDealsByMemberCoin(member_no, coin_no);
   }
+  
+  /** 멤버가 해당 코인에 주문한 거래내역 날짜 내림차 순 반환 */
+  public List<Deal> find_deal_by_member_coin_twoweek(Long member_no) {
+	LocalDateTime twoWeeksAgo = LocalDateTime.now().minusWeeks(2);
+    return dealRepository.findRecentDealsTwoweeks(member_no, twoWeeksAgo);
+  }
+  
 }

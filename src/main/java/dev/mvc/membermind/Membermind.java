@@ -35,7 +35,7 @@ public class Membermind {
 	private LocalDateTime minddate;
 	
 	// 분석 내용
-	@Column(name = "mind_content", nullable = false, columnDefinition = "VARCHAR2(500 char)")
+	@Column(name = "mind_content", nullable = false, columnDefinition = "VARCHAR2(700 char)")
 	private String mindcontent = "";
 	
 	//member외래키
