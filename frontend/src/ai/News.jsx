@@ -2,7 +2,7 @@ import React from "react"
 import { useState,useEffect } from "react";
 import {getIP} from "../components/Tool"
 import { Link } from 'react-router-dom';
-import { Dropdown } from "../components/coinComponents";
+import { Dropdown } from "../components/CoinComponents";
 import { useGlobal } from "../components/GlobalContext";
 
 function News() {
