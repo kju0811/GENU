@@ -10,8 +10,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import dev.mvc.auth.Auth;
+import dev.mvc.auth.AuthRepository;
+import dev.mvc.exception.MemberNotFoundException;
+import dev.mvc.tool.MailTool;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +26,8 @@ public class MemberService {
 
   private final MemberRepository memberRepository;
   private final PasswordEncoder encode;
+  private final MailTool mailTool;
+  private final AuthRepository authRepository;
 
   /** 회원 생성 또는 수정 */
   public Member save(Member member) {
@@ -47,7 +54,7 @@ public class MemberService {
   /** 회원 번호로 회원 단건 조회 (없으면 예외 발생) */
   public Member findByMember_no(Long member_no) {
     return memberRepository.findById(member_no)
-            .orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다. 번호: " + member_no));
+            .orElseThrow(() -> new MemberNotFoundException("해당 회원이 존재하지 않습니다. 번호: " + member_no));
   }
   
   /** MemberId 조회 */
@@ -73,7 +80,7 @@ public class MemberService {
   // 마이페이지 정보 수정
   public Member updateMyPage(Long member_no, Member update) {
       Member member = memberRepository.findById(member_no)
-              .orElseThrow(() -> new IllegalArgumentException("회원 없음"));
+              .orElseThrow(() -> new MemberNotFoundException("회원 없음"));
 
       // 수정 가능한 필드만 적용
       member.setMember_tel(update.getMember_tel());
@@ -90,7 +97,7 @@ public class MemberService {
   // 프로필 이미지 변경 (파일 저장 경로 맞게 조정)
   public String updateProfileImage(Long member_no, String fileName) {
     Member member = memberRepository.findById(member_no)
-        .orElseThrow(() -> new IllegalArgumentException("회원 없음"));
+        .orElseThrow(() -> new MemberNotFoundException("회원 없음"));
     member.setMember_img(fileName);
     memberRepository.save(member);
     return fileName;
@@ -113,9 +120,37 @@ public class MemberService {
     String birth = memberDTO.getMemberBirth();
     
     String find = memberRepository.findId(name, tel, birth)
-        .orElseThrow(() -> new EntityNotFoundException("입력하신 아이디가 존재하지 않습니다."));
+        .orElseThrow(() -> new MemberNotFoundException("입력하신 아이디가 존재하지 않습니다."));
    
     return find;
   }
+  
+  /** 패스워드 찾기 메일로 임시번호 요청*/
+  public void findPw(String memberId) {
+    // 입력받은 id가 있는 아이디인지
+    Member member = memberRepository.findByLocalMemberId(memberId)
+    .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 아이디 입니다."));
+    
+    mailTool.send(member); // 메일 전송
+  }
+  
+  /** 메일로 온 인증번호 체크 메서드 */
+  @Transactional
+  public void checkAuthCode(String authCode, Long member_no) {
+    Auth auth = authRepository.checkAuthCode(member_no)
+    .orElseThrow(() -> new IllegalArgumentException("토큰이 만료되었습니다."));
+    
+    if (auth.getVerified()) {
+      throw new IllegalArgumentException("이미 인증이 완료된 인증번호입니다. 재발급 바랍니다.");
+    }
+    
+    if (!auth.getAuthCode().equals(authCode)) {
+      throw new IllegalArgumentException("인증번호가 일치하지 않습니다.");
+    }
+    
+    auth.setVerified(true);
+    authRepository.save(auth);
+  }
+  
   
 }

@@ -21,12 +21,14 @@ public class ChatBotService {
 	    this.restTemplate = restTemplate;
 	  }
 	
-	public String talk(String message)  {
+	public String talk(String message,String jwt)  {
 	   String url = "http://localhost:8000/chatbot";
 	    
 	    // HTTP 헤더 설정 (JSON)
 	    HttpHeaders headers = new HttpHeaders();
 	    headers.setContentType(MediaType.APPLICATION_JSON);
+	    
+	    headers.set("Authorization",jwt);
 	    
 	    Map<String, Object> body = new HashMap<>();
 	    body.put("message", message);

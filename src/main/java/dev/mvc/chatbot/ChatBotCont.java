@@ -2,6 +2,7 @@ package dev.mvc.chatbot;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,8 +18,8 @@ public class ChatBotCont {
 	
 	@PostMapping(value="/talk")
 	@ResponseBody
-	public String chatbot(@RequestBody String message) {
-		return service.talk(message);
+	public String chatbot(@RequestBody String message,@RequestHeader("Authorization") String jwt) {
+		return service.talk(message,jwt);
 	}
 	
 }
