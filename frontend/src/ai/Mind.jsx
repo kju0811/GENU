@@ -22,7 +22,6 @@ const mind =() => {
         .then(res => res.json())
         .then(result => {
             setDealinfo(result)
-            console.log("거래",result)
         }) 
     }
     const name = dealinfo[0]?.member.member_nick
