@@ -32,6 +32,7 @@ export default function MyPage() {
     } catch (err) {}
   }
   const member_no = userInfo?.member_no;
+  const filtermember = mindata.find(item => item.member.member_no == member_no)
 
   // 딜 정보 담기
   useEffect(()=> {
@@ -184,7 +185,9 @@ export default function MyPage() {
             </div>
             <div className="bg-gray-300 rounded-xl shadow p-8 w-full min-w-[600px] min-h-[500px] flex flex-col">
               <div>
+              {filtermember && (
               <span>{mindata[0].mindcontent}</span>
+              )}
               </div>  
             </div>
               <button onClick={()=>createmind()}>심리분석 요청하기</button>
