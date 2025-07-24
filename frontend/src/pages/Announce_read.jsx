@@ -39,7 +39,6 @@ function Announce_read() {
     }, [announce_no]);
 
     useEffect(() => {
-        console.log("번호:",announce_no);
         fetch(`http://${getIP()}:9093/announce/read/${announce_no}`, {
           method: 'GET'
         })
@@ -48,14 +47,13 @@ function Announce_read() {
           setData(result);
           setTitle(result.announcetitle);
           setContent(result.announce_content);
-          console.log(result);
         })
         .catch(err => console.error(err))
     },[]);
 
     const deleteAnnounce =()=>{
         const delcheck = window.confirm('공지사항을 삭제하시겠습니까?');
-        if (delcheck && jwt == "ADMIN") {
+        if (delcheck && role == "ADMIN") {
         fetch(`http://${getIP()}:9093/announce/delete/${announce_no}`, {
             method: 'DELETE',
             headers: {
@@ -100,7 +98,9 @@ function Announce_read() {
     return (
         <>
         { img && (
+            <div style={{marginTop:'5%'}}>
             <img src={`http://${getIP()}:9093/home/storage/${data.file}`} />
+            </div>
         ) 
         }
 
@@ -115,10 +115,10 @@ function Announce_read() {
         )
         :
         (
-        <div>
-        <h1>{data.announcetitle}</h1>
+        <div style={{textAlign:'center',width:'50%'}}>
+        <h1 style={{marginBottom:'20px'}}>{data.announcetitle}</h1>
         <span>{data.announce_content}</span><br/>
-        <button onClick={()=>history.back()}>이전으로</button>
+        <button onClick={()=>history.back()} style={{marginTop:'30px',marginBottom:'20px'}}>이전으로</button>
         </div>
         )
         }
@@ -132,7 +132,7 @@ function Announce_read() {
             </div>
             ) : (
             <div>
-            <button onClick={deleteAnnounce}>삭제하기</button>
+            <button onClick={() => deleteAnnounce()}>삭제하기</button>
             <button onClick={() => setUpdate(true)}>수정하기</button>
             </div>
             )}
