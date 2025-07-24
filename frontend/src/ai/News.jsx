@@ -12,7 +12,7 @@ const [cloading, setCloading] = useState(false);
 const [sloading, setSLoading] = useState(false);
 const [option1,setOption1] = useState('선택하지 않음');
 const [option3,setOption3] = useState('');
-
+const [dropdownOpen, setDropdownOpen] = useState(false);
 const { option2,setOption2 } = useGlobal();
 
 const jwt = sessionStorage.getItem('jwt');
@@ -36,6 +36,7 @@ const jwt = sessionStorage.getItem('jwt');
       })
     .then((response) => {
         setNews(response);
+        console.log(response);
       })
       .catch((err) => console.error(err))
       .finally(() => setCloading(false));
@@ -46,7 +47,7 @@ const jwt = sessionStorage.getItem('jwt');
 
 
     const Summary = (result) => {
-    if (news.res != null) {
+    if (news[0].res != null) {
     setSLoading(true);
     fetch(`http://${getIP()}:9093/news/summary`, {
       method: 'POST',
@@ -79,17 +80,16 @@ const jwt = sessionStorage.getItem('jwt');
 
     return (
     <>
-    <Link to="/">메인 메뉴로</Link>
-    <Link to="/ai/newsfind">기사 보러가기</Link>
-    <button className="btn btn-accent" onClick={() => setNews({ res: '' })  && setSummary({ res: ''})}>지우기</button>
+    <button className="btn btn-accent" onClick={() => setNews({ res: '' })  && setSummary({ res: ''})} style={{marginTop:'2%'}}>지우기</button>
 
     <div style={{marginRight:'60%'}}>
       <h2>‼️기사 생성시‼️</h2>
-      <span>기사 생성시 이미지는 자동으로 만들어집니다!</span><br />
-      <span>다음 기사 생성시에는 "지우기"를 먼저 해주세요!!&nbsp;&nbsp;오류가 날수있습니다...</span>
+      <span>1. 기사 생성시 이미지는 자동으로 만들어지며 아래에서 확인 할 수 있습니다.</span><br />
+      <span>2. 다음 기사 생성시에는 "지우기"를 먼저 해주세요!!&nbsp;&nbsp;오류가 날 수 있습니다...</span><br /> 
+      <span>3. gpt가 기사와 이미지를 동시에 만들어 냅니다.<br />  시간이 1~2분이상 소요 될수 있습니다!!</span>
     </div>
 
-    <div style={{marginTop:'-3.5%'}}>
+    <div style={{marginTop:'-5%'}}>
       <div className="dropdown dropdown-start" style={{margin:'5px'}}>
         <div tabIndex={0} role="button" className="btn btn-accent">호/악재 생성</div> 
         <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm" style={{width:'120%'}}>
@@ -101,8 +101,6 @@ const jwt = sessionStorage.getItem('jwt');
             </li>
         </ul>
        </div>
-
-       <span></span>
 
       <div className="dropdown dropdown-start">
         <div tabIndex={0} role="button" className="btn btn-accent">카테고리 생성</div> 
@@ -121,18 +119,24 @@ const jwt = sessionStorage.getItem('jwt');
     </div>
     
     <span>뉴스 기사</span>
-    <div style={{width:'70%', justifyContent: 'center', display: 'flex', height:'23%'}}>
-      <textarea style={{width:'100%', padding: '10px', border:'1px solid gray', borderRadius: '5px',resize:'none'}} readOnly value={news.res} > </textarea>
+    <div style={{width:'70%', justifyContent: 'center', display: 'flex', height:'500px'}}>
+      <textarea style={{width:'100%',height:'100%', padding: '10px', border:'1px solid gray', borderRadius: '5px',resize:'none'}} readOnly value={news[0]?.res} > </textarea>
     </div> <br />
 
     <div>
-    <button onClick={() => Summary(news.res)} className="btn btn-accent">요약하기</button>
+    <button onClick={() => Summary(news[0].res)} className="btn btn-accent">요약하기</button>
     {sloading && <span className="loading loading-bars loading-xl"></span>}
     </div>
 
     <span>요약본</span>
     <div style={{width:'70%', justifyContent: 'center', display: 'flex', height:'23%'}}>
       <textarea style={{width:'100%', padding: '10px', border:'1px solid gray', borderRadius: '5px',resize:'none'}} readOnly value={summary.res} ></textarea>
+    </div><br />
+
+    <div style={{height:'50%',textAlign:'center'}}>
+    <span>생성된 이미지</span>
+    <img src={news[1] != null ? (`http://${getIP()}:9093/home/storage/${news[1]}.jpg`) : ("https://cdn.startupful.io/img/app_logo/no_img2.png") } alt="Featured" 
+    class="w-full h-full"></img>
     </div>
     </>
     
