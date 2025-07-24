@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Outlet, useNavigate, useLocation, useParams } from 'react-router-dom';
 import { getIP } from '../components/Tool';
 import OrderBook from '../components/OrderBook';
 import CoinInfo from '../components/CoinInfo';
@@ -16,8 +16,10 @@ export default function CoinDetail() {
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState('chart');
+  const [activeTab, setActiveTab] = useState('order');
   const [selectedPrice, setSelectedPrice] = useState(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   // useLikeToggle 훅 사용
   const { liked, toggleLike } = useLikeToggle(coin_no);
@@ -46,7 +48,7 @@ export default function CoinDetail() {
           setLoading(false);
         });
     };
-  
+
     fetchDetail();                         // 마운트 직후 1회 호출
 
     // const intervalId = setInterval(fetchDetail, 60000);  // 폴링방식채택 (소켓사용?몰루)
@@ -56,124 +58,86 @@ export default function CoinDetail() {
   if (loading) return <p>Loading...</p>;
   if (error || !detail) return <p>Error loading coin details.</p>;
 
+  const handleTab = tabId => {
+    navigate(`/coin/${coin_no}/${tabId}`);
+  };
+
   const { coin_name, coin_price, coin_percentage, coin_img } = detail;
+
+  const currentTab = location.pathname.split('/').pop();
   const tabs = [
-    { id: 'chart', label: '차트 · 호가' },
-    { id: 'info',  label: '종목 정보' },
-    { id: 'coin',  label: '보유수량' },
+    { id: 'order', label: '차트 · 호가' },
+    { id: 'info', label: '종목 정보' },
+    { id: 'coin', label: '보유수량' },
     { id: 'community', label: '커뮤니티' }
   ];
 
   return (
     <div className="w-[100%] mx-auto p-4 bg-gray-100">
-    <div className="w-[90%] mx-auto p-4">
-      {/* 헤더 */}
-      <header className="flex items-center justify-between mb-6">
-        {/* 헤더 좌측 */}
-        <div className="flex flex-row items-center gap-4">
-          <img
-            src={`http://${getIP()}:9093/home/storage/${coin_img}`}
-            alt={coin_name}
-            className="w-16 h-16 rounded-full object-cover"
-          />
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              {coin_name}
-            </h1>
-            <p className="text-lg text-gray-800 dark:text-gray-200">
-              {coin_price.toLocaleString()}원 {' '}
-              <span className={coin_percentage >= 0 ? 'text-red-600' : 'text-blue-600'}>
-                {coin_percentage >= 0 ? `+${coin_percentage}` : coin_percentage}%
-              </span>
-            </p>
+      <div className="w-[90%] mx-auto p-4">
+        {/* 헤더 */}
+        <header className="flex items-center justify-between mb-6">
+          {/* 헤더 좌측 */}
+          <div className="flex flex-row items-center gap-4">
+            <img
+              src={`http://${getIP()}:9093/home/storage/${coin_img}`}
+              alt={coin_name}
+              className="w-16 h-16 rounded-full object-cover"
+            />
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                {coin_name}
+              </h1>
+              <p className="text-lg text-gray-800 dark:text-gray-200">
+                {coin_price.toLocaleString()}원 {' '}
+                <span className={coin_percentage >= 0 ? 'text-red-600' : 'text-blue-600'}>
+                  {coin_percentage >= 0 ? `+${coin_percentage}` : coin_percentage}%
+                </span>
+              </p>
+            </div>
           </div>
-        </div>
-        {/* 헤더 우측 */}
-        <div className="flex space-x-2">
+          {/* 헤더 우측 */}
+          <div className="flex space-x-2">
             {/* 좋아요 버튼 - liked 상태에 따라 스타일과 텍스트 변경 */}
             <button
               onClick={toggleLike}
-              className={`mb-4 px-4 py-2 rounded ${
-                liked
+              className={`mb-4 px-4 py-2 rounded ${liked
                   ? 'bg-red-600 text-white hover:bg-red-700'
                   : 'bg-rose-100 text-gray-700 hover:bg-rose-300'
-              }`}
+                }`}
             >
               {liked ? '❤️' : '🤍'}
             </button>
-          {/* 금액알림 */}
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            금액알림
-          </button>
-        </div>
-      </header>
-
-      {/* 탭 메뉴 */}
-      {isModalOpen && <NoticeModal coin_no={coin_no} onClose={() => setIsModalOpen(false)} />}
-      <nav className="flex space-x-4 border-b mb-4">
-        {tabs.map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`py-2 px-4 -mb-px font-medium border-b-2 transition-all ${
-              activeTab === tab.id
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </nav>
-
-      <div>
-        {activeTab === 'chart' && (
-          <div className="flex flex-col md:flex-row gap-4">
-            {/* 차트 */}
-            <div className="w-full md:w-1/2">
-              <ApexChart coin_no={coin_no} />
-            </div>
-            {/* 호가창: 클릭 시 주문 가격을 상위로 전달 */}
-            <div className="w-full md:w-1/3">
-              <OrderBook
-                coin_no={coin_no}
-                currentPrice={selectedPrice}
-                onSelectPrice={handleSelectPrice}
-              />
-            </div>
-            {/* 주문 폼: defaultPrice로 선택된 가격 전달 */}
-            <div className="w-full md:w-1/5">
-              <OrderForm
-                coin_no={coin_no}
-                defaultPrice={selectedPrice}
-              />
-            </div>
+            {/* 금액알림 */}
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              금액알림
+            </button>
           </div>
-        )}
+        </header>
 
-        {activeTab === 'info' && (
-          <section>
-            <CoinInfo coin_no={coin_no} />
-          </section>
-        )}
+        {/* 탭 메뉴 */}
+        {isModalOpen && <NoticeModal coin_no={coin_no} onClose={() => setIsModalOpen(false)} />}
+        <nav className="flex space-x-4 border-b mb-4">
+          {tabs.map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => handleTab(tab.id)}
+              className={`py-2 px-4 -mb-px font-medium border-b-2 transition-all ${currentTab === tab.id
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </nav>
 
-        {activeTab === 'news' && (
-          <section>
-            <h3 className="text-lg font-semibold mb-2">Related News</h3>
-            <RelatedNews coin_no={coin_no} />
-          </section>
-        )}
-
-        {activeTab === 'community' && (
-          <section>
-            <CommunityFeed coin_no={coin_no} />
-          </section>
-        )}
+        {/* 탭 내용 */}
+        <Outlet />
       </div>
-    </div>
     </div>
   );
 }
