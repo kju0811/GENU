@@ -79,7 +79,7 @@ function Announce() {
               type="file"
               accept="image/*"
               onChange={e => setImg(e.target.files[0])}
-              className="mt-1"
+              className="w-full file:rounded-lg file:bg-indigo-50 file:border-0 file:py-2 file:px-4 file:text-indigo-600 file:cursor-pointer"
               required
             />
             {img && <p className="mt-2 text-sm text-green-600">{img.name} 선택됨</p>}
