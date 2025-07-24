@@ -15,6 +15,9 @@ export default {
         animation: {
           fadeInUp: 'fadeInUp 0.7s cubic-bezier(0.16,1,0.3,1) both',
         },
+        fontSize: {
+          'xxs': '0.625rem', // 10px
+        },
       },
     },    
     plugins: [
