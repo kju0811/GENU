@@ -126,7 +126,7 @@ public class MemberController {
     /** 키워드 검색 페이징 조회 */  
     @GetMapping("/search")
     public ResponseEntity<Page<Member>> search(
-        @RequestParam("word") String keyword,
+        @RequestParam("kw") String keyword,
         Pageable pageable
     ) {
         Page<Member> page = memberService.searchKeyword(keyword, pageable);
