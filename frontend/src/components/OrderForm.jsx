@@ -31,21 +31,21 @@ const calculateTotal = (price, quantity, side) => {
 export default function OrderForm({ coin_no, defaultPrice }) {
   const [type, setType] = useState('limit'); // 'limit' | 'market'
   const [side, setSide] = useState('buy');  // 'buy' | 'sell'
-  const [price, setPrice] = useState(defaultPrice || '');
+  const [price, setPrice] = useState(defaultPrice);
   const [quantity, setQuantity] = useState('');
 
-  // defaultPrice가 바뀔 때마다 price를 업데이트
+  // 호가창에서 선택한값으로 변경
   useEffect(() => {
-    setPrice(defaultPrice ?? '');
+    setPrice(defaultPrice);
   }, [defaultPrice]);
 
   // 총 주문 금액 계산
   const total = type === 'market'
     ? '시가'
     : (price && quantity
-        ? calculateTotal(parseFloat(price), parseFloat(quantity), side).toLocaleString()
-        : 0);
-  
+      ? calculateTotal(parseFloat(price), parseFloat(quantity), side).toLocaleString()
+      : 0);
+
   const fee = price && quantity
     ? calculateFee(parseFloat(price), parseFloat(quantity))
     : 0;
@@ -210,24 +210,24 @@ export default function OrderForm({ coin_no, defaultPrice }) {
           Authorization: jwt,
         },
       })
-      .then(res => {
-        if (res.ok) {
-          alert("주문이 취소되었습니다.");
-          setMyDealList(prev => prev.filter(item => item.deal_no !== dealNo));
-        } else {
-          throw new Error("주문 취소 실패!");
-        }
-      })
-      .catch(err => {
-        console.error(err);
-        alert("거래 취소 중 오류가 발생했습니다.");
-      });
+        .then(res => {
+          if (res.ok) {
+            alert("주문이 취소되었습니다.");
+            setMyDealList(prev => prev.filter(item => item.deal_no !== dealNo));
+          } else {
+            throw new Error("주문 취소 실패!");
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          alert("거래 취소 중 오류가 발생했습니다.");
+        });
     }
   };
 
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white dark:bg-[#1E2028] rounded-lg p-4 shadow space-y-4">
+    <form onSubmit={handleSubmit} className="bg-white dark:bg-[#1E2028] min-w-[300px] min-h-[500px] max-h-[500px] rounded-lg p-4 shadow space-y-4">
       {/* 매수/매도/내역 탭 */}
       <div className="flex space-x-4">
         <button type="button" onClick={() => setSide('buy')} className={`${side === 'buy' ? 'bg-red-500 text-white' : 'bg-gray-100 dark:bg-[#2A2C36] text-gray-500'} flex-1 py-2 rounded`}>매수</button>
@@ -296,9 +296,11 @@ export default function OrderForm({ coin_no, defaultPrice }) {
           </div>
 
           {/* 총 주문 금액 */}
-          <div className='text-right text-xs text-gray-500'>수수료: 총 주문 금액의 0.05% </div>
-          <div className="text-right text-xs text-gray-500">
-            예상 수수료: {fee.toLocaleString()} 원
+          <div className='flex justify-between'>
+            <div className='text-right text-xxs text-gray-500'>수수료: 총 주문 금액의 0.05% </div>
+            <div className="text-right text-xs text-gray-500">
+              예상 수수료: {fee.toLocaleString()} 원
+            </div>
           </div>
           <div className="text-right text-sm text-gray-500">
             총 주문 금액: <span className="font-medium">{total}</span> 원
@@ -307,34 +309,40 @@ export default function OrderForm({ coin_no, defaultPrice }) {
           <button type="submit" className="w-full py-2 bg-green-500 text-white rounded font-medium">{side === 'buy' ? '매수' : '매도'} 주문</button>
         </>
       ) : (
-<>
-  <div className="text-gray-400 text-sm">
-    🧾 주문 내역 탭입니다. 여기에 내역 리스트 UI가 들어갈 수 있습니다.
-  </div>
-  <div style={{ textAlign: "center" }}>
-    <h5>거래 내역</h5>
-    <div className="flex flex-col gap-4 items-center">
-      <ul>
-        {myDealList.length > 0 ? myDealList.map((item, idx) => (
-          <li key={idx} className="flex justify-between items-center w-[400px] border-b py-2">
-            <span>
-              {item.deal_type === 3 ? "매수" : "매도"} / 
-              예상 수수료: {item.deal_fee.toLocaleString()} / 
-              {item.deal_price.toLocaleString()}누렁 / 
-              {item.deal_cnt}개
-            </span>
-            <button
-              className="ml-4 text-red-500 hover:text-red-700 font-bold"
-              onClick={() => handleCancel(item.deal_no, item.deal_type)}
-            >
-              ❌
-            </button>
-          </li>
-        )) : <p>거래 내역이 없습니다.</p>}
-      </ul>
-    </div>
-  </div>
-</>
+        <div>
+          <h5 className="text-lg font-semibold text-center mb-2">🧾 거래 내역</h5>
+          <ul className="w-full max-h-[330px] overflow-y-auto flex flex-col gap-3">
+            {myDealList.length > 0 ? myDealList.map((item, idx) => (
+              <li
+                key={idx}
+                className="w-full flex justify-between items-center px-4 py-3 bg-gray-50 rounded-lg shadow border border-gray-100"
+              >
+                <div className="flex flex-col text-left">
+                  <span className={`text-xs font-bold ${item.deal_type === 3 ? 'text-red-500' : 'text-blue-500'}`}>
+                    {item.deal_type === 3 ? "매수" : "매도"}
+                  </span>
+                  <span className="text-xs text-gray-700 font-mono">
+                    {item.deal_price.toLocaleString()} <span className="font-normal">누렁</span>
+                  </span>
+                  <span className="text-xs text-gray-400">
+                    수량: <span className="font-mono">{item.deal_cnt}</span>개
+                  </span>
+                </div>
+                <button
+                  className="ml-2 text-red-400 hover:text-red-700 font-bold text-xl"
+                  title="주문 취소"
+                  onClick={() => handleCancel(item.deal_no, item.deal_type)}
+                >
+                  ❌
+                </button>
+              </li>
+            )) : (
+              <li className="text-gray-400 py-8 text-center w-full">
+                거래 내역이 없습니다.
+              </li>
+            )}
+          </ul>
+        </div>
       )}
     </form>
   )
