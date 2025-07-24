@@ -87,4 +87,28 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
 	List<Deal> findRecentDealsTwoweeks(@Param("member_no") Long memberNo,
 	                           @Param("twoWeeksAgo") LocalDateTime twoWeeksAgo);
   
+  // 보유 수량이 0이 된 마지막 시점
+  @Query(value = """
+      SELECT deal_date
+      FROM (
+        SELECT deal_date,
+               SUM(CASE WHEN deal_type = 1 THEN deal_cnt WHEN deal_type = 2 THEN -deal_cnt ELSE 0 END)
+                   OVER (ORDER BY deal_date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running_qty
+        FROM Deal
+        WHERE member_no = :member_no AND coin_no = :coin_no
+      ) t
+      WHERE running_qty = 0
+      ORDER BY deal_date DESC
+      FETCH FIRST 1 ROWS ONLY
+      """, nativeQuery = true)
+  LocalDateTime findLastZeroQuantityDate(@Param("member_no") Long member_no, @Param("coin_no") Long coin_no);
+  
+  // 평단가를 위해 가격과 갯수 반환
+  @Query("SELECT d.deal_price, d.deal_cnt "
+      + "FROM Deal d "
+      + "WHERE d.member.member_no=:member_no AND d.coin.coin_no=:coin_no AND d.deal_type=1 "
+      + "AND d.deal_date > :last_zero_date")
+  List<Object[]> getAVGprice(@Param("member_no") Long member_no, @Param("coin_no") Long coin_no, @Param("last_zero_date") LocalDateTime lastZeroDate);
+  
+  
 }
