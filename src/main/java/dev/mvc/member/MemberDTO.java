@@ -11,4 +11,6 @@ public class MemberDTO {
   private String member_name;
   private String member_tel;
   private String memberBirth;
+  private Long member_no;
+  private Integer grade;
 }
