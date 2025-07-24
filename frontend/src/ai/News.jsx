@@ -6,7 +6,7 @@ import { Dropdown } from "../components/CoinComponents";
 import { useGlobal } from "../components/GlobalContext";
 
 function News() {
-const [news,setNews] = useState('');
+const [news,setNews] = useState([]);
 const [summary,setSummary] = useState('');
 const [cloading, setCloading] = useState(false);
 const [sloading, setSLoading] = useState(false);
@@ -80,13 +80,10 @@ const jwt = sessionStorage.getItem('jwt');
 
     return (
     <>
-    <button className="btn btn-accent" onClick={() => setNews({ res: '' })  && setSummary({ res: ''})} style={{marginTop:'2%'}}>지우기</button>
-
-    <div style={{marginRight:'60%'}}>
+    <div style={{marginRight:'60%',marginTop:'2%'}}>
       <h2>‼️기사 생성시‼️</h2>
-      <span>1. 기사 생성시 이미지는 자동으로 만들어지며 아래에서 확인 할 수 있습니다.</span><br />
-      <span>2. 다음 기사 생성시에는 "지우기"를 먼저 해주세요!!&nbsp;&nbsp;오류가 날 수 있습니다...</span><br /> 
-      <span>3. gpt가 기사와 이미지를 동시에 만들어 냅니다.<br />  시간이 1~2분이상 소요 될수 있습니다!!</span>
+      <span>1. 기사 생성시 이미지는 자동으로 만들어지며 아래에서 확인 할 수 있습니다.</span><br /> 
+      <span>2. gpt가 기사와 이미지를 동시에 만들어 냅니다.<br />  시간이 1~2분이상 소요 될수 있습니다!!</span>
     </div>
 
     <div style={{marginTop:'-5%'}}>
