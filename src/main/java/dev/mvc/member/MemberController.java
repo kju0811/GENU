@@ -23,6 +23,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -35,6 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import dev.mvc.exception.MemberNotFoundException;
+import dev.mvc.news.News;
 import dev.mvc.pay.PayService;
 import dev.mvc.team4.Home;
 import dev.mvc.team4.JwtService;
@@ -327,5 +329,19 @@ public class MemberController {
           return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생");
       }
     }
+    
+    @PatchMapping("/update/grade")
+    public ResponseEntity<?> updateCnt(@RequestBody MemberDTO dto) {
+        Optional<Member> optionalMember = memberService.findByMemberNoOptional(dto.getMember_no());
+        if (optionalMember.isPresent()) {
+        	Member member = optionalMember.get();
+        	member.setMember_grade(dto.getGrade());
+            memberService.save(member);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     
 }
