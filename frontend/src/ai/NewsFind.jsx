@@ -68,10 +68,6 @@ export default function NewsFind() {
 
   return (
     <>
-      {userInfo?.role == "ADMIN" && (
-      <Link to="/ai/news" className="text-indigo-600 hover:underline">뉴스 생성하기</Link>
-      )}
-
       <div className="flex justify-between items-center mb-6" style={{marginTop:'2%'}}>
         <input
           type="search"
