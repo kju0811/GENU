@@ -6,7 +6,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.SequenceGenerator;
@@ -25,7 +24,6 @@ import dev.mvc.member.Member;
 //    community_no  NUMBER(10)  NOT NULL,
 //    member_no NUMBER(10)  NOT NULL,   -- FK
 //    coin_no NUMBER(10)  NOT NULL,       -- FK
-//    community_title VARCHAR2(200) NOT NULL,
 //    community_content CLOB  NOT NULL,
 //    community_cnt NUMBER(7) NOT NULL,
 //    community_date  DATE  NOT NULL,
@@ -43,24 +41,23 @@ public class Community {
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "community_seq")
   @SequenceGenerator(name = "community_seq", sequenceName = "COMMUNITY_SEQ", allocationSize = 1)
   @Column(name = "community_no")
-  private Long community_no;
+  private Long communityNo;
 
-  /** 커뮤니티 제목 */
-  @Column(name = "community_title", nullable = false, length = 200)
-  private String community_title;
-
+//  /** 커뮤니티 제목, 댓글식 커뮤니티를 위해 보류 */
+//  @Column(name = "community_title", nullable = false, length = 200)
+//  private String communityTitle;
+  
   /** 커뮤니티 본문 내용 */
-  @Lob
-  @Column(name = "community_content", nullable = false)
-  private String community_content;
-
-  /** 조회수 */
-  @Column(name = "community_cnt", nullable = false)
-  private Integer community_cnt = 0;
+  @Column(name = "community_content", nullable = false, length = 2000)
+  private String communityContent;
 
   /** 작성일 */
   @Column(name = "community_date", nullable = false, columnDefinition = "DATE")
   private LocalDateTime communityDate;
+  
+  /** 커뮤니티 이미지 */
+  @Column(name = "community_img", nullable = true)
+  private String communityImg="";
   
   /** 회원번호 외래키 */
   @ManyToOne
