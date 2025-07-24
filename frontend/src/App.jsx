@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {Routes, Route, useLocation } from "react-router-dom";
+import {Routes, Route, useLocation, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
@@ -38,6 +38,9 @@ import Mindfind from "./ai/MindFind";
 import FindIdPw from "./pages/FindIdPw";
 
 import { getInitialMessages } from "./components/chatCompnents";
+import CoinInfo from "./components/CoinInfo";
+import OrderTab from "./components/OrderTab";
+import CommunityFeed from "./components/CommunityFeed";
 
 function App() {
   const { close, hideNavbar,hideChatbot } = useGlobal();
@@ -54,7 +57,13 @@ function App() {
         {/* <Route path="/attendance/:attendance_no" element={<Attendance/>} /> */}
         <Route path="/coin/create" element={<CoinCreate/>} />
         <Route path="/coinlist" element={<CoinList />} />
-        <Route path="/coin/:coin_no" element={<CoinDetail/>} />
+        <Route path="/coin/:coin_no/*" element={<CoinDetail />}>
+          <Route path="order" element={<OrderTab />} />
+          <Route path="info" element={<CoinInfo />} />
+          <Route path="coin" element={<CoinList />} />
+          <Route path="community" element={<CommunityFeed />} />
+          <Route index element={<Navigate to="order" replace />} />
+        </Route>
         <Route path="/calendar" element={<Schedule/>} />
         <Route path="/coin/update/:coin_no" element={<CoinUpdate/>} />
         <Route path="/coin/tickList/:coin_no" element={<OrderBook/>} />
