@@ -3,6 +3,7 @@ package dev.mvc.member;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
@@ -80,6 +81,7 @@ public class Member {
   private String address2 = "";
 
   /** 가입일 */
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
   @Column(name = "member_date", nullable = false, columnDefinition = "DATE")
   private LocalDateTime memberDate;
 
