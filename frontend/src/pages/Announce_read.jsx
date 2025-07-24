@@ -47,6 +47,7 @@ function Announce_read() {
           setData(result);
           setTitle(result.announcetitle);
           setContent(result.announce_content);
+          console.log("dddasddqwd",result);
         })
         .catch(err => console.error(err))
     },[]);
@@ -99,25 +100,25 @@ function Announce_read() {
         <>
         { img && (
             <div style={{marginTop:'5%'}}>
-            <img src={`http://${getIP()}:9093/home/storage/${data.file}`} />
+            <img src={`http://${getIP()}:9093/home/storage/${img}`} />
             </div>
         ) 
         }
 
         { update ? (
-        <div>
-        <span>제목</span>
-        <textarea value={title} style={{resize:'none',marginTop:"15%", border:'1px solid gray', borderRadius: '5px'}} onChange={(e) => setTitle(e.target.value)}></textarea> <br />
-        <span>본문</span>
-        <textarea value={content} style={{resize:'none', border:'1px solid gray', borderRadius: '5px'}} onChange={(e) => setContent(e.target.value)}></textarea>
+        <div style={{width:'50%'}}>
+        <span>제목</span><br />
+        <textarea value={title} style={{resize:'none', border:'1px solid gray', borderRadius: '5px',width:'100%',height:'80px'}} onChange={(e) => setTitle(e.target.value)}></textarea> <br />
+        <span>본문</span><br />
+        <textarea value={content} style={{resize:'none', border:'1px solid gray', borderRadius: '5px',width:'100%',height:'500px'}} onChange={(e) => setContent(e.target.value)}></textarea>
         </div>
         
         )
         :
         (
-        <div style={{textAlign:'center',width:'50%'}}>
-        <h1 style={{marginBottom:'20px'}}>{data.announcetitle}</h1>
-        <span>{data.announce_content}</span><br/>
+        <div style={{textAlign:'center',width:'50%',marginTop:'2%'}}>
+        <h1 style={{marginBottom:'20px'}}>{title}</h1>
+        <span>{content}</span><br/>
         <button onClick={()=>history.back()} style={{marginTop:'30px',marginBottom:'20px'}}>이전으로</button>
         </div>
         )
