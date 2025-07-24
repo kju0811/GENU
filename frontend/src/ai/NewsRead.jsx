@@ -40,6 +40,7 @@ export default function NewsRead() {
   }
 
   const member_no = userInfo?.member_no;
+  console.log("ㅁㄴㅇㅁㅇㄴㅇㅇ",member_no);
   const matchedLike = like.find(
   (l) =>
     l.member?.member_no === Number(member_no) &&
@@ -83,7 +84,8 @@ export default function NewsRead() {
       })
       .catch(console.error);
   };
-
+console.log("ㅁㄴㅇㅇ",userData);
+console.log("멤머:",member);
 useEffect(() => {
   fetchReplies();
 }, []);
@@ -364,7 +366,7 @@ useEffect(() => {
                   </p>
                   {(() => {
                       const matchedMember = member.find(
-                        (m) => m.member_no === userData[index]?.member?.member_no
+                        (m) => m.member_no === filteredUserData[index]?.member?.member_no
                       );
                       const replyNo = filteredUserData[index]?.newsreply_no;
                       if (userInfo?.role === 'ADMIN' && replyNo) {
@@ -373,8 +375,7 @@ useEffect(() => {
                             댓글 삭제
                           </span>
                         );
-                      }
-                      if (userInfo?.member_no === matchedMember?.member_no && replyNo) {
+                      } else if (member_no === matchedMember?.member_no && replyNo) {
                         return (
                           <span style={{ fontSize: '13px', cursor: 'pointer' }} onClick={() => deleteReply(replyNo)}>
                             댓글 삭제
