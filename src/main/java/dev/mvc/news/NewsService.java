@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.RestTemplate;
 
+import dev.mvc.fluctuation.Fluctuation;
+
 
 @Service
 public class NewsService {
@@ -114,4 +116,8 @@ public class NewsService {
   public void deleteEntity(Long id){
 	  repository.deleteById(id);
   }
+  
+  public void save(News news) {
+	  repository.save(news); 
+	  }
 }
