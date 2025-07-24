@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getIP } from '../components/Tool';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams,useNavigate } from 'react-router-dom';
 import Pagination from 'react-js-pagination';
 import load from "../images/로딩.gif";
 import basic from "../images/profile.png"
@@ -11,6 +11,7 @@ export default function NewsFind() {
   const [searchParams, setSearchParams] = useSearchParams();
   const pageParam = parseInt(searchParams.get('page')) || 1;
   const wordParam = searchParams.get('word') || '';
+  const navigate = useNavigate();
   const [page, setPage] = useState(pageParam);
   const [word, setWord] = useState(wordParam);
   const size = 6;
@@ -26,6 +27,9 @@ export default function NewsFind() {
   } 
 
   useEffect(() => {
+    if(word.trim() == '') {
+      word === false
+    }
     const url = word
       ? `http://${getIP()}:9093/news/find?word=${encodeURIComponent(word)}`
       : `http://${getIP()}:9093/news/find_all`;
@@ -55,6 +59,12 @@ export default function NewsFind() {
   const indexOfLast = page * size;
   const indexOfFirst = indexOfLast - size;
   const currentItems = data.slice(indexOfFirst, indexOfLast);
+
+  const cntup =(newsno)=> {
+    fetch(`http://${getIP()}:9093/news/cnt/${newsno}`, {
+      method: 'PATCH',
+    })
+  }
 
   return (
     <>
@@ -113,11 +123,12 @@ export default function NewsFind() {
                     {item.member.member_nick}
                   </span>
                 </div>
-                <Link to={`/ai/read/${item.newsno}`}>  
-                  <button className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">
+                <span className="text-gray-500 dark:text-gray-400 text-sm" style={{marginLeft:'45%'}}>
+                  조회수 {item.newscnt}
+                </span>
+                  <button className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition" onClick={()=>{cntup(item.newsno); navigate(`/ai/read/${item.newsno}`);}}>
                     뉴스 보러가기
                   </button>
-                </Link>
               </div>
             </div>
           </article>
