@@ -56,7 +56,7 @@ public class Member {
   private String memberId;
 
   /** 패스워드 */
-  @Column(name = "member_pw", nullable = false, length = 200)
+  @Column(name = "member_pw", nullable = false, length = 100)
   private String memberPw;
   
   /** 성명 */
