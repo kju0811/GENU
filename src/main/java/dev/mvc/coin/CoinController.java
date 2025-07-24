@@ -167,13 +167,12 @@ public class CoinController {
   public ResponseEntity<Coin> updateEntity(@PathVariable("coin_no") Long id, 
                                                       @RequestPart("coin") Coin coin, 
                                                       @RequestPart(value = "file", required = false) MultipartFile file) {
-    System.out.println(coin);
-    System.out.println(file);
+//    System.out.println(coin);
+//    System.out.println(file);
     // id를 이용한 레코드 조회 -> existingEntity 객체에 할당 -> {} 실행 값 저장 -> DBMS 저장 -> 상태 코드 200 출력
     return coinService.find_by_id(id).<ResponseEntity<Coin>>map(existingCoin -> {
       existingCoin.setCoin_name(coin.getCoin_name());
       existingCoin.setCoin_info(coin.getCoin_info());
-      existingCoin.setCoin_price(coin.getCoin_price());
       existingCoin.setCoin_cate(coin.getCoin_cate());
       
       create(existingCoin, file);
