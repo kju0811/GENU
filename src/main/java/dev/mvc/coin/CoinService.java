@@ -63,10 +63,23 @@ public class CoinService {
   private final Random rand = new Random();
   
   /** Create, INSERT~, UPDATE~ */
-  public Coin save(Coin coin) {
-    return coinRepository.save(coin); 
+  public Coin save(Coin coin) {  
+    boolean isNew = (coin.getCoin_no() == null);
+    
+    Coin savecoin =  coinRepository.save(coin); 
+    
+    if (isNew) { // 새로운 코인시 기록에 추가
+      Coinlog coinlog = new Coinlog();
+      coinlog.setCoinlog_price(savecoin.getCoin_price());
+      coinlog.setCoinlog_percentage(0.00);
+      coinlog.setCoinlog_time(LocalDateTime.now());
+      coinlog.setCoin(savecoin);
+      coinlogRepository.save(coinlog);
+    }
+    
+    return savecoin;
   }
-  
+    
   /** 시뮬레이션 로직 */
   public double calculateFluctuation(int buyVolume, int sellVolume, int newsSentiment) {
     // (1) 정규분포 기반 기본 변화율
@@ -130,6 +143,7 @@ public class CoinService {
       
       if (coin.getCoin_price() <= 50) { // 50누렁 이하면 상장폐지
         coin.setCoin_type(0);
+        coin.setCoin_percentage(0.00); // 보기 불편해서 초기화
       }
       coinRepository.save(coin);
       
