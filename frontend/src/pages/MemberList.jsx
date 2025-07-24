@@ -86,6 +86,12 @@ export default function MemberList() {
     setSearchParams(next)
   }
 
+  const onSearchCancel = () => {
+   const newParams = new URLSearchParams(searchParams);
+   newParams.delete("kw");
+   setSearchParams(newParams);
+  }
+
   // 페이지 버튼 → URL만 갱신
   const goToPage = (p) => {
     if (p < 1 || p > totalPages) return
@@ -96,7 +102,7 @@ export default function MemberList() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-10">
       <h1 className="text-2xl font-bold mb-4">회원 목록</h1>
 
       {/* 검색 바 */}
@@ -113,6 +119,12 @@ export default function MemberList() {
           className="bg-blue-600 text-white px-4 rounded-r hover:bg-blue-700"
         >
           검색
+        </button>
+        <button
+          onClick={()=>onSearchCancel()}
+          className="bg-blue-600 text-white px-4 rounded-r hover:bg-blue-700"
+        >
+          검색 취소
         </button>
       </div>
 
