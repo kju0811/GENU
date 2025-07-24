@@ -106,7 +106,7 @@ const jwt = sessionStorage.getItem('jwt');
 
       <div className="dropdown dropdown-start">
         <div tabIndex={0} role="button" className="btn btn-accent">카테고리 생성</div> 
-        <Dropdown showNoneOption={true}/>
+        <Dropdown onSelect={cate => { setOption2(cate); setDropdownOpen(true); }}   />
        </div>
     </div>
     <div>
