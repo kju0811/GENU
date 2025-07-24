@@ -74,6 +74,8 @@ def makeimg(content,title):
     with open(f"/Users/kimjiun/kd/deploy/team4_v2sbm3c/home/storage/{file1}.jpg", "wb") as f:
         f.write(image_bytes)
 
+    return file1
+
 @app.post("/news")
 async def news(request:Request):
     print("-> news 함수")
@@ -81,6 +83,7 @@ async def news(request:Request):
     option1 = data.get("option1")
     coin_cate = data.get("option2")
     option3 = data.get("option3")
+    file1 = None
     
     jwtToken = request.headers.get("Authorization")
     if jwtToken is not None:
@@ -105,7 +108,8 @@ async def news(request:Request):
         format_instructions = output_parser.get_format_instructions()
         prompt = PromptTemplate.from_template(
             "{system}\n"
-            "{option1}과 카테고리 {coin_cate}, 그리고 추가 사항 {option3}조건에 맞는 경제 뉴스를 생성해줘, 내용은 1500글자이상 2000글자이하 사이에서 생성해줘, 호재는 1로 악재를 0으로 판별해줘"
+            '''{option1}과 카테고리 {coin_cate}, 그리고 추가 사항 {option3}조건에 맞는 경제 뉴스를 생성해줘, 내용은 1500글자이상 2000글자이하 사이에서 생성해줘, 호재는 1로 악재를 0으로 판별해줘.
+            결과에 제목과 내용 분석은 / 로 무조건 분류해줘\n\n'''
             "{format_instructions}"
         )
 
@@ -137,11 +141,12 @@ async def news(request:Request):
             member_no
         )
         
-        makeimg(content, title)
+        file1 = makeimg(content, title)
+        
     else:
         result = "정상적이지 않습니다"
     
-    return result
+    return result,file1
 
 @app.post("/summary")
 async def summary(request:Request):
