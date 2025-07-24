@@ -2,6 +2,7 @@ package dev.mvc.deal;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -322,10 +323,40 @@ public class DealService {
     return dealRepository .findDealsByMemberCoin(member_no, coin_no);
   }
   
-  /** 멤버가 해당 코인에 주문한 거래내역 날짜 내림차 순 반환 */
+  /** 멤버가 해당 코인에 2주간 주문한 거래내역 날짜 내림차 순 반환 */
   public List<Deal> find_deal_by_member_coin_twoweek(Long member_no) {
-	LocalDateTime twoWeeksAgo = LocalDateTime.now().minusWeeks(2);
+    LocalDateTime twoWeeksAgo = LocalDateTime.now().minusWeeks(2);
     return dealRepository.findRecentDealsTwoweeks(member_no, twoWeeksAgo);
+  }
+  
+  /** 평단가 반환 */
+  public int getAVGprice(Long member_no, Long coin_no) {
+    // Oracle이 처리할 수 있는 안전한 최소 날짜
+    LocalDateTime safeMinDate = LocalDateTime.of(1900, 1, 1, 0, 0);
+    
+    // 보유 수량이 0이 된 마지막 시점의 날짜을 받아옴
+    LocalDateTime lastZeroDate = Optional.ofNullable(dealRepository.findLastZeroQuantityDate(member_no, coin_no))
+        .orElse(safeMinDate);
+    
+    System.out.println("lastZeroDate -> "+ lastZeroDate);
+    // 기간 이후의 평단가를 위해 가격과 갯수 반환
+    List<Object[]> getList = dealRepository.getAVGprice(member_no, coin_no, lastZeroDate);
+    
+    int totalPrice = 0;
+    int totalCnt = 0;
+    
+    // 평단가 계산
+    for (Object[] arr : getList) {
+      int p = ((Number) arr[0]).intValue();
+      int k = ((Number) arr[1]).intValue();
+
+      totalPrice += p*k; // 총합 계산
+      totalCnt += k;
+    }
+    
+    if (totalCnt == 0) return 0;
+    
+    return totalPrice / totalCnt;
   }
   
 }

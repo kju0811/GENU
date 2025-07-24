@@ -239,4 +239,12 @@ public class DealController {
    
     return list;
   }
+  
+  /** 평단가 반환 */
+  @GetMapping("/getAVGprice/{member_no}/{coin_no}")
+  public ResponseEntity<Integer> getAVGprice(@PathVariable(name="member_no") Long member_no, @PathVariable("coin_no") Long coin_no) {
+      Integer result = dealService.getAVGprice(member_no, coin_no);
+      return ResponseEntity.ok(result);
+  }
+  
 }
