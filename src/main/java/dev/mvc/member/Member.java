@@ -115,9 +115,9 @@ public class Member {
   public String getRole() {
     String grade_str = "GUEST";
     
-    if (member_grade <= 1) {
+    if (member_grade == 1) {
       grade_str = "ADMIN"; // 관리자
-    } else if (member_grade <= 10) {
+    } else if (member_grade == 10) {
       grade_str = "USER";    // 회원
     } else if (member_grade == 20) {
       grade_str = "STOP";    // 정지 회원
