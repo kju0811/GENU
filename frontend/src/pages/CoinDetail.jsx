@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, useNavigate, useLocation, useParams } from 'react-router-dom';
 import { getIP } from '../components/Tool';
-import OrderBook from '../components/OrderBook';
-import CoinInfo from '../components/CoinInfo';
-import RelatedNews from '../components/RelatedNews';
-import CommunityFeed from '../components/CommunityFeed';
-import OrderForm from '../components/OrderForm';
-import ApexChart from '../components/ApexChart';
+import OrderTab from "../components/OrderTab";
+import CoinInfo from "../components/CoinInfo";
+// import RelatedNews from "../components/RelatedNews";
+import CommunityFeed from "../components/CommunityFeed";
 import NoticeModal from '../components/NoticeModal'
 
 import { useLikeToggle } from '../components/useLikeToggle';
@@ -89,7 +87,7 @@ export default function CoinDetail() {
                 {coin_name}
               </h1>
               <p className="text-lg text-gray-800 dark:text-gray-200">
-                {coin_price.toLocaleString()}원 {' '}
+                {coin_price.toLocaleString()}누렁 {' '}
                 <span className={coin_percentage >= 0 ? 'text-red-600' : 'text-blue-600'}>
                   {coin_percentage >= 0 ? `+${coin_percentage}` : coin_percentage}%
                 </span>
@@ -102,8 +100,8 @@ export default function CoinDetail() {
             <button
               onClick={toggleLike}
               className={`mb-4 px-4 py-2 rounded ${liked
-                  ? 'bg-red-600 text-white hover:bg-red-700'
-                  : 'bg-rose-100 text-gray-700 hover:bg-rose-300'
+                ? 'bg-red-600 text-white hover:bg-red-700'
+                : 'bg-rose-100 text-gray-700 hover:bg-rose-300'
                 }`}
             >
               {liked ? '❤️' : '🤍'}
@@ -126,8 +124,8 @@ export default function CoinDetail() {
               key={tab.id}
               onClick={() => handleTab(tab.id)}
               className={`py-2 px-4 -mb-px font-medium border-b-2 transition-all ${currentTab === tab.id
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
                 }`}
             >
               {tab.label}
@@ -136,7 +134,7 @@ export default function CoinDetail() {
         </nav>
 
         {/* 탭 내용 */}
-        <Outlet />
+        <Outlet context={{ coin_price, coin_no }} />
       </div>
     </div>
   );
