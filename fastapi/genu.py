@@ -102,13 +102,13 @@ async def news(request:Request):
     if role == "ADMIN":
         # 2) 출력 스키마 & 출력 파서 설정
         response_schemas = [
-            ResponseSchema(name="res", description="{'제목:뉴스 제목 / 내용:경제 뉴스 생성(1000~1200자) / 분석: 1,0'}")
+            ResponseSchema(name="res", description="{'제목:뉴스 제목 / 내용:경제 뉴스 생성(1200글자이상 ~ 1500글자이하) / 분석: 1,0'}")
         ]
         output_parser = StructuredOutputParser.from_response_schemas(response_schemas)
         format_instructions = output_parser.get_format_instructions()
         prompt = PromptTemplate.from_template(
             "{system}\n"
-            '''{option1}과 카테고리 {coin_cate}, 그리고 추가 사항 {option3}조건에 맞는 경제 뉴스를 생성해줘, 내용은 1500글자이상 2000글자이하 사이에서 생성해줘, 호재는 1로 악재를 0으로 판별해줘.
+            '''{option1}과 카테고리 {coin_cate}, 그리고 추가 사항 {option3}조건에 맞는 경제 뉴스를 생성해줘, 내용은 1200글자이상 ~ 1500글자이하 사이에서 생성해줘, 호재는 1로 악재를 0으로 판별해줘.
             결과에 제목과 내용 분석은 / 로 무조건 분류해줘\n\n'''
             "{format_instructions}"
         )

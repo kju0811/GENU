@@ -2,25 +2,52 @@
 import React, { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { getIP } from '../components/Tool'
+import { jwtDecode } from 'jwt-decode'
 
 export default function MemberList() {
   const [searchParams, setSearchParams] = useSearchParams()
   const [members, setMembers]           = useState([])
   const [totalPages, setTotalPages]     = useState(0)
   const [loading, setLoading]           = useState(false)
-
+  const jwt = sessionStorage.getItem('jwt');
   const size = 10  // 한 페이지당 아이템 수 고정
-
   // 1-based로 읽어서, 백엔드는 0-based로 변환
   const queryKw   = searchParams.get('kw')   || ''
   const queryPage = parseInt(searchParams.get('page'), 10) || 1
   const pageIndex = queryPage - 1
+
+  const gradeMap = {
+  1: "관리자",
+  10: "일반 유저",
+  20: "정지 유저",
+  30: "탈퇴 유저",
+};
 
   // Controlled input: URL이 바뀌면 이 값도 동기화
   const [inputKw, setInputKw] = useState(queryKw)
   useEffect(() => {
     setInputKw(queryKw)
   }, [queryKw])
+
+  const changeGrade =(member_no,grade,name)=> {
+      const check = window.confirm(`${name}의 등급을 변경하시겠습니까?`)
+      if (check) {
+      fetch(`http://${getIP()}:9093/member/update/grade`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': jwt,
+        },
+        body: JSON.stringify({ member_no,grade }),
+      })
+      .then((result) => {
+        if(result.ok){
+          alert("등급이 변경 되었습니다")
+          window.location.reload();
+        }
+      })
+    }
+    }
 
   // URL 쿼리가 바뀔 때마다 멤버 리스트 재조회
   useEffect(() => {
@@ -35,7 +62,7 @@ export default function MemberList() {
 
     fetch(`http://${getIP()}:9093${endpoint}?${params}`, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('jwtToken')}`
+        Authorization: jwt
       }
     })
       .then(res => {
@@ -59,6 +86,12 @@ export default function MemberList() {
     setSearchParams(next)
   }
 
+  const onSearchCancel = () => {
+   const newParams = new URLSearchParams(searchParams);
+   newParams.delete("kw");
+   setSearchParams(newParams);
+  }
+
   // 페이지 버튼 → URL만 갱신
   const goToPage = (p) => {
     if (p < 1 || p > totalPages) return
@@ -69,7 +102,7 @@ export default function MemberList() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-10">
       <h1 className="text-2xl font-bold mb-4">회원 목록</h1>
 
       {/* 검색 바 */}
@@ -82,10 +115,16 @@ export default function MemberList() {
           className="flex-1 border rounded-l px-3 py-2 focus:outline-none"
         />
         <button
-          onClick={onSearch}
+          onClick={()=>onSearch()}
           className="bg-blue-600 text-white px-4 rounded-r hover:bg-blue-700"
         >
           검색
+        </button>
+        <button
+          onClick={()=>onSearchCancel()}
+          className="bg-blue-600 text-white px-4 rounded-r hover:bg-blue-700"
+        >
+          검색 취소
         </button>
       </div>
 
@@ -101,6 +140,7 @@ export default function MemberList() {
               <th className="px-4 py-2 border">가입일</th>
               <th className="px-4 py-2 border">등급</th>
               <th className="px-4 py-2 border">닉네임</th>
+              <th className="px-4 py-2 border">등급관리</th>
             </tr>
           </thead>
           <tbody>
@@ -118,8 +158,21 @@ export default function MemberList() {
                   <td className="px-4 py-2 border">{m.member_name}</td>
                   <td className="px-4 py-2 border">{m.member_tel}</td>
                   <td className="px-4 py-2 border">{m.memberDate}</td>
-                  <td className="px-4 py-2 border">{m.member_grade}</td>
+                  <td className="px-4 py-2 border">{gradeMap[m.member_grade]}</td>
                   <td className="px-4 py-2 border">{m.member_nick}</td>
+                  <td className="px-4 py-2 border">
+                    <div className="dropdown">
+                      <div tabIndex={0} role="button" className="btn btn-sm">
+                        등급 선택
+                      </div>
+                      <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-40 p-2 shadow" >
+                        <li><a onClick={() => changeGrade(m.member_no, 1,m.member_name)}>관리자</a></li>
+                        <li><a onClick={() => changeGrade(m.member_no, 10,m.member_name)}>일반유저</a></li>
+                        <li><a onClick={() => changeGrade(m.member_no, 20,m.member_name)}>정지</a></li>
+                        <li><a onClick={() => changeGrade(m.member_no, 30,m.member_name)}>탈퇴</a></li>
+                      </ul>
+                    </div>
+                  </td>
                 </tr>
               ))
             ) : (

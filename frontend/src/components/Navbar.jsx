@@ -1,21 +1,48 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import ProfileDropdown from './ProfileDropdown';
 import SearchInput from './SearchInput';
 import NotificationDropdown from './NotificationList';
+import { jwtDecode } from 'jwt-decode';
 
-const NAV_TABS = [
+const navTabs = [
   { id: "home", label: "홈", to: "/" },
   { id: "coinlist", label: "코인 리스트", to: "/coinlist" },
   { id: "newsfind", label: "기사", to: "/ai/newsfind" },
   { id: "calendar", label: "캘린더", to: "/calendar" },
-  { id: "portfolio", label: "내 자산", to: "/portfolio" },
   { id: "announce", label: "공지사항", to: "/announce_find" },
 ];
 
-export default function Navbar() {
+const adminTab = [
+  { label: "코인 생성하기", to: "/coin/create" },
+  { label: "기사 생성하기", to: "/ai/news" },
+  { label: "공지사항 생성하기", to: "/announce" },
+  { label: "회원 목록", to: "/member" }
+];
 
+export default function Navbar() {
   const jwt = sessionStorage.getItem('jwt');
+  const [adminOpen, setAdminOpen] = useState(false);
+  const adminRef = useRef();
+
+  let userInfo = null;
+  if (jwt) {
+    try {
+      userInfo = jwtDecode(jwt);
+    } catch (e) {
+      userInfo = null;
+    }
+  }
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (adminRef.current && !adminRef.current.contains(e.target)) {
+        setAdminOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   return (
     <nav className="bg-gradient-to-t from-white to-gray-100 shadow-md p-4 w-full" aria-label="Main navigation">
@@ -48,8 +75,8 @@ export default function Navbar() {
       </div>
 
       {/* 하단 탭 메뉴: 중앙 정렬 및 스크롤 지원 */}
-      <div className="flex justify-center overflow-x-auto whitespace-nowrap gap-6 mt-3 border-t pt-2">
-        {NAV_TABS.map((tab) => (
+      <div className="flex justify-center overflow-visible whitespace-nowrap gap-6 mt-3 border-t pt-2">
+        {navTabs.map((tab) => (
           <NavLink
             key={tab.id}
             to={tab.to}
@@ -63,8 +90,35 @@ export default function Navbar() {
             }
           >
             {tab.label}
-          </NavLink>          
+          </NavLink>
         ))}
+
+        {userInfo?.role === "ADMIN" && (
+          <div className="relative" ref={adminRef}>
+            <div
+              className="px-3 py-1 font-medium hover:text-blue-600 text-gray-700 border-b-2 border-transparent transition-all duration-200 cursor-pointer"
+              onClick={() => setAdminOpen((o) => !o)}
+              role="button"
+              tabIndex={0}
+            >
+              관리자 <span className="ml-1">&#x25BC;</span>
+            </div>
+            {adminOpen && (
+              <div className="absolute left-1/2 -translate-x-1/2 mt-2 min-w-[150px] z-50 bg-white dark:bg-[#1E2028] rounded-lg shadow-lg p-2">
+                {adminTab.map(item => (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    className="block px-4 py-2 text-sm ..."
+                    onClick={() => setAdminOpen(false)}
+                  >
+                    {item.label}
+                  </NavLink>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </nav>
   );
