@@ -2,6 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { getIP } from "./Tool";
 import { jwtDecode } from 'jwt-decode';
 
+
+const FEE_RATE = 0.0005; // 수수료 비율 0.05%
+
+// 수수료 계산 함수
+const calculateFee = (price, quantity) => {
+  const fee = price * quantity * FEE_RATE;
+  return Math.max(Math.floor(fee), 1); // 최소 수수료 1원
+};
+
+// 총 주문 금액 계산 함수
+const calculateTotal = (price, quantity, side) => {
+  const baseAmount = price * quantity;
+  const fee = calculateFee(price, quantity);
+  return side === 'buy' ? baseAmount + fee : baseAmount - fee; // 매수면 수수료를 더하고, 매도면 수수료를 뺌
+};
+
 /**
  * OrderForm
  * @param {{ coin_no: string }} props
@@ -25,16 +41,37 @@ export default function OrderForm({ coin_no, defaultPrice }) {
 
   // 총 주문 금액 계산
   const total = type === 'market'
-    ? '시가' // TODO: 시장가일 경우 시가 데이터 바인딩
-    : (price && quantity ? (parseFloat(price) * parseFloat(quantity)).toLocaleString() : 0);
+    ? '시가'
+    : (price && quantity
+        ? calculateTotal(parseFloat(price), parseFloat(quantity), side).toLocaleString()
+        : 0);
+  
+  const fee = price && quantity
+    ? calculateFee(parseFloat(price), parseFloat(quantity))
+    : 0;
 
   // 수량 비율 설정 핸들러
   const handlePercent = percent => {
-    // TODO: 사용자의 잔고 기반으로 수량 계산
-    const qty = Math.floor(((myBalance * percent) / 100) / price);
-    console.log("qty -> ", qty)
-    setQuantity(qty);
+    if (side === 'buy') {
+      // 가격, 보유금액이 유효한지 체크
+      if (!price || isNaN(price) || !myBalance || isNaN(myBalance)) return;
+
+      // 수수료 포함 실제 필요한 단가 계산 (가격 + 수수료)
+      const effectivePrice = price * (1 + FEE_RATE);
+
+      // 보유금액의 percent%만큼 사용할 때 구매 가능한 최대 수량 계산
+      // 수수료 포함된 가격으로 나눔
+      const qty = Math.floor(((myBalance * percent) / 100) / effectivePrice);
+      setQuantity(qty);
+
+    } else if (side === 'sell') {
+      if (!myAmount || isNaN(myAmount)) return;
+      // 보유 수량의 percent% 만큼 매도할 수량 설정
+      const qty = Math.floor((myAmount * percent) / 100);
+      setQuantity(qty);
+    }
   };
+
 
   let [memberNo, setMemberNo] = useState(null);
   const jwt = sessionStorage.getItem("jwt");
@@ -260,6 +297,9 @@ export default function OrderForm({ coin_no, defaultPrice }) {
 
           {/* 총 주문 금액 */}
           <div className='text-right text-xs text-gray-500'>수수료: 총 주문 금액의 0.05% </div>
+          <div className="text-right text-xs text-gray-500">
+            예상 수수료: {fee.toLocaleString()} 원
+          </div>
           <div className="text-right text-sm text-gray-500">
             총 주문 금액: <span className="font-medium">{total}</span> 원
           </div>
