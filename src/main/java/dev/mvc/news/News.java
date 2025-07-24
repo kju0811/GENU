@@ -85,7 +85,7 @@ public class News {
   
   // 뉴스 조회수
   @Column(name = "news_cnt", nullable = false, columnDefinition = "NUMBER(7)")
-  private  Integer news_cnt = 0;
+  private  Integer newscnt = 0;
   
   // 댓글수
   @Column(name = "news_replycnt", nullable = false, columnDefinition = "NUMBER(7)")
