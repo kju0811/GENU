@@ -40,11 +40,11 @@ public class Reply {
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "reply_seq")
   @SequenceGenerator(name = "reply_seq", sequenceName = "REPLY_SEQ", allocationSize = 1)
   @Column(name = "reply_no")
-  private Long reply_no;
+  private Long replyNo;
   
   /** 댓글 내용 */
   @Column(name = "reply_content", nullable = false, length = 600)
-  private String reply_content;
+  private String replyContent;
 
   /** 댓글 작성일 */
   @Column(name = "reply_date", nullable = false, columnDefinition = "DATE")
