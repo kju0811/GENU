@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -94,5 +95,18 @@ public class NewsController {
 	        return ResponseEntity.notFound().build(); // 찾지 못한 경우 404 반환
 	      }
 	}
+  
+  @PatchMapping("/cnt/{newsno}")
+  public ResponseEntity<?> updateCnt(@PathVariable("newsno") Long id) {
+      Optional<News> optionalNews = newsService.find_by_id(id);
+      if (optionalNews.isPresent()) {
+          News news = optionalNews.get();
+          news.setNewscnt(news.getNewscnt() + 1);
+          newsService.save(news);
+          return ResponseEntity.ok().build();
+      } else {
+          return ResponseEntity.notFound().build();
+      }
+  }
 
 }

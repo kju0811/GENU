@@ -40,7 +40,6 @@ export default function NewsRead() {
   }
 
   const member_no = userInfo?.member_no;
-  console.log("ㅁㄴㅇㅁㅇㄴㅇㅇ",member_no);
   const matchedLike = like.find(
   (l) =>
     l.member?.member_no === Number(member_no) &&
@@ -84,8 +83,6 @@ export default function NewsRead() {
       })
       .catch(console.error);
   };
-console.log("ㅁㄴㅇㅇ",userData);
-console.log("멤머:",member);
 useEffect(() => {
   fetchReplies();
 }, []);
