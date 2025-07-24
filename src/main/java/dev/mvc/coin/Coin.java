@@ -52,7 +52,7 @@ public class Coin {
   private String coin_info="";
   
   /** 코인 등락률 */
-  @Column(name = "coin_percentage", columnDefinition = "NUMBER(5,2)", nullable = false)
+  @Column(name = "coin_percentage", columnDefinition = "NUMBER(6,2)", nullable = false)
   private double coin_percentage=0.00;
   
   /** 코인 이미지 */
