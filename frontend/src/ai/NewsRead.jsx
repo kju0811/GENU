@@ -368,7 +368,6 @@ useEffect(() => {
                       const matchedMember = member.find(
                         (m) => m.member_no === filteredUserData[index]?.member?.member_no
                       );
-                        console.log('asdasd',matchedMember);
                       const replyNo = filteredUserData[index]?.newsreply_no;
                       if (userInfo?.role === 'ADMIN' && replyNo) {
                         return (
