@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getIP, getNowDate } from '../components/Tool';
 import { Dropdown } from './CoinComponents';
+import ImageUpload from './ImageUpload';
 
 export default function CoinCreate() {
   const [step, setStep] = useState(1);
@@ -12,23 +13,14 @@ export default function CoinCreate() {
   const [name, setName] = useState('');
   const [cate, setCate] = useState('');
   const [price, setPrice] = useState('');
-  const [img, setImg] = useState(null);
-  const [imgURL, setImgURL] = useState(''); // 이미지 미리보기용
+  const [file, setFile] = useState(null);
 
   // Step2: 상세정보
   const [info, setInfo] = useState('');
 
-  // 이미지 프리뷰
-  const handleImg = e => {
-    const file = e.target.files[0];
-    setImg(file);
-    if (file) setImgURL(URL.createObjectURL(file));
-    else setImgURL('');
-  };
-
   // 스텝 이동
   const handleNext = () => {
-    if (name && cate && price && img) setStep(2);
+    if (name && cate && price && file) setStep(2);
     else alert('모든 기본 정보를 입력하고 이미지를 업로드하세요.');
   };
 
@@ -44,7 +36,7 @@ export default function CoinCreate() {
     };
     const formData = new FormData();
     formData.append('coin', new Blob([JSON.stringify(coin)], { type: 'application/json' }));
-    if (img) formData.append('file', img);
+    if (file) formData.append('file', file);
 
     try {
       const res = await fetch(`http://${getIP()}:9093/coin/create`, { method: 'POST', body: formData });
@@ -133,18 +125,13 @@ export default function CoinCreate() {
             </div>
             {/* 이미지 */}
             <div>
-              <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">코인 이미지 업로드</label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImg}
-                className="w-full file:rounded-lg file:bg-indigo-50 file:border-0 file:py-2 file:px-4 file:text-indigo-600 file:cursor-pointer"
+              <ImageUpload
+                value={file}
+                onChange={setFile}
+                // originUrl={기존이미지 있으면 주소}
+                // previewSize={96}
+                label="이미지 업로드"
               />
-              {imgURL &&
-                <div className="mt-2 flex justify-center">
-                  <img src={imgURL} alt="preview" className="w-24 h-24 rounded-full object-cover border-2 border-indigo-400 shadow" />
-                </div>
-              }
             </div>
             <div className="flex justify-end">
               <button
