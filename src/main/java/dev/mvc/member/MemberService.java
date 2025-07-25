@@ -30,6 +30,11 @@ public class MemberService {
     member.setMemberPw(encodedPw);
     return memberRepository.save(member);
   }
+  
+  /** 회원 권한 수정 */
+  public Member grade(Member member) {
+    return memberRepository.save(member);
+  }
 
   /** 전체 회원 목록 조회 (페이징x) */
   public List<Member> findAll() {
