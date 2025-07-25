@@ -8,6 +8,7 @@ import { jwtDecode } from 'jwt-decode';
 
 export default function NewsFind() {
   const [data, setData] = useState([]);
+  const [likedata, setLikedata] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const pageParam = parseInt(searchParams.get('page')) || 1;
   const wordParam = searchParams.get('word') || '';
@@ -25,6 +26,19 @@ export default function NewsFind() {
       console.error("JWT 디코딩 오류:", err);
     }
   } 
+  console.log('ㄱㅅ주ㅗㅠ굿ㄴ',data);
+
+  useEffect(() => {
+    fetch(`http://${getIP()}:9093/newslike/liked`, {
+      method: 'GET'
+    })
+      .then(result => result.json()) // 응답
+      .then(result => {
+        setLikedata(result);
+        console.log("egtwhmrtlbrt",result);
+      })
+      .catch(err => console.error(err))
+  },[])
 
   useEffect(() => {
     if(word.trim() == '') {
@@ -54,7 +68,6 @@ export default function NewsFind() {
     setPage(1);
     setSearchParams(newWord ? { page: 1, word: newWord } : { page: 1 });
   };
-
   // 페이지네이션 아이템 계산
   const indexOfLast = page * size;
   const indexOfFirst = indexOfLast - size;
@@ -119,7 +132,10 @@ export default function NewsFind() {
                     {item.member.member_nick}
                   </span>
                 </div>
-                <span className="text-gray-500 dark:text-gray-400 text-sm" style={{marginLeft:'45%'}}>
+                <span className="text-gray-500 dark:text-gray-400 text-sm" style={{marginLeft:'35%'}}>
+                  ❤️ 좋아요 {likedata.filter(like => like.news.newsno === item.newsno).length}
+                </span>
+                <span className="text-gray-500 dark:text-gray-400 text-sm" >
                   조회수 {item.newscnt}
                 </span>
                   <button className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition" onClick={()=>{cntup(item.newsno); navigate(`/ai/read/${item.newsno}`);}}>
