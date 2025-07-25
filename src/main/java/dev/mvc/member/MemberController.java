@@ -236,10 +236,10 @@ public class MemberController {
     // 이미지
     @PostMapping("/change-profileImage/{member_no}")
     public ResponseEntity<?> changeProfileImage(
-      @PathVariable Long member_no,
-      @RequestPart MultipartFile file) {
+      @PathVariable("member_no") Long member_no,
+      @RequestPart("file") MultipartFile file) {
       String fileName = file.getOriginalFilename();
-      Path dest = Paths.get("C:\\kd\\deploy\\team4_v2sbm3c\\home\\storage", fileName); // 경로 맞게!
+      Path dest = storageLocation.resolve(Paths.get(fileName)).normalize().toAbsolutePath();
       try {
           file.transferTo(dest);
           // 서비스 레이어 통해 업데이트!
