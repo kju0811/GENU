@@ -78,6 +78,7 @@ public class DealDTO {
   @NoArgsConstructor
   public static class MyAssetList {
     private Long coin_no;
+    private String coin_name;
     private String coin_img;
     private int cnt;
     private int total_price;
