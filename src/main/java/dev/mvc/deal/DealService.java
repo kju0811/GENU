@@ -332,7 +332,7 @@ public class DealService {
   }
   
   /** 평단가 반환 */
-  public int getAVGprice(Long member_no, Long coin_no) {
+  public List<Integer> getAVGprice(Long member_no, Long coin_no) {
     // Oracle이 처리할 수 있는 안전한 최소 날짜
     LocalDateTime safeMinDate = LocalDateTime.of(1900, 1, 1, 0, 0);
     
@@ -356,9 +356,12 @@ public class DealService {
       totalCnt += k;
     }
     
-    if (totalCnt == 0) return 0;
+    List<Integer> list = new ArrayList<>();
+    if (totalCnt == 0) return list;
+    list.add(totalPrice / totalCnt);
+    list.add(totalCnt);
     
-    return totalPrice / totalCnt;
+    return list;
   }
   
   /** 멤버가 가지고 있는 자산내역 */
@@ -367,21 +370,13 @@ public class DealService {
       List<DealDTO.MyAssetList> myAssetList = new ArrayList<>();
       
       for (CoinDTO dto : coinList) {
-        int buyCnt = 0;
-        int sellCnt = 0;
-        Long coinNo = dto.getCoin_no();
+        List<Integer> getList = getAVGprice(member_no, dto.getCoin_no()); // 평단가, 갯수
+        int avgPrice = getList.get(0);
+        int totalCnt = getList.get(1);
         
-        // 매수 - 매도(매도 주문X) = 가지고 있는 갯수
-        buyCnt = dealRepository.getBuybyCnt(member_no, coinNo);
-        sellCnt = dealRepository.getSellbyCntOk(member_no, coinNo);
-        int totalCnt = buyCnt - sellCnt;
+        if (totalCnt == 0) continue; // 자산 없음
         
-        if (totalCnt == 0) { // 자산 없음
-          continue;
-        }
-
         int currentTotalPrice = dto.getCoin_price() * totalCnt; // 현재 총 금액
-        int avgPrice= getAVGprice(member_no, dto.getCoin_no()); // 평단가
         int previousTotalPrice = avgPrice * totalCnt; // 이전 총 금액
         
         // 이득, 퍼센트
@@ -393,7 +388,7 @@ public class DealService {
         }
 
         myAssetList.add(new DealDTO.MyAssetList(
-            coinNo, 
+            dto.getCoin_no(), 
             dto.getCoin_img(), 
             totalCnt, 
             currentTotalPrice, 
@@ -405,4 +400,27 @@ public class DealService {
       return myAssetList;
   }
   
+  /** 단일 자산내역 반환 */
+  public DealDTO.AssetInfo one_asset(Long member_no, Long coin_no) {
+    
+    List<Integer> getList = getAVGprice(member_no, coin_no); // 평단가, 갯수
+    int avgPrice = getList.get(0);
+    int totalCnt = getList.get(1);
+    
+    int currentPrice = coinRepository.getCoinPrice(coin_no); // 현재가
+    int totalPrice = currentPrice * totalCnt; // 현재 평가 금액
+    int previousTotalPrice = avgPrice * totalCnt; // 이전 총 금액
+    
+    // 이득, 퍼센트
+    int profitAmount = totalPrice - previousTotalPrice ;
+    double profitPercentage = 0.0;
+    if (previousTotalPrice != 0) {
+      profitPercentage = ((double) profitAmount / previousTotalPrice) * 100;
+      profitPercentage = Math.round(profitPercentage * 10) / 10.0;
+    }
+    
+    DealDTO.AssetInfo asset = new DealDTO.AssetInfo(avgPrice, totalPrice, profitAmount, profitPercentage);
+    
+    return asset;
+  }
 }
