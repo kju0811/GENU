@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import dev.mvc.coin.Coin;
 import dev.mvc.coinlike.CoinlikeRepository;
 import dev.mvc.member.Member;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -246,5 +248,20 @@ public class DealController {
       Integer result = dealService.getAVGprice(member_no, coin_no);
       return ResponseEntity.ok(result);
   }
+  
+  /** 멤버가 가지고 있는 자산내역 */
+  @GetMapping("/get_member_asset/{member_no}")
+  public ResponseEntity<?> get_member_asset(@PathVariable(name="member_no") Long member_no) {
+    try {
+      List<DealDTO.MyAssetList> assets = dealService.get_member_asset(member_no);
+      return ResponseEntity.ok(assets);
+    } catch (EntityNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 에러");
+    }
+  }
+  
+  
   
 }
