@@ -3,9 +3,7 @@ package dev.mvc.coin;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,8 +12,6 @@ import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,9 +21,7 @@ import dev.mvc.deal.Deal;
 import dev.mvc.deal.DealDTO;
 import dev.mvc.deal.DealService;
 import dev.mvc.exception.NotFoundException;
-import dev.mvc.fluctuation.Fluctuation;
 import dev.mvc.fluctuation.FluctuationDTO;
-import dev.mvc.fluctuation.FluctuationRepository;
 import dev.mvc.fluctuation.FluctuationService;
 import dev.mvc.news.News;
 import dev.mvc.news.NewsRepository;
@@ -88,11 +82,9 @@ public class CoinService {
     
     // (2) 순매수량 보정
     int netBuy = buyVolume - sellVolume;
-    System.out.println("netBuy -> "+netBuy);
     
-    // * 20  -> 20% 보정최대 / 클수록 영향이큼  (조정중)
-    // tanh(x) 크면 결과가 +-1에 거의 수렴 -> 0.01를 곱해
-    // 현재 1당 0.02% 적용중
+    // 3% 보정최대 / 클수록 영향이큼
+    // tanh(x) 크면 결과가 +-1에 거의 수렴 -> 0.001를 곱해
     double netBuyAdjustment = Math.tanh(netBuy * 0.001) * 3;
 
     // (3) 뉴스 감성 보정 (기사 분석 결과: 0 ~ 1) -+0.3 -> 하루 -+43.2퍼
@@ -133,6 +125,7 @@ public class CoinService {
       int buy_cnt = dealService.getTotalType1(coin.getCoin_no());
       int sell_cnt = dealService.getTotalType2(coin.getCoin_no());
       
+      System.out.print(coin.getCoin_no()+"번 코인 -> ");
       double fluctuation = calculateFluctuation(buy_cnt, sell_cnt, cnt);
       int updatePrice = (int)(coin.getCoin_price() * (1 + fluctuation / 100));
       coin.setCoin_price(updatePrice);
@@ -215,7 +208,6 @@ public class CoinService {
           }
         }
       }
-    System.out.println("예약 매수 처리완료");
     }
   }
   
@@ -239,7 +231,6 @@ public class CoinService {
           }
         }
       }
-      System.out.println("예약 매도 처리완료");
     }
   }
   
@@ -296,7 +287,6 @@ public class CoinService {
           }
         }
       }
-    System.out.println("알림 처리 완료");
     }
   }
   
