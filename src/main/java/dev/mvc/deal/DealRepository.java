@@ -24,6 +24,14 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
       + "AND (d.deal_type = 2 OR d.deal_type = 4)")
   Integer getSellbyCnt(@Param("member_no") Long member_no, @Param("coin_no") Long coin_no);
   
+  // 평단가 출력할 때 매도 주문을 넣어두면 현자산에선 빠지지 않는다. (거래가 되지않았기 때문에)
+  @Query("SELECT COALESCE(SUM(d.deal_cnt), 0) "
+      + "FROM Deal d "
+      + "WHERE d.member.member_no = :member_no "
+      + "AND d.coin.coin_no = :coin_no "
+      + "AND d.deal_type = 2")
+  Integer getSellbyCntOk(@Param("member_no") Long member_no, @Param("coin_no") Long coin_no);
+  
   @Query(value = "SELECT COALESCE(SUM(d.deal_cnt), 0) "
       + "FROM deal d "
       + "WHERE d.deal_type = 1 "
@@ -109,6 +117,5 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
       + "WHERE d.member.member_no=:member_no AND d.coin.coin_no=:coin_no AND d.deal_type=1 "
       + "AND d.deal_date > :last_zero_date")
   List<Object[]> getAVGprice(@Param("member_no") Long member_no, @Param("coin_no") Long coin_no, @Param("last_zero_date") LocalDateTime lastZeroDate);
-  
   
 }
