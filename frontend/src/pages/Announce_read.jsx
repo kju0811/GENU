@@ -47,7 +47,6 @@ function Announce_read() {
           setData(result);
           setTitle(result.announcetitle);
           setContent(result.announce_content);
-          console.log("dddasddqwd",result);
         })
         .catch(err => console.error(err))
     },[]);
@@ -73,17 +72,25 @@ function Announce_read() {
         }
     }
 
+    const formData = new FormData();
+    formData.append(
+    'announce',
+    new Blob([JSON.stringify({
+        announcetitle: title,
+        announce_content: content
+    })], { type: 'application/json' })
+    );
+    if (img) {
+    formData.append('file', img);
+    }
+
     const updateAnnounce =(title,content)=> {
         fetch(`http://${getIP()}:9093/announce/update/${announce_no}`, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json',
                 'Authorization': jwt
             },
-            body: JSON.stringify({
-                "announcetitle" :title,
-                "announce_content":content
-            })
+            body: formData
             })
             .then(response => {
             if(response.ok){
@@ -130,6 +137,14 @@ function Announce_read() {
             <div>
             <button onClick={() => updateAnnounce(title,content)}>수정하기</button>
             <button onClick={() => setUpdate(false)}>수정취소</button>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={e => setImg(e.target.files[0])}
+              className="w-full file:rounded-lg file:bg-indigo-50 file:border-0 file:py-2 file:px-4 file:text-indigo-600 file:cursor-pointer"
+              required
+            />
+            {img && <p className="mt-2 text-sm text-green-600">{img.name} 선택됨</p>}
             </div>
             ) : (
             <div>
