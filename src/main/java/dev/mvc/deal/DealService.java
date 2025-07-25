@@ -1,16 +1,13 @@
 package dev.mvc.deal;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,10 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import dev.mvc.coin.Coin;
 import dev.mvc.coin.CoinDTO;
 import dev.mvc.coin.CoinRepository;
-import dev.mvc.coin.CoinService;
-import dev.mvc.coinlike.CoinlikeRepository;
 import dev.mvc.exception.DelistedCoinException;
-import dev.mvc.member.Member;
 import dev.mvc.pay.Pay;
 import dev.mvc.pay.PayService;
 import jakarta.persistence.EntityNotFoundException;
@@ -81,25 +75,21 @@ public class DealService {
   
   /** 매수 체결된 코인갯수 반환 + 기간 하루 치*/
   public Integer getTotalType1(Long coin_no) {
-    System.out.println("-> getTotalType1 ok");
     return dealRepository.getTotalType1(coin_no);
   }
   
   /** 매도 체결된 코인갯수 반환 + 기간 하루 치 */
   public Integer getTotalType2(Long coin_no) {
-    System.out.println("-> getTotalType2 ok");
     return dealRepository.getTotalType2(coin_no);
   }
   
   /** 예약 매수된 정보 반환 */
   public List<Deal> getType3(Long coin_no) {
-    System.out.println("-> getType3 ok");
     return dealRepository.getType3(coin_no);
   }
   
   /** 예약 매수된 정보 반환 */
   public List<Deal> getType4(Long coin_no) {
-    System.out.println("-> getType4 ok");
     return dealRepository.getType4(coin_no);
   }
   
@@ -340,7 +330,7 @@ public class DealService {
     LocalDateTime lastZeroDate = Optional.ofNullable(dealRepository.findLastZeroQuantityDate(member_no, coin_no))
         .orElse(safeMinDate);
     
-    System.out.println("lastZeroDate -> "+ lastZeroDate);
+//    System.out.println("lastZeroDate -> "+ lastZeroDate);
     // 기간 이후의 평단가를 위해 가격과 갯수 반환
     List<Object[]> getList = dealRepository.getAVGprice(member_no, coin_no, lastZeroDate);
     
@@ -403,7 +393,7 @@ public class DealService {
             profitPercentage
             ));
       }
-      System.out.println("myAssetList ->"+ myAssetList);
+//      System.out.println("myAssetList ->"+ myAssetList);
       return myAssetList;
   }
   
