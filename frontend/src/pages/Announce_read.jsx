@@ -106,7 +106,7 @@ function Announce_read() {
     return (
         <>
         { img && (
-            <div style={{marginTop:'5%'}}>
+            <div style={{marginTop:'5%',width:'500px',alignItems:'center',display:'flex',justifyContent:'center'}}>
             <img src={`http://${getIP()}:9093/home/storage/${img}`} />
             </div>
         ) 
@@ -124,7 +124,7 @@ function Announce_read() {
         :
         (
         <div style={{textAlign:'center',width:'50%',marginTop:'2%'}}>
-        <h1 style={{marginBottom:'20px'}}>{title}</h1>
+        <h1 style={{marginBottom:'1px'}}>{title}</h1><span className="text-gray-500">{data.announcedate}</span><br/><br/>
         <span>{content}</span><br/>
         <button onClick={()=>history.back()} style={{marginTop:'30px',marginBottom:'20px'}}>이전으로</button>
         </div>
