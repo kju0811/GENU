@@ -85,4 +85,14 @@ public class DealDTO {
     private double profitPercentage;
   }
 
+  /** 단일 평가액 DTO */
+  @Data
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class AssetInfo {
+    private int avg_price;
+    private int total_price;
+    private int profitAmount;
+    private double profitPercentage;
+  }
 }
