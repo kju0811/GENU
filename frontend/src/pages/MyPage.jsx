@@ -4,6 +4,7 @@ import { getIP } from '../components/Tool';
 import { jwtDecode } from 'jwt-decode';
 import mind from '../ai/Mind';
 import CoinLikeList from '../components/CoinLikeList';
+import MyAssets from '../components/MyAssets';
 
 const TABS = [
   { key: "info", label: "개인정보" },
@@ -11,6 +12,7 @@ const TABS = [
   { key: "changePw", label: "비밀번호 변경" },
   { key: "memberMind", label: "심리분석" },
   { key: "coinlikelist", label: "좋아요목록" },
+  { key: "myassets", label: "내 자산" },
 ];
 
 export default function MyPage() {
@@ -200,6 +202,11 @@ export default function MyPage() {
         {activeTab === "coinlikelist" && (
           <div className="flex flex-col">
             <CoinLikeList member_no={member_no} />
+          </div>
+        )}
+        {activeTab === "myassets" && (
+          <div className="flex flex-col">
+            <MyAssets member_no={member_no} />
           </div>
         )}
       </main>
