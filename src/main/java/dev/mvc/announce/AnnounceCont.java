@@ -162,13 +162,57 @@ public class AnnounceCont {
 	 */
 	@PutMapping(value="/update/{announce_no}")
 	public ResponseEntity<Announce> update(@PathVariable("announce_no") Long id,
-										@RequestBody Announce announce) {		
-		return service.find_by_id(id).<ResponseEntity<Announce>>map(updateRe->{
-		updateRe.setAnnounce_content(announce.getAnnounce_content());
-		updateRe.setAnnouncetitle(announce.getAnnouncetitle());
-		
-		service.save(updateRe);
-		return ResponseEntity.ok().build();
-		}).orElseGet(() -> ResponseEntity.notFound().build());
+										   @RequestPart("announce") Announce announce, 
+										   @RequestPart(value = "file", required = false) MultipartFile file) {		
+		try {
+			if (file == null || file.isEmpty()) {
+				return service.find_by_id(id).<ResponseEntity<Announce>>map(updateRe->{
+				updateRe.setAnnounce_content(announce.getAnnounce_content());
+				updateRe.setAnnouncetitle(announce.getAnnouncetitle());
+				
+				service.save(updateRe);
+				return ResponseEntity.ok().build();
+				}).orElseGet(() -> ResponseEntity.notFound().build());
+			}
+				String target = file.getOriginalFilename();
+		        System.out.println("target -> " + target);
+		        String announceImg = "";
+		         if (file.getOriginalFilename().endsWith("jpg")) { 
+		        	announceImg = target;
+		         } else if (file.getOriginalFilename().endsWith("jpeg")) {
+		        	announceImg = target;
+		         } else if (file.getOriginalFilename().endsWith("png")) {
+		        	announceImg = target;
+		         }     
+		      
+		       
+		         announce.setFile(announceImg);
+	
+		       // 절대 경로 객체 생성
+		       Path destination = storageLocation.resolve(
+		           Paths.get(announceImg)
+		       ).normalize().toAbsolutePath();
+		       
+		       System.out.println("-> destination: " + destination);
+		       // -> destination: C:\kd8\deploy\issue_v2jpac\home\storage\home.jpg
+	
+		       // 디렉터리 경로 위·변조 방지
+		       if (!destination.getParent().equals(storageLocation.toAbsolutePath())) {
+		           return ResponseEntity.notFound().build();
+		       }
+	
+		       file.transferTo(destination); // 서버에 저장
+	
+		       return service.find_by_id(id).<ResponseEntity<Announce>>map(updateRe->{
+					updateRe.setAnnounce_content(announce.getAnnounce_content());
+					updateRe.setAnnouncetitle(announce.getAnnouncetitle());
+					updateRe.setFile(announce.getFile());
+					
+					service.save(updateRe);
+				return ResponseEntity.ok().build();
+				}).orElseGet(() -> ResponseEntity.notFound().build());
+		} catch (IOException e) {
+		       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // 500
+		}
 	}
 }
