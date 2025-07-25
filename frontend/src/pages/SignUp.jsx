@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getIP, getNowDate } from '../components/Tool';
+import ImageUpload from '../components/ImageUpload';
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -23,8 +24,7 @@ export default function SignUp() {
   const [address1, setAddress1] = useState('');
   const [address2, setAddress2] = useState('');
   const [nick, setNick] = useState('');
-  const [img, setImg] = useState(null);
-  const [imgURL, setImgURL] = useState(null);
+  const [file, setFile] = useState(null);
 
   // Step1 input refs
   const emailRef = useRef(null);
@@ -56,7 +56,7 @@ export default function SignUp() {
 
   const openDaumPostcode = () => {
     new window.daum.Postcode({
-      oncomplete: function(data) {
+      oncomplete: function (data) {
         setZipcode(data.zonecode);
         setAddress1(data.roadAddress || data.jibunAddress);
         addr2Ref.current?.focus();
@@ -94,7 +94,7 @@ export default function SignUp() {
     formData.append('member', new Blob([JSON.stringify(member)], {
       type: 'application/json'
     }));
-    if (img) formData.append('file', img);
+    if (file) formData.append('file', file);
 
     try {
       const res = await fetch(`http://${getIP()}:9093/member/create`, {
@@ -112,15 +112,6 @@ export default function SignUp() {
       alert('서버 오류 발생');
     }
   };
-
-  // 이미지 미리보기
-  const handleImg = (e) => {
-    const file = e.target.files[0];
-    setImg(file);
-    if (file) setImgURL(URL.createObjectURL(file));
-    else setImgURL('');
-  };
-
 
 
   // 스타일 공통 변수로 선언 (가독성↑, 재사용)
@@ -368,23 +359,13 @@ export default function SignUp() {
               </div>
               <div>
                 <label className="block text-sm">프로필 이미지</label>
-                <input
-                  ref={imgRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImg}
-                  className="w-full"
-                  onKeyDown={e => {
-                    if (e.key === 'Enter') { e.preventDefault(); }
-                  }}
+                <ImageUpload
+                  value={file}
+                  onChange={setFile}
+                  // originUrl={기존이미지 있으면 주소}
+                  // previewSize={96}
+                  label="이미지 업로드"
                 />
-                {/* 이미지 미리보기 */}
-                {imgURL &&
-                  <div className="mt-2 flex justify-center">
-                    <img src={imgURL} alt="preview"
-                      className="w-24 h-24 rounded-full object-cover border-2 border-indigo-400 shadow" />
-                  </div>
-                }
               </div>
               <div className="flex justify-between">
                 <button type="button" onClick={() => setStep(1)} className="px-4 py-2 bg-gray-200 rounded">이전으로</button>
