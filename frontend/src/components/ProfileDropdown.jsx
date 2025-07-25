@@ -7,7 +7,6 @@ import { jwtDecode } from 'jwt-decode';
 import basic from "../images/profile.png"
 
 const defaultMenu = [
-  { id: 'coincreate', label: '코인 생성하기', to: '/coin/create' },
   { id: 'mypage', label: '마이페이지', to: '/mypage' },
   { id: 'signout',   label: '로그아웃',   to: '/member/logout', danger: true },
 ];
