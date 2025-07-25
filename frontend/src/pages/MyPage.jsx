@@ -4,6 +4,8 @@ import { getIP } from '../components/Tool';
 import { jwtDecode } from 'jwt-decode';
 import mind from '../ai/Mind';
 import CoinLikeList from '../components/CoinLikeList';
+import MyAssets from '../components/MyAssets';
+import ProfileImageEdit from '../components/ProfileImageEdit';
 
 const TABS = [
   { key: "info", label: "개인정보" },
@@ -11,16 +13,15 @@ const TABS = [
   { key: "changePw", label: "비밀번호 변경" },
   { key: "memberMind", label: "심리분석" },
   { key: "coinlikelist", label: "좋아요목록" },
+  { key: "myassets", label: "내 자산" },
 ];
 
 export default function MyPage() {
   const [member, setMember] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [imgFile, setImgFile] = useState(null);      // 실제 파일
-  const [imgPreview, setImgPreview] = useState(null); // 미리보기 URL
   const [isUploading, setIsUploading] = useState(false);
   const [myNurung, setMyNurung] = useState(0);
-  const { getDeal,createmind,mindata,load,list,info } = mind();
+  const { getDeal, createmind, mindata, load, list, info } = mind();
 
   // 예시
   // const { coin_no } = useParams(); // coin_no 파라미터 받아오기
@@ -31,15 +32,15 @@ export default function MyPage() {
   if (jwt != null) {
     try {
       userInfo = jwtDecode(jwt);
-    } catch (err) {}
+    } catch (err) { }
   }
   const member_no = userInfo?.member_no;
   const filtermember = mindata.find(item => item.member.member_no == member_no)
 
   // 딜 정보 담기
-  useEffect(()=> {
+  useEffect(() => {
     getDeal()
-  },[])
+  }, [])
 
   useEffect(() => {
     if (!member_no) return;
@@ -53,32 +54,32 @@ export default function MyPage() {
 
     // 보유 누렁
     fetch(`http://${getIP()}:9093/pay/my/${member_no}`, {
-        method: 'GET',
-        headers: { 'Authorization': jwt }
+      method: 'GET',
+      headers: { 'Authorization': jwt }
     })
-        .then(res => res.json())
-        .then(data => setMyNurung(data))
-        .catch(err => setMyNurung(0));
+      .then(res => res.json())
+      .then(data => setMyNurung(data))
+      .catch(err => setMyNurung(0));
   }, [member_no]);
 
-    // 보유 코인
-    // useEffect(() => {
-    //   const fetchDetail = () => {
-    //     fetch(`http://${getIP()}:9093/coin/${coin_no}`)
-    //       .then(res => res.json())
-    //       .then(data => {
-    //         setDetail(data);
-    //       })
-    //       .catch(err => {
-    //         console.error(err);
-    //       });
-    //   };
-    //   fetchDetail();
-    // }, [coin_no]);
+  // 보유 코인
+  // useEffect(() => {
+  //   const fetchDetail = () => {
+  //     fetch(`http://${getIP()}:9093/coin/${coin_no}`)
+  //       .then(res => res.json())
+  //       .then(data => {
+  //         setDetail(data);
+  //       })
+  //       .catch(err => {
+  //         console.error(err);
+  //       });
+  //   };
+  //   fetchDetail();
+  // }, [coin_no]);
 
-    if (!member) {
-      return <div className="text-center p-8">로딩중...</div>;
-    }
+  if (!member) {
+    return <div className="text-center p-8">로딩중...</div>;
+  }
 
 
   return (
@@ -87,12 +88,38 @@ export default function MyPage() {
       <aside className="w-60 bg-white border-r rounded-l-2xl flex flex-col items-center py-8">
         {/* Coin thumbnail & info */}
         <div className="flex flex-col items-center mb-10">
-          <img
-            src='/nurung.png'
-            className="w-20 h-20 rounded-full bg-blue-200 mb-4 flex items-center justify-center text-4xl font-bold text-blue-600">
-          </img>
-          <div className="text-lg font-semibold">{member.member_nick}</div>
-          <div className="text-gray-500 text-xs">{member.memberId}</div>
+          <div className="flex flex-col items-center mb-10">
+            <div className="flex flex-col items-center mb-1 relative group">
+              {/* 프로필 이미지 + 오버레이 */}
+              <img
+                src={
+                  member?.member_img
+                    ? `http://${getIP()}:9093/home/storage/${member.member_img}`
+                    : "/nurung.png"
+                }
+                alt="프로필"
+                className="rounded-full object-cover border-2 border-blue-300"
+                style={{ width: 160, height: 160, cursor: "pointer" }}
+                onClick={() => setModalOpen(true)}
+              />
+              {/* Hover Layer */}
+              <div
+                className="absolute inset-0 rounded-full bg-black bg-opacity-40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer transition"
+                onClick={() => setModalOpen(true)}
+                tabIndex={0}
+                role="button"
+              >
+                <svg className="w-7 h-7 text-white mb-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a4 4 0 01-2.828 1.172H7v-2a4 4 0 011.172-2.828z" />
+                </svg>
+                <span className="text-white text-xs font-semibold">프로필 편집</span>
+              </div>
+            </div>
+            <div className="text-lg font-semibold mt-3">{member.member_nick}</div>
+            <div className="text-gray-500 text-xs">{member.memberId}</div>
+          </div>
+          {/* <div className="text-lg font-semibold">{member.member_nick}</div>
+          <div className="text-gray-500 text-xs">{member.memberId}</div> */}
         </div>
         {/* Vertical Tabs */}
         <nav className="flex flex-col w-full gap-1">
@@ -129,12 +156,12 @@ export default function MyPage() {
               <div className="bg-blue-600 rounded-xl text-white p-6 shadow-lg">
                 <div className="text-lg font-semibold mb-2">보유금액</div>
                 <div className="text-3xl font-bold mb-4">
-                {
-                  typeof myNurung === 'object'
-                    ? (myNurung.message || JSON.stringify(myNurung))
-                    : Number(myNurung).toLocaleString()
-                } 누렁
-              </div>
+                  {
+                    typeof myNurung === 'object'
+                      ? (myNurung.message || JSON.stringify(myNurung))
+                      : Number(myNurung).toLocaleString()
+                  } 누렁
+                </div>
                 <div className="text-xs opacity-80">2025.07.21 15:12 기준</div>
                 <div className="mt-6 text-sm flex items-center gap-2">
                   <span className="bg-white bg-opacity-10 px-2 py-1 rounded-lg">전일대비 ▲ 2.1%</span>
@@ -183,18 +210,18 @@ export default function MyPage() {
         {activeTab === "memberMind" && (
           <div className="flex flex-col">
             <div>
-            {list()} <span className="text-gray-400" style={{marginLeft:'30%',fontSize:'15px'}}>📢 아래 주의사항 한번씩만 읽어주세요</span>
+              {list()} <span className="text-gray-400" style={{ marginLeft: '30%', fontSize: '15px' }}>📢 아래 주의사항 한번씩만 읽어주세요</span>
             </div>
             <div className="bg-gray-300 rounded-xl shadow p-8 w-full min-w-[600px] min-h-[500px] flex flex-col">
               <div>
-              {filtermember && (
-              <span>{mindata[0].mindcontent}</span>
-              )}
-              </div>  
+                {filtermember && (
+                  <span>{mindata[0].mindcontent}</span>
+                )}
+              </div>
             </div>
-              <button onClick={()=>createmind()}>심리분석 요청하기</button>
-              {load()}
-              {info()}
+            <button onClick={() => createmind()}>심리분석 요청하기</button>
+            {load()}
+            {info()}
           </div>
         )}
         {activeTab === "coinlikelist" && (
@@ -202,7 +229,24 @@ export default function MyPage() {
             <CoinLikeList member_no={member_no} />
           </div>
         )}
+        {activeTab === "myassets" && (
+          <div className="flex flex-col">
+            <MyAssets member_no={member_no} />
+          </div>
+        )}
       </main>
+      <ProfileImageEdit
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        memberNo={member_no}
+        originUrl={member?.member_img ? `http://${getIP()}:9093/home/storage/${member.member_img}` : "/nurung.png"}
+        onSuccess={newFileName => {
+          setMember(prev => ({
+            ...prev,
+            member_img: newFileName,
+          }));
+        }}
+      />
     </div>
   );
 }
