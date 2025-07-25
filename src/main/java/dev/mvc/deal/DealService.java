@@ -2,6 +2,7 @@ package dev.mvc.deal;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import dev.mvc.coin.Coin;
+import dev.mvc.coin.CoinDTO;
 import dev.mvc.coin.CoinRepository;
 import dev.mvc.coin.CoinService;
 import dev.mvc.coinlike.CoinlikeRepository;
@@ -357,6 +359,50 @@ public class DealService {
     if (totalCnt == 0) return 0;
     
     return totalPrice / totalCnt;
+  }
+  
+  /** 멤버가 가지고 있는 자산내역 */
+  public List<DealDTO.MyAssetList> get_member_asset(Long member_no) {
+      List<CoinDTO> coinList = coinRepository.getCoinList();
+      List<DealDTO.MyAssetList> myAssetList = new ArrayList<>();
+      
+      for (CoinDTO dto : coinList) {
+        int buyCnt = 0;
+        int sellCnt = 0;
+        Long coinNo = dto.getCoin_no();
+        
+        // 매수 - 매도(매도 주문X) = 가지고 있는 갯수
+        buyCnt = dealRepository.getBuybyCnt(member_no, coinNo);
+        sellCnt = dealRepository.getSellbyCntOk(member_no, coinNo);
+        int totalCnt = buyCnt - sellCnt;
+        
+        if (totalCnt == 0) { // 자산 없음
+          continue;
+        }
+
+        int currentTotalPrice = dto.getCoin_price() * totalCnt; // 현재 총 금액
+        int avgPrice= getAVGprice(member_no, dto.getCoin_no()); // 평단가
+        int previousTotalPrice = avgPrice * totalCnt; // 이전 총 금액
+        
+        // 이득, 퍼센트
+        int profitAmount = currentTotalPrice - previousTotalPrice;
+        double profitPercentage = 0.0;
+        if (previousTotalPrice != 0) {
+          profitPercentage = ((double) profitAmount / previousTotalPrice) * 100;
+          profitPercentage = Math.round(profitPercentage * 10) / 10.0;
+        }
+
+        myAssetList.add(new DealDTO.MyAssetList(
+            coinNo, 
+            dto.getCoin_img(), 
+            totalCnt, 
+            currentTotalPrice, 
+            profitAmount, 
+            profitPercentage
+            ));
+      }
+      System.out.println("myAssetList ->"+ myAssetList);
+      return myAssetList;
   }
   
 }
