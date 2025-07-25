@@ -34,7 +34,10 @@ export default function OrderForm({ coin_no, defaultPrice }) {
   const [price, setPrice] = useState(defaultPrice);
   const [quantity, setQuantity] = useState('');
   const [memberNo, setMemberNo] = useState(null);
-  const [avgPrice, setAvgPrice] = useState(null);
+  const [avgPrice, setAvgPrice] = useState(null); // 평단가
+  const [totalPrice, setTotalPrice] = useState(null); // 평가금액
+  const [profitAmount, setProfitAmount] = useState(null); // 평가손익
+  const [profitPercentage, setProfitPercentage] = useState(null); // 수익률
 
   const jwt = sessionStorage.getItem("jwt");
   // const token = localStorage.getItem('token');
@@ -96,17 +99,23 @@ export default function OrderForm({ coin_no, defaultPrice }) {
   // 평단가 연결
   useEffect(() => {
     if (memberNo && coin_no) {
-      fetch(`http://${getIP()}:9093/deal/getAVGprice/${memberNo}/${coin_no}`, {
+      fetch(`http://${getIP()}:9093/deal/get_one_asset/${memberNo}/${coin_no}`, {
         method: "GET",
         headers: { Authorization: jwt },
       })
         .then(res => res.json())
         .then(data => {
-          setAvgPrice(data);
+          setAvgPrice(data.avg_price ?? null); // 평단가
+          setTotalPrice(data.total_price ?? null); // 평가금액
+          setProfitAmount(data.profitAmount ?? null); // 평가손익
+          setProfitPercentage(data.profitPercentage ?? null); // 수익률
         })
         .catch(err => {
           console.error(err);
           setAvgPrice(null);
+          setTotalPrice(null);
+          setProfitAmount(null);
+          setProfitPercentage(null);
         });
     }
   }, [memberNo, coin_no, jwt]);
@@ -321,28 +330,51 @@ export default function OrderForm({ coin_no, defaultPrice }) {
           </div>
 
           {/* 총 주문 금액 */}
-          <div className='flex justify-between'>
-            <div className='text-right text-xxs text-gray-500'>수수료: 총 주문 금액의 0.05% </div>
-            <div className="text-right text-xs text-gray-500">
-              예상 수수료: {fee.toLocaleString()} 원
-            </div>
-          </div>
-          <div className="text-right text-sm text-gray-500">
+          <div className="text-right text-sm text-gray-500 p-2">
             총 주문 금액: <span className="font-medium">{total}</span> 원
           </div>
           {/* 주문 버튼 */}
           <button type="submit" className="w-full py-2 bg-green-500 text-white rounded font-medium">{side === 'buy' ? '매수' : '매도'} 주문</button>
 
-          {/* 보유 코인 수량및 평균 매수가 */}
-          <div className='text-left text-s'>보유코인</div>
-          <div className='flex justify-between'>
-            <div className='text-xs text-gray-500'>평균매수가</div>
-            <div className='text-xs text-gray-500'>
-              {avgPrice !== null ? avgPrice.toLocaleString() + " 누렁" : "-"}
+          {/* 평단가및 수익률 */}
+          <div>
+            <div className='text-left text-s mb-1'>보유코인</div>
+            <div className='flex flex-col space-y-1'>
+              <div className='flex justify-between'>
+                <div className='text-xs text-gray-500'>평균매수가</div>
+                <div className='text-xs text-gray-500'>
+                  {avgPrice !== null ? avgPrice.toLocaleString() + " 누렁" : "-"}
+                </div>
+              </div>
+              <div className='flex justify-between'>
+                <div className='text-xs text-gray-500'>평가금액</div>
+                <div className='text-xs text-gray-500'>
+                  {totalPrice !== null ? totalPrice.toLocaleString() + " 누렁" : "-"}
+                </div>
+              </div>
+              <div className='flex justify-between'>
+                <div className='text-xs text-gray-500'>평가손익</div>
+                <div className='text-xs text-gray-500'>
+                  {profitAmount !== null ? profitAmount.toLocaleString() + " 누렁" : "-"}
+                </div>
+              </div>
+              <div className='flex justify-between'>
+                <div className='text-xs text-gray-500'>수익률</div>
+                <div className='text-xs text-gray-500'>
+                  {profitPercentage !== null ? profitPercentage.toFixed(1) + " %" : "-"}
+                </div>
+              </div>
             </div>
           </div>
-          <div className='text-xs text-gray-500'>평가금액</div>
-          <div className='text-xs text-gray-500'>수익률</div>
+
+          <div className="border-t border-gray-300 dark:border-gray-600 mt-1"></div>
+
+          <div className='flex justify-between pt-1'>
+            <div className='text-right text-xxs text-gray-500'>수수료: 총 주문 금액의 0.05% </div>
+            <div className="text-right text-xs text-gray-500">
+              예상 수수료: {fee.toLocaleString()} 원
+            </div>
+          </div>
         </div>
       ) : (
 
