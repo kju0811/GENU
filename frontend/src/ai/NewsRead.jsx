@@ -24,7 +24,6 @@ export default function NewsRead() {
   const { newsno } = useParams();
   
   const filteredUserData = userData.filter(reply => reply.news.newsno == newsno);
-  const filteredUser = user.filter((_, index) => userData[index]?.news.newsno == newsno);
   const filteredUserReply = userReply.filter((_, index) => userData[index]?.news.newsno == newsno);
   const filteredShowReply = showReply.filter((_, index) => userData[index]?.news.newsno == newsno);
   const filteredLikes = like.filter(l => l.news?.newsno == newsno);
@@ -313,7 +312,9 @@ useEffect(() => {
               )}
             </div>
           )}
+          <span style={{marginLeft:'5%',marginBottom:'-1%'}}>댓글 {filteredShowReply.length}</span>
         </div>
+
       </div>
 
 
