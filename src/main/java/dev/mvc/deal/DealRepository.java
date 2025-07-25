@@ -37,7 +37,7 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
       + "WHERE d.deal_type = 1 "
       + "AND d.coin_no = :coin_no "
       + "AND d.deal_date BETWEEN "
-      + "(SYSTIMESTAMP AT TIME ZONE 'Asia/Seoul') - INTERVAL '1' DAY "
+      + "(SYSTIMESTAMP AT TIME ZONE 'Asia/Seoul') - INTERVAL '1' HOUR "
       + "AND (SYSTIMESTAMP AT TIME ZONE 'Asia/Seoul')", nativeQuery = true)
   Integer getTotalType1(@Param("coin_no") Long coin_no);
 
@@ -46,7 +46,7 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
       + "WHERE d.deal_type = 2 "
       + "AND d.coin_no = :coin_no "
       + "AND d.deal_date BETWEEN "
-      + "(SYSTIMESTAMP AT TIME ZONE 'Asia/Seoul') - INTERVAL '1' DAY "
+      + "(SYSTIMESTAMP AT TIME ZONE 'Asia/Seoul') - INTERVAL '1' HOUR "
       + "AND (SYSTIMESTAMP AT TIME ZONE 'Asia/Seoul')", nativeQuery = true)
   Integer getTotalType2(@Param("coin_no") Long coin_no);
   
