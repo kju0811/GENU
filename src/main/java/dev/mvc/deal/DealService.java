@@ -331,7 +331,7 @@ public class DealService {
     return dealRepository.findRecentDealsTwoweeks(member_no, twoWeeksAgo);
   }
   
-  /** 평단가 반환 */
+  /** 평단가 반환, 가격, 갯수 반환*/
   public List<Integer> getAVGprice(Long member_no, Long coin_no) {
     // Oracle이 처리할 수 있는 안전한 최소 날짜
     LocalDateTime safeMinDate = LocalDateTime.of(1900, 1, 1, 0, 0);
@@ -347,19 +347,23 @@ public class DealService {
     int totalPrice = 0;
     int totalCnt = 0;
     
+    // 갯수
+    int bc = dealRepository.getBuybyCnt(member_no, coin_no);
+    int sc = dealRepository.getSellbyCntOk(member_no, coin_no);
+    
     // 평단가 계산
     for (Object[] arr : getList) {
       int p = ((Number) arr[0]).intValue();
       int k = ((Number) arr[1]).intValue();
 
       totalPrice += p*k; // 총합 계산
-      totalCnt += k;
+      totalCnt += k; // 계산을 위한 갯수
     }
     
     List<Integer> list = new ArrayList<>();
     if (totalCnt == 0) return list;
     list.add(totalPrice / totalCnt);
-    list.add(totalCnt);
+    list.add(bc - sc);
     
     return list;
   }
@@ -370,10 +374,12 @@ public class DealService {
       List<DealDTO.MyAssetList> myAssetList = new ArrayList<>();
       
       for (CoinDTO dto : coinList) {
-        List<Integer> getList = getAVGprice(member_no, dto.getCoin_no()); // 평단가, 갯수
-        int avgPrice = getList.get(0);
-        int totalCnt = getList.get(1);
+        List<Integer> getList = getAVGprice(member_no, dto.getCoin_no()); // 평단가, 가지고 있는 갯수
         
+        if (getList == null || getList.size() < 2 ) continue; // 정보 없음
+
+        int avgPrice = getList.get(0);
+        int totalCnt = getList.get(1); // 가지고 있는 갯수
         if (totalCnt == 0) continue; // 자산 없음
         
         int currentTotalPrice = dto.getCoin_price() * totalCnt; // 현재 총 금액
@@ -389,6 +395,7 @@ public class DealService {
 
         myAssetList.add(new DealDTO.MyAssetList(
             dto.getCoin_no(), 
+            dto.getCoin_name(),
             dto.getCoin_img(), 
             totalCnt, 
             currentTotalPrice, 

@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CoinDTO {
   private Long coin_no;
+  private String coin_name;
   private int coin_price;
   private String coin_img;
 }

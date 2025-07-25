@@ -90,17 +90,17 @@ public class CoinService {
     int netBuy = buyVolume - sellVolume;
     System.out.println("netBuy -> "+netBuy);
     
-    // * 20  -> 20% 보정최대 / 클수록 영향이큼  (조정필요)
+    // * 20  -> 20% 보정최대 / 클수록 영향이큼  (조정중)
     // tanh(x) 크면 결과가 +-1에 거의 수렴 -> 0.01를 곱해
     // 현재 1당 0.02% 적용중
-    double netBuyAdjustment = Math.tanh(netBuy * 0.001) * 10;
+    double netBuyAdjustment = Math.tanh(netBuy * 0.001) * 3;
 
-    // (3) 뉴스 감성 보정 (기사 분석 결과: 0 ~ 1) // 조정할수도?
-    double newsAdjustment = newsSentiment * 3.0;
+    // (3) 뉴스 감성 보정 (기사 분석 결과: 0 ~ 1) -+0.3 -> 하루 -+43.2퍼
+    double newsAdjustment = newsSentiment * 0.3;
     
     // (4) 최종 변화율
     double change = baseChange + netBuyAdjustment + newsAdjustment;
-    change = Math.max(-35, Math.min(35, change)); // -30% ~ +30% 제한
+    change = Math.max(-30, Math.min(30, change)); // -30% ~ +30% 제한
 
     // 출력 로그
     System.out.printf(
