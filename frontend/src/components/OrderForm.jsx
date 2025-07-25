@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { getIP } from "./Tool";
 import { jwtDecode } from 'jwt-decode';
 
-
 const FEE_RATE = 0.0005; // 수수료 비율 0.05%
 
 // 수수료 계산 함수
@@ -29,26 +28,90 @@ const calculateTotal = (price, quantity, side) => {
  * TODO: 백엔드 주문 API 연동
  */
 export default function OrderForm({ coin_no, defaultPrice }) {
+  // 1. state 선언
   const [type, setType] = useState('limit'); // 'limit' | 'market'
-  const [side, setSide] = useState('buy');  // 'buy' | 'sell'
+  const [side, setSide] = useState('buy');   // 'buy' | 'sell'
   const [price, setPrice] = useState(defaultPrice);
   const [quantity, setQuantity] = useState('');
+  const [memberNo, setMemberNo] = useState(null);
+  const [avgPrice, setAvgPrice] = useState(null);
+
+  const jwt = sessionStorage.getItem("jwt");
+  // const token = localStorage.getItem('token');
+  const [myBalance, setMyBalance] = useState(0);       // buy
+  const [myAmount, setMyAmount] = useState(0);         // sell
+  const [myDealList, setMyDealList] = useState([]);    // list
+
+  // 2. useEffect 선언
 
   // 호가창에서 선택한값으로 변경
   useEffect(() => {
     setPrice(defaultPrice);
   }, [defaultPrice]);
 
-  // 총 주문 금액 계산
-  const total = type === 'market'
-    ? '시가'
-    : (price && quantity
-      ? calculateTotal(parseFloat(price), parseFloat(quantity), side).toLocaleString()
-      : 0);
+  // memberNo 세팅 및 잔고/수량/내역 fetch
+  useEffect(() => {
+    try {
+      const decoded = jwtDecode(jwt);
+      console.log(decoded);
+      const decodedMemberNo = decoded.member_no;
+      setMemberNo(decoded.member_no);
 
-  const fee = price && quantity
-    ? calculateFee(parseFloat(price), parseFloat(quantity))
-    : 0;
+      let endpoint = '';
+      let stateSetter;
+
+      if (side === 'buy') {
+        endpoint = `http://${getIP()}:9093/pay/my/${decodedMemberNo}`;
+        stateSetter = setMyBalance;
+      } else if (side === 'sell') {
+        endpoint = `http://${getIP()}:9093/deal/get_total_cnt/${decodedMemberNo}/${coin_no}`
+        stateSetter = setMyAmount;
+      } else if (side === 'list') {
+        endpoint = `http://${getIP()}:9093/deal/find_deal_by_member_coin/${decodedMemberNo}/${coin_no}`
+        stateSetter = setMyDealList;
+      }
+
+      if (endpoint) {
+        fetch(endpoint, {
+          method: 'GET',
+          headers: { 'Authorization': jwt }
+        })
+          .then(result => result.json())
+          .then(data => {
+            console.log("받은 데이터 -> ", data);
+            stateSetter(data);
+          })
+          .catch(err => console.error(err));
+      }
+
+    } catch (err) {
+      console.error("Invalid token:", err.message);
+      setMyBalance(0);
+      setMyAmount(0);
+      setMyDealList([]);
+    }
+
+  }, [jwt, side, coin_no]); // coin_no도 추가해야 안전!
+
+  // 평단가 연결
+  useEffect(() => {
+    if (memberNo && coin_no) {
+      fetch(`http://${getIP()}:9093/deal/getAVGprice/${memberNo}/${coin_no}`, {
+        method: "GET",
+        headers: { Authorization: jwt },
+      })
+        .then(res => res.json())
+        .then(data => {
+          setAvgPrice(data);
+        })
+        .catch(err => {
+          console.error(err);
+          setAvgPrice(null);
+        });
+    }
+  }, [memberNo, coin_no, jwt]);
+
+  // 3. 핸들러 함수
 
   // 수량 비율 설정 핸들러
   const handlePercent = percent => {
@@ -72,14 +135,51 @@ export default function OrderForm({ coin_no, defaultPrice }) {
     }
   };
 
+  // 거래내역에서 취소 시
+  const handleCancel = (dealNo, dealTpye) => {
+    let endpoint = '';
+    console.log("deal_no -> ", dealNo);
+    console.log("dealTpye -> ", dealTpye);
+    if (confirm('정말 해당 매매주문을 취소하시겠습니까?')) {
+      if (dealTpye === 3) { // 매수 주문일 시
+        endpoint = `http://${getIP()}:9093/deal/buydeal/cancel/${dealNo}`;
+      } else if (dealTpye === 4) { // 매도 주문일 시
+        endpoint = `http://${getIP()}:9093/deal/selldeal/cancel/${dealNo}`;
+      }
 
-  let [memberNo, setMemberNo] = useState(null);
-  const jwt = sessionStorage.getItem("jwt");
-  // const token = localStorage.getItem('token');
-  const [myBalance, setMyBalance] = useState(0);       // buy
-  const [myAmount, setMyAmount] = useState(0);         // sell
-  const [myDealList, setMyDealList] = useState([]);    // list
+      fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          Authorization: jwt,
+        },
+      })
+        .then(res => {
+          if (res.ok) {
+            alert("주문이 취소되었습니다.");
+            setMyDealList(prev => prev.filter(item => item.deal_no !== dealNo));
+          } else {
+            throw new Error("주문 취소 실패!");
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          alert("거래 취소 중 오류가 발생했습니다.");
+        });
+    }
+  };
 
+  // 총 주문 금액 계산
+  const total = type === 'market'
+    ? '시가'
+    : (price && quantity
+      ? calculateTotal(parseFloat(price), parseFloat(quantity), side).toLocaleString()
+      : 0);
+
+  const fee = price && quantity
+    ? calculateFee(parseFloat(price), parseFloat(quantity))
+    : 0;
+
+  // 주문 submit
   const handleSubmit = async e => {
     e.preventDefault();
     // TODO: 주문 API 호출 로직
@@ -144,88 +244,9 @@ export default function OrderForm({ coin_no, defaultPrice }) {
       console.error(err);
       alert('서버 오류 발생');
     }
-
-
   };
 
-
-  useEffect(() => {
-    try {
-      const decoded = jwtDecode(jwt);
-      console.log(decoded);
-      const decodedMemberNo = decoded.member_no;
-      setMemberNo(decoded.member_no);
-
-      let endpoint = '';
-      let stateSetter;
-
-      if (side === 'buy') {
-        endpoint = `http://${getIP()}:9093/pay/my/${decodedMemberNo}`;
-        stateSetter = setMyBalance;
-      } else if (side === 'sell') {
-        endpoint = `http://${getIP()}:9093/deal/get_total_cnt/${decodedMemberNo}/${coin_no}`
-        stateSetter = setMyAmount;
-      } else if (side === 'list') {
-        endpoint = `http://${getIP()}:9093/deal/find_deal_by_member_coin/${decodedMemberNo}/${coin_no}`
-        stateSetter = setMyDealList;
-      }
-
-      if (endpoint) {
-        fetch(endpoint, {
-          method: 'GET',
-          headers: { 'Authorization': jwt }
-        })
-          .then(result => result.json())
-          .then(data => {
-            console.log("받은 데이터 -> ", data);
-            stateSetter(data);
-          })
-          .catch(err => console.error(err));
-      }
-
-    } catch (err) {
-      console.error("Invalid token:", err.message);
-      setMyBalance(0);
-      setMyAmount(0);
-      setMyDealList([]);
-    }
-
-  }, [jwt, side])
-
-  // 거래내역에서 취소 시
-  const handleCancel = (dealNo, dealTpye) => {
-    let endpoint = '';
-    console.log("deal_no -> ", dealNo);
-    console.log("dealTpye -> ", dealTpye);
-    if (confirm('정말 해당 매매주문을 취소하시겠습니까?')) {
-      if (dealTpye === 3) { // 매수 주문일 시
-        endpoint = `http://${getIP()}:9093/deal/buydeal/cancel/${dealNo}`;
-      } else if (dealTpye === 4) { // 매도 주문일 시
-        endpoint = `http://${getIP()}:9093/deal/selldeal/cancel/${dealNo}`;
-      }
-
-      fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          Authorization: jwt,
-        },
-      })
-        .then(res => {
-          if (res.ok) {
-            alert("주문이 취소되었습니다.");
-            setMyDealList(prev => prev.filter(item => item.deal_no !== dealNo));
-          } else {
-            throw new Error("주문 취소 실패!");
-          }
-        })
-        .catch(err => {
-          console.error(err);
-          alert("거래 취소 중 오류가 발생했습니다.");
-        });
-    }
-  };
-
-
+  // 4. 렌더링 return
   return (
     <form onSubmit={handleSubmit} className="bg-white dark:bg-[#1E2028] min-w-[300px] min-h-[500px] max-h-[500px] rounded-lg p-4 shadow space-y-4">
       {/* 매수/매도/내역 탭 */}
@@ -236,7 +257,7 @@ export default function OrderForm({ coin_no, defaultPrice }) {
       </div>
 
       {side !== 'list' ? (
-        <>
+        <div>
           {/* 주문 유형 선택 */}
           <div className="flex space-x-2">
             <button type="button" onClick={() => setType('limit')} className={`${type === 'limit' ? 'font-medium' : 'text-gray-500'} text-sm`}>지정가</button>
@@ -284,6 +305,10 @@ export default function OrderForm({ coin_no, defaultPrice }) {
             <input
               type="number"
               value={quantity}
+              min="1"
+              step="1"
+              inputMode="numeric"
+              pattern="[0-9]*"
               onChange={e => setQuantity(e.target.value)}
               className="w-full mt-1 p-2 border rounded bg-gray-50 dark:bg-[#2A2C36]"
               placeholder="0" />
@@ -307,9 +332,22 @@ export default function OrderForm({ coin_no, defaultPrice }) {
           </div>
           {/* 주문 버튼 */}
           <button type="submit" className="w-full py-2 bg-green-500 text-white rounded font-medium">{side === 'buy' ? '매수' : '매도'} 주문</button>
-        </>
+
+          {/* 보유 코인 수량및 평균 매수가 */}
+          <div className='text-left text-s'>보유코인</div>
+          <div className='flex justify-between'>
+            <div className='text-xs text-gray-500'>평균매수가</div>
+            <div className='text-xs text-gray-500'>
+              {avgPrice !== null ? avgPrice.toLocaleString() + " 누렁" : "-"}
+            </div>
+          </div>
+          <div className='text-xs text-gray-500'>평가금액</div>
+          <div className='text-xs text-gray-500'>수익률</div>
+        </div>
       ) : (
+
         <div>
+          {/* 거래내역탭 */}
           <h5 className="text-lg font-semibold text-center mb-2">🧾 거래 내역</h5>
           <ul className="w-full max-h-[330px] overflow-y-auto flex flex-col gap-3">
             {myDealList.length > 0 ? myDealList.map((item, idx) => (

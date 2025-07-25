@@ -41,21 +41,32 @@ import { getInitialMessages } from "./components/chatCompnents";
 import CoinInfo from "./components/CoinInfo";
 import OrderTab from "./components/OrderTab";
 import CommunityFeed from "./components/CommunityFeed";
+import { jwtDecode } from "jwt-decode";
+import Forbidden from "./pages/Forbidden";
 
 function App() {
   const { close, hideNavbar,hideChatbot } = useGlobal();
   const getmsg = getInitialMessages();
+  const jwt = sessionStorage.getItem('jwt');
+    let userInfo = null;
+    if (jwt != null) {
+      try {
+        userInfo = jwtDecode(jwt);
+      } catch (err) {
+        console.error("JWT 디코딩 오류:", err);
+      }
+    } 
+
+  const role = userInfo?.role;
   return (
     <>
       {!hideNavbar && <Navbar />}
       <Routes>
         <Route path="/" element={<Home />} /> {/* <Link to="/"> */}
         <Route path="/SignUp" element={<SignUp />} /> 
-        <Route path="/ai/news" element={<News />} />
         <Route path="/ai/newsfind" element={<NewsFind/>} />
         <Route path="/ai/read/:newsno" element={<NewsRead/>} />
         {/* <Route path="/attendance/:attendance_no" element={<Attendance/>} /> */}
-        <Route path="/coin/create" element={<CoinCreate/>} />
         <Route path="/coinlist" element={<CoinList />} />
         <Route path="/coin/:coin_no/*" element={<CoinDetail />}>
           <Route path="order" element={<OrderTab />} />
@@ -67,15 +78,31 @@ function App() {
         <Route path="/calendar" element={<Schedule/>} />
         <Route path="/coin/update/:coin_no" element={<CoinUpdate/>} />
         <Route path="/coin/tickList/:coin_no" element={<OrderBook/>} />
-        <Route path="/member" element={<MemberList />} />
-        <Route path="/mypage" element={<MyPage />} />
-        <Route path="/announce" element={<Announce />} />
         <Route path="/announce_find" element={<Announce_find />} />
         <Route path="/mindfind" element={<Mindfind/>} />
         <Route path="/announce_read/:announce_no" element={<Announce_read />} />
         <Route path="/deal/dealList/:member_no" element={<DealList/>} />
         <Route path="/notification/find_by_MemberNotification/:member_no" element={<NotificationLog/>} />
         <Route path="/findidpw" element={<FindIdPw/>} />
+
+        { role == "USER" || role == "ADMIN" ? (<Route path="/mypage" element={<MyPage />} />) : (<Route path="/mypage" element={<Forbidden/>} />)}
+
+        { role == "ADMIN" ? (
+        <>
+          <Route path="/ai/news" element={<News />} />
+          <Route path="/coin/create" element={<CoinCreate />} />
+          <Route path="/announce" element={<Announce />} />
+          <Route path="/member" element={<MemberList />} />
+        </>
+        ) :
+        (
+        <>
+        <Route path="/ai/news" element={<Forbidden/>} />
+        <Route path="/coin/create" element={<Forbidden/>} />
+        <Route path="/announce" element={<Forbidden/>} />
+        <Route path="/member" element={<Forbidden/>} />
+        </>
+        )}
         <Route path="*" element={<NotFound/>} />
 
         <Route path="/sociallogin" element={<SocialLogin />} /> {/* Backend 로그인후 실행, Backend: OAuthSuccessHandler.java */}
@@ -93,7 +120,7 @@ function App() {
           <ChatOpen />
         )
       )}
-      <Footer />
+      {!hideNavbar && <Footer /> }
     </>
   );  
 }
