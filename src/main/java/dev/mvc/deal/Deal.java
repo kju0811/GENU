@@ -53,7 +53,7 @@ public class Deal {
   private Integer deal_fee;
   
   /** 매매 구분 */
-  @Column(name = "deal_type", nullable = false) //, columnDefinition = "NUMBER(1)"
+  @Column(name = "deal_type", length=1, nullable = false) //, columnDefinition = "NUMBER(1)"
   private int deal_type=1;
   
   /**
