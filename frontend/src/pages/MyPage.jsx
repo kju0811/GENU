@@ -89,17 +89,33 @@ export default function MyPage() {
         {/* Coin thumbnail & info */}
         <div className="flex flex-col items-center mb-10">
           <div className="flex flex-col items-center mb-10">
-            <ProfileImageEdit
-              originUrl={member?.member_img ? `http://${getIP()}:9093/home/storage/${member.member_img}` : "/nurung.png"}
-              memberNo={member_no}
-              onSuccess={newFileName => {
-                setMember(prev => ({
-                  ...prev,
-                  member_img: newFileName, // 새 파일명으로 즉시 갱신
-                }));
-              }}
-            />
-            <div className="text-lg font-semibold">{member.member_nick}</div>
+            <div className="flex flex-col items-center mb-1 relative group">
+              {/* 프로필 이미지 + 오버레이 */}
+              <img
+                src={
+                  member?.member_img
+                    ? `http://${getIP()}:9093/home/storage/${member.member_img}`
+                    : "/nurung.png"
+                }
+                alt="프로필"
+                className="rounded-full object-cover border-2 border-blue-300"
+                style={{ width: 160, height: 160, cursor: "pointer" }}
+                onClick={() => setModalOpen(true)}
+              />
+              {/* Hover Layer */}
+              <div
+                className="absolute inset-0 rounded-full bg-black bg-opacity-40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer transition"
+                onClick={() => setModalOpen(true)}
+                tabIndex={0}
+                role="button"
+              >
+                <svg className="w-7 h-7 text-white mb-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a4 4 0 01-2.828 1.172H7v-2a4 4 0 011.172-2.828z" />
+                </svg>
+                <span className="text-white text-xs font-semibold">프로필 편집</span>
+              </div>
+            </div>
+            <div className="text-lg font-semibold mt-3">{member.member_nick}</div>
             <div className="text-gray-500 text-xs">{member.memberId}</div>
           </div>
           {/* <div className="text-lg font-semibold">{member.member_nick}</div>
@@ -219,6 +235,18 @@ export default function MyPage() {
           </div>
         )}
       </main>
+      <ProfileImageEdit
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        memberNo={member_no}
+        originUrl={member?.member_img ? `http://${getIP()}:9093/home/storage/${member.member_img}` : "/nurung.png"}
+        onSuccess={newFileName => {
+          setMember(prev => ({
+            ...prev,
+            member_img: newFileName,
+          }));
+        }}
+      />
     </div>
   );
 }
