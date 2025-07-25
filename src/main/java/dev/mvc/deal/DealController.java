@@ -242,11 +242,17 @@ public class DealController {
     return list;
   }
   
-  /** 평단가 반환 */
-  @GetMapping("/getAVGprice/{member_no}/{coin_no}")
-  public ResponseEntity<Integer> getAVGprice(@PathVariable(name="member_no") Long member_no, @PathVariable("coin_no") Long coin_no) {
-      Integer result = dealService.getAVGprice(member_no, coin_no);
-      return ResponseEntity.ok(result);
+  /** 단일 평단가 반환 */
+  @GetMapping("/get_one_asset/{member_no}/{coin_no}")
+  public ResponseEntity<?> get_one_asset(@PathVariable(name="member_no") Long member_no, @PathVariable("coin_no") Long coin_no) {
+    try {
+      DealDTO.AssetInfo assets = dealService.one_asset(member_no, coin_no);
+      return ResponseEntity.ok(assets);
+    } catch (EntityNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 에러");
+    }
   }
   
   /** 멤버가 가지고 있는 자산내역 */

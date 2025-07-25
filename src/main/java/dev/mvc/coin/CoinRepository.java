@@ -33,4 +33,7 @@ public interface CoinRepository extends JpaRepository<Coin, Long> {
   // 진행중인 코인 dto로 반환
   @Query("SELECT new dev.mvc.coin.CoinDTO(c.coin_no, c.coin_price, c.coin_img) FROM Coin c WHERE c.coin_type = 1")
   List<CoinDTO> getCoinList();
+  
+  @Query("SELECT coin_price FROM Coin WHERE coin_no = :coin_no")
+  Integer getCoinPrice(@Param("coin_no") Long coin_no);
 }
