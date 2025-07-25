@@ -306,13 +306,6 @@ useEffect(() => {
           onChange={(e) => setNewEventTitle(e.target.value)}
           className="w-full border px-2 py-1 mb-3"
         />
-        <textarea
-          placeholder="내용"
-          value={updateEventBody}
-          onChange={(e) => setUpdateEventBody(e.target.value)}
-          style={{ height: 200 }}
-          className="w-full border px-2 py-1 mb-3"
-        />
         <div className="flex justify-end gap-2">
           <button
             onClick={() => setShowUpdateModal(false)}
