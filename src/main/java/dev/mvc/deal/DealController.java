@@ -262,9 +262,11 @@ public class DealController {
       List<DealDTO.MyAssetList> assets = dealService.get_member_asset(member_no);
       return ResponseEntity.ok(assets);
     } catch (EntityNotFoundException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+      e.printStackTrace();  // 에러 상세 로그 출력
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 에러");
+      e.printStackTrace();  // 에러 상세 로그 출력
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 에러");
     }
   }
   
