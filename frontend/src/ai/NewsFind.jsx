@@ -26,7 +26,6 @@ export default function NewsFind() {
       console.error("JWT 디코딩 오류:", err);
     }
   } 
-  console.log('ㄱㅅ주ㅗㅠ굿ㄴ',data);
 
   useEffect(() => {
     fetch(`http://${getIP()}:9093/newslike/liked`, {
@@ -35,7 +34,6 @@ export default function NewsFind() {
       .then(result => result.json()) // 응답
       .then(result => {
         setLikedata(result);
-        console.log("egtwhmrtlbrt",result);
       })
       .catch(err => console.error(err))
   },[])
@@ -132,12 +130,14 @@ export default function NewsFind() {
                     {item.member.member_nick}
                   </span>
                 </div>
-                <span className="text-gray-500 dark:text-gray-400 text-sm" style={{marginLeft:'35%'}}>
-                  ❤️ 좋아요 {likedata.filter(like => like.news.newsno === item.newsno).length}
+                <div style={{width:'170px',position:'relative',left:'14%'}}>
+                <span className="text-gray-500 dark:text-gray-400 text-sm">
+                  ❤️ 좋아요 {likedata.filter(like => like.news.newsno === item.newsno).length}&nbsp;
                 </span>
                 <span className="text-gray-500 dark:text-gray-400 text-sm" >
-                  조회수 {item.newscnt}
+                  👁️ 조회수 {item.newscnt}
                 </span>
+                </div>
                   <button className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition" onClick={()=>{cntup(item.newsno); navigate(`/ai/read/${item.newsno}`);}}>
                     뉴스 보러가기
                   </button>
