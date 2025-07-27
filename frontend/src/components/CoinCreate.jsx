@@ -95,21 +95,11 @@ export default function CoinCreate() {
             </div>
             {/* 카테고리 */}
             <div className="relative">
-              <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">카테고리</label>
-              <button
-                type="button"
-                onClick={() => setDropdownOpen(prev => !prev)}
-                className="w-full rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 p-3 flex justify-between items-center focus:ring-2 focus:ring-indigo-400 transition"
-              >
-                <span className={cate ? "text-gray-900 dark:text-white" : "text-gray-400"}>{cate || '카테고리를 선택하세요'}</span>
-                <svg className={`w-5 h-5 transition-transform ${dropdownOpen ? 'rotate-180' : ''} text-gray-400`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
-              </button>
               {/* 카테고리 드롭다운 */}
-              {dropdownOpen && (
-                <ul className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md shadow-lg max-h-48 overflow-auto">
-                  <Dropdown onSelect={cate => { setCate(cate); setDropdownOpen(false); }} />
-                </ul>
-              )}
+              <div>
+                <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">카테고리</label>
+                <Dropdown value={cate} onSelect={setCate} />
+              </div>
             </div>
             {/* 가격 */}
             <div>
