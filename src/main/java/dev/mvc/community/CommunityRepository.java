@@ -11,6 +11,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CommunityRepository extends JpaRepository<Community, Long> {
-  @Query("SELECT c FROM Community c WHERE c.coin.coin_no = :coinNo")
+  @Query("SELECT c FROM Community c WHERE c.coin.coin_no = :coinNo ORDER BY c.communityDate DESC")
   Page<Community> findByCoinNo(@Param("coinNo") Long coinNo, Pageable pageable);
 }
