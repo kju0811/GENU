@@ -2,7 +2,9 @@ package dev.mvc.deal;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -390,7 +392,8 @@ public class DealService {
             totalCnt, 
             currentTotalPrice, 
             profitAmount, 
-            profitPercentage
+            profitPercentage,
+            previousTotalPrice
             ));
       }
 //      System.out.println("myAssetList ->"+ myAssetList);
@@ -399,6 +402,9 @@ public class DealService {
   
   /** 단일 자산내역 반환 */
   public DealDTO.AssetInfo one_asset(Long member_no, Long coin_no) {
+    
+    Coin coin = coinRepository.findById(coin_no)
+        .orElseThrow(() -> new EntityNotFoundException("해당 코인 정보를 찾을 수 없습니다."));
     
     List<Integer> getList = getAVGprice(member_no, coin_no); // 평단가, 갯수
     int avgPrice = getList.get(0);
@@ -416,8 +422,41 @@ public class DealService {
       profitPercentage = Math.round(profitPercentage * 10) / 10.0;
     }
     
-    DealDTO.AssetInfo asset = new DealDTO.AssetInfo(avgPrice, totalPrice, profitAmount, profitPercentage);
-    
-    return asset;
+    return new DealDTO.AssetInfo(
+        coin.getCoin_no(),
+        coin.getCoin_name(),
+        coin.getCoin_img(),
+        coin.getCoin_price(),
+        coin.getCoin_percentage(),
+        avgPrice,
+        totalPrice,
+        previousTotalPrice,
+        profitAmount,
+        profitPercentage,
+        totalCnt,
+        currentPrice
+    );
   }
+  
+  // 체결강도 + 순매수량 반환
+  public Map<String, Object> getStrengthAndNetBuy(Long coin_no) {
+    int buy = getTotalType1(coin_no);
+    int sell = getTotalType2(coin_no);
+    int netBuy = buy - sell;
+
+    double strength = 0.0;
+    if (buy + sell != 0) {
+        strength = ((double) buy / (buy + sell)) * 100.0;
+        strength = Math.round(strength * 10.0) / 10.0; // 소수점 1자리 반올림
+    }
+
+    Map<String, Object> result = new LinkedHashMap<>();
+    result.put("buy", buy);
+    result.put("sell", sell);
+    result.put("netBuy", netBuy);
+    result.put("strength", strength);
+
+    return result;
+}
+  
 }

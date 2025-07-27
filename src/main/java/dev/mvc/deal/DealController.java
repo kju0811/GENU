@@ -1,6 +1,7 @@
 package dev.mvc.deal;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -270,6 +271,12 @@ public class DealController {
     }
   }
   
+  // 체결강도 + 순매수량 반환
+  @GetMapping("/coin-strength/{coin_no}")
+  public ResponseEntity<Map<String, Object>> getStrengthInfo(@PathVariable("coin_no") Long coin_no) {
+      Map<String, Object> result = dealService.getStrengthAndNetBuy(coin_no);
+      return ResponseEntity.ok(result);
+  }
   
-  
+   
 }
