@@ -50,6 +50,7 @@ export default function OrderForm({ coin_no, defaultPrice }) {
   // 호가창에서 선택한값으로 변경
   useEffect(() => {
     setPrice(defaultPrice);
+    if (type === 'market') setType('limit');
   }, [defaultPrice]);
 
   // memberNo 세팅 및 잔고/수량/내역 fetch
@@ -380,7 +381,7 @@ export default function OrderForm({ coin_no, defaultPrice }) {
 
         <div>
           {/* 거래내역탭 */}
-          <h5 className="text-lg font-semibold text-center mb-2">🧾 거래 내역</h5>
+          <h5 className="text-lg font-semibold text-center mb-2">🧾 예약 내역</h5>
           <ul className="w-full max-h-[330px] overflow-y-auto flex flex-col gap-3">
             {myDealList.length > 0 ? myDealList.map((item, idx) => (
               <li
@@ -408,7 +409,7 @@ export default function OrderForm({ coin_no, defaultPrice }) {
               </li>
             )) : (
               <li className="text-gray-400 py-8 text-center w-full">
-                거래 내역이 없습니다.
+                예약 내역이 없습니다.
               </li>
             )}
           </ul>
