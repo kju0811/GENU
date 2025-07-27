@@ -50,4 +50,13 @@ public class MembermindCont {
 		return list;
 	}
 	
+	/**
+	 * 단건 조회
+	 */
+	@GetMapping("/read/{mindno}")
+	public Membermind read(@PathVariable("mindno") Long mindno) {
+	    return service.read(mindno)
+	            .orElseThrow(() -> new RuntimeException("Mind 분석 결과가 존재하지 않습니다. (mindno=" + mindno + ")"));
+	}
+	
 }
