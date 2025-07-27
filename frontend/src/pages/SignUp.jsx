@@ -247,10 +247,19 @@ export default function SignUp() {
               </div>
               <div>
                 <label className="block text-sm">생년월일*</label>
-                <input ref={birthRef} type="date" value={birth} onChange={e => setBirth(e.target.value)}
+                <input
+                  ref={birthRef}
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={8}
+                  value={birth}
+                  placeholder="YYYYMMDD 예: 20000101"
+                  onChange={(e) => {
+                    const cleaned = e.target.value.replace(/[^0-9]/g, '').slice(0, 8);
+                    setBirth(cleaned);
+                  }}
                   className={inputClass}
                   required
-                  onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); tel1Ref.current?.focus(); } }}
                 />
               </div>
               <div>
