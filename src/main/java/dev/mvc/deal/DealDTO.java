@@ -84,6 +84,7 @@ public class DealDTO {
     private int total_price;
     private int profitAmount;
     private double profitPercentage;
+    private int buyPrice; // 매수원금
   }
 
   /** 단일 평가액 DTO */
@@ -91,9 +92,17 @@ public class DealDTO {
   @AllArgsConstructor
   @NoArgsConstructor
   public static class AssetInfo {
-    private int avg_price;
-    private int total_price;
-    private int profitAmount;
-    private double profitPercentage;
+      private Long coin_no;
+      private String coin_name;
+      private String coin_img;
+      private int coin_price;
+      private double coin_percentage;
+      private int avg_price;
+      private int total_price;
+      private int previousTotalPrice;
+      private int profitAmount;
+      private double profitPercentage;
+      private int totalCnt;
+      private int currentPrice;
   }
 }
