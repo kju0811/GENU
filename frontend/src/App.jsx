@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
@@ -34,8 +34,12 @@ import "react-chatbot-kit/build/main.css";
 import "./style/chat.css";
 import NotFound from "./pages/NotFound";
 import MyPage from "./pages/MyPage";
-import Mindfind from "./ai/MindFind";
 import FindIdPw from "./pages/FindIdPw";
+import CoinLikeList from "./components/CoinLikeList"
+import Portfolio from "./components/Portfolio";
+import Mind from "./ai/Mind";
+import Mindfind from "./ai/MindFind";
+import MindRead from "./ai/MindRead";
 
 import { getInitialMessages } from "./components/chatCompnents";
 import CoinInfo from "./components/CoinInfo";
@@ -45,17 +49,17 @@ import { jwtDecode } from "jwt-decode";
 import Forbidden from "./pages/Forbidden";
 
 function App() {
-  const { close, hideNavbar,hideChatbot } = useGlobal();
+  const { close, hideNavbar, hideChatbot } = useGlobal();
   const getmsg = getInitialMessages();
   const jwt = sessionStorage.getItem('jwt');
-    let userInfo = null;
-    if (jwt != null) {
-      try {
-        userInfo = jwtDecode(jwt);
-      } catch (err) {
-        console.error("JWT 디코딩 오류:", err);
-      }
-    } 
+  let userInfo = null;
+  if (jwt != null) {
+    try {
+      userInfo = jwtDecode(jwt);
+    } catch (err) {
+      console.error("JWT 디코딩 오류:", err);
+    }
+  }
 
   const role = userInfo?.role;
   return (
@@ -63,9 +67,9 @@ function App() {
       {!hideNavbar && <Navbar />}
       <Routes>
         <Route path="/" element={<Home />} /> {/* <Link to="/"> */}
-        <Route path="/SignUp" element={<SignUp />} /> 
-        <Route path="/ai/newsfind" element={<NewsFind/>} />
-        <Route path="/ai/read/:newsno" element={<NewsRead/>} />
+        <Route path="/SignUp" element={<SignUp />} />
+        <Route path="/ai/newsfind" element={<NewsFind />} />
+        <Route path="/ai/read/:newsno" element={<NewsRead />} />
         {/* <Route path="/attendance/:attendance_no" element={<Attendance/>} /> */}
         <Route path="/coinlist" element={<CoinList />} />
         <Route path="/coin/:coin_no/*" element={<CoinDetail />}>
@@ -75,35 +79,48 @@ function App() {
           <Route path="community" element={<CommunityFeed />} />
           <Route index element={<Navigate to="order" replace />} />
         </Route>
-        <Route path="/calendar" element={<Schedule/>} />
-        <Route path="/coin/update/:coin_no" element={<CoinUpdate/>} />
-        <Route path="/coin/tickList/:coin_no" element={<OrderBook/>} />
+        <Route path="/calendar" element={<Schedule />} />
+        <Route path="/coin/update/:coin_no" element={<CoinUpdate />} />
+        <Route path="/coin/tickList/:coin_no" element={<OrderBook />} />
         <Route path="/announce_find" element={<Announce_find />} />
-        <Route path="/mindfind" element={<Mindfind/>} />
+        <Route path="/mindfind" element={<Mindfind />} />
+        <Route path="/mindread/:mindno" element={<MindRead />} />
         <Route path="/announce_read/:announce_no" element={<Announce_read />} />
-        <Route path="/deal/dealList/:member_no" element={<DealList/>} />
-        <Route path="/notification/find_by_MemberNotification/:member_no" element={<NotificationLog/>} />
-        <Route path="/findidpw" element={<FindIdPw/>} />
+        <Route path="/deal/dealList/:member_no" element={<DealList />} />
+        <Route path="/notification/find_by_MemberNotification/:member_no" element={<NotificationLog />} />
+        <Route path="/findidpw" element={<FindIdPw />} />
 
-        { role == "USER" || role == "ADMIN" ? (<Route path="/mypage" element={<MyPage />} />) : (<Route path="/mypage" element={<Forbidden/>} />)}
-
-        { role == "ADMIN" ? (
-        <>
-          <Route path="/ai/news" element={<News />} />
-          <Route path="/coin/create" element={<CoinCreate />} />
-          <Route path="/announce" element={<Announce />} />
-          <Route path="/member" element={<MemberList />} />
-        </>
-        ) :
-        (
-        <>
-        <Route path="/ai/news" element={<Forbidden/>} />
-        <Route path="/coin/create" element={<Forbidden/>} />
-        <Route path="/announce" element={<Forbidden/>} />
-        <Route path="/member" element={<Forbidden/>} />
-        </>
+        {role === "USER" || role === "ADMIN" ? (
+          <Route path="/mypage/*" element={<MyPage />}>
+            <Route path="portfolio" element={<Portfolio />} />
+            {/* <Route path="changeInfo" element={<ChangeInfo />} />
+            <Route path="changePw" element={<ChangePw />} /> */}
+            <Route path="memberMind" element={<Mind />} />
+            <Route path="coinlikelist" element={<CoinLikeList />} />
+            <Route index element={<Navigate to="portfolio" replace />} />
+          </Route>
+        ) : (
+          // 권한 없을경우
+          <Route path="/mypage/*" element={<Forbidden />} />
         )}
-        <Route path="*" element={<NotFound/>} />
+
+        {role == "ADMIN" ? (
+          <>
+            <Route path="/ai/news" element={<News />} />
+            <Route path="/coin/create" element={<CoinCreate />} />
+            <Route path="/announce" element={<Announce />} />
+            <Route path="/member" element={<MemberList />} />
+          </>
+        ) :
+          (
+            <>
+              <Route path="/ai/news" element={<Forbidden />} />
+              <Route path="/coin/create" element={<Forbidden />} />
+              <Route path="/announce" element={<Forbidden />} />
+              <Route path="/member" element={<Forbidden />} />
+            </>
+          )}
+        <Route path="*" element={<NotFound />} />
 
         <Route path="/sociallogin" element={<SocialLogin />} /> {/* Backend 로그인후 실행, Backend: OAuthSuccessHandler.java */}
       </Routes>
@@ -120,9 +137,9 @@ function App() {
           <ChatOpen />
         )
       )}
-      {!hideNavbar && <Footer /> }
+      {!hideNavbar && <Footer />}
     </>
-  );  
+  );
 }
 
 export default App;
