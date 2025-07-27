@@ -15,8 +15,8 @@ const navTabs = [
 
 const adminTab = [
   { label: "코인 생성하기", to: "/coin/create" },
-  { label: "기사 생성하기", to: "/ai/news" },
   { label: "공지사항 생성하기", to: "/announce" },
+  { label: "기사 생성하기", to: "/ai/news" },
   { label: "회원 목록", to: "/member" }
 ];
 
