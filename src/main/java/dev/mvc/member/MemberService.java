@@ -1,6 +1,8 @@
 package dev.mvc.member;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -124,13 +126,17 @@ public class MemberService {
   }
 
   /** 패스워드 찾기 메일로 임시번호 요청 */
-  public void findPw(String memberId) {
-    // 입력받은 id가 있는 아이디인지
+  public Map<String, Object> findPw(String memberId) {
     Member member = memberRepository.findByLocalMemberId(memberId)
         .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 아이디 입니다."));
 
-    mailTool.send(member); // 메일 전송
-  }
+    mailTool.send(member);
+
+    Map<String, Object> result = new HashMap<>();
+    result.put("message", "인증번호가 메일로 발송되었습니다.");
+    result.put("member_no", member.getMember_no());
+    return result;
+}
 
   /** 메일로 온 인증번호 체크 메서드 */
   @Transactional

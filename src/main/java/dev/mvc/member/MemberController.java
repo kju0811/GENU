@@ -233,7 +233,7 @@ public class MemberController {
         return ResponseEntity.ok(member);
     }
 
-    // 이미지
+    // 프로필 이미지
     @PostMapping("/change-profileImage/{member_no}")
     public ResponseEntity<?> changeProfileImage(
       @PathVariable("member_no") Long member_no,
@@ -283,14 +283,15 @@ public class MemberController {
     @PostMapping("/find_by_pw")
     public ResponseEntity<?> findByPw(@RequestParam("memberId") String memberId) {
         try {
-            memberService.findPw(memberId);  // 메일 전송 요청
-            return ResponseEntity.ok("인증번호가 메일로 발송되었습니다.");
+            Map<String, Object> result = memberService.findPw(memberId);
+            return ResponseEntity.ok(result);
         } catch (MemberNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 에러가 발생했습니다.");
         }
     }
+
     
     /**
      * 인증번호 체크 
