@@ -1,81 +1,95 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useParams } from 'react-router-dom';
 import { getIP } from '../components/Tool';
 
-/**
- * OrderBook 컴포넌트 ( 호가창 )
- * - 현재 호가 강조
- */
+const ROW_HEIGHT = 32;
+const VISIBLE_COUNT = 13;
+
 export default function OrderBook({ coin_no, currentPrice, onSelectPrice }) {
   const [data, setData] = useState(null);
+  const [selectedPrice, setSelectedPrice] = useState(null);
   const listRef = useRef(null);
-  const ROW_HEIGHT = 30;
-  const VISIBLE_COUNT = 13;
 
-  // 1) 데이터 로딩
   useEffect(() => {
-    const fetchData = () => {
-      fetch(`http://${getIP()}:9093/coin/orderlist/${coin_no}`)
-        .then(res => res.json())
-        .then(setData)
-        .catch(console.error);
-    }; 
-    fetchData();                                  // 최초 호출
-
-    // const id = setInterval(fetchData, 60000);     // 폴링방식채택 (소켓사용?몰루)
-    // return () => clearInterval(id);
+    fetch(`http://${getIP()}:9093/coin/orderlist/${coin_no}`)
+      .then(res => res.json())
+      .then(setData)
+      .catch(console.error);
   }, [coin_no]);
 
-  // 2) 데이터 포맷
   const prices = data
-    ? Object.entries(data).map(([price, amount]) => ({ price: Number(price), amount }))
+    ? Object.entries(data).map(([price, amount]) => ({
+        price: Number(price),
+        amount: Number(amount),
+      }))
     : [];
-  const sorted = [...prices].sort((a, b) => a.price - b.price);
-  const displayPrices = [...sorted].reverse();
-
-  // 3) 초기 스크롤: 중앙에 currentPrice 위치시키기
-  useEffect(() => {
-    if (listRef.current && currentPrice != null) {
-      const idx = displayPrices.findIndex(p => p.price === currentPrice);
-      const offset = (idx - Math.floor(VISIBLE_COUNT / 2)) * ROW_HEIGHT;
-      listRef.current.scrollTop = Math.max(0, offset);  
-    }
-  }, [displayPrices, currentPrice]);
+  const displayPrices = [...prices].sort((a, b) => b.price - a.price);
+  const mid = Math.floor(displayPrices.length / 2);
 
   if (!data) {
-    return <div className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow text-center">Loading...</div>;
+    return (
+      <div className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow text-center">
+        <div className="space-y-2">
+          {Array.from({ length: VISIBLE_COUNT }).map((_, i) => (
+            <div key={i} className="animate-pulse bg-gray-200 h-7 rounded" />
+          ))}
+        </div>
+      </div>
+    );
   }
-  
-  // 4) 중앙 인덱스 계산
-  const centerIndex = Math.floor(displayPrices.length / 2);
-
 
   return (
-    <div className="w-64 mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
-      <h3 className="text-center text-lg font-semibold p-2 border-b dark:border-gray-700">
-        📈 호가창
+    <div className="w-full max-w-xs mx-auto min-h-[500px] max-h-[500px] bg-white dark:bg-gray-900 rounded-2xl shadow-lg overflow-hidden border border-gray-100 dark:border-gray-700">
+      <h3 className="text-center text-base font-bold p-2 border-b dark:border-gray-700 text-gray-800 dark:text-gray-100 tracking-wide">
+        호가창
       </h3>
       <div
         ref={listRef}
         className="divide-y divide-gray-200 dark:divide-gray-700 overflow-y-auto"
         style={{ maxHeight: ROW_HEIGHT * VISIBLE_COUNT }}
       >
-        {displayPrices.map(({ price, amount }, i) => (
-          <div
-            key={price}
-            onClick={() => onSelectPrice(price)}
-            // i === centerIndex 일 때만 강조
-            className={`flex justify-between items-center px-4 py-2 cursor-pointer transition-colors ${
-              i === centerIndex
-                ? 'bg-blue-100 dark:bg-blue-900 font-medium'
-                : 'hover:bg-gray-100 dark:hover:bg-gray-700'
-            }`}
-            style={{ height: ROW_HEIGHT }}
-          >
-            <span className="text-sm text-gray-800 dark:text-gray-200">{price.toLocaleString()}</span>
-            <span className="text-sm text-green-600 dark:text-green-400">{amount}</span>
-          </div>
-        ))}
+        {displayPrices.map(({ price, amount }, i) => {
+          const isAsk = i < mid;
+          const isBid = !isAsk;
+          const isSelected = price === selectedPrice;
+
+          return (
+            <div
+              key={price + '-' + i}
+              onClick={() => {
+                setSelectedPrice(price);
+                onSelectPrice?.(price);
+              }}
+              className={`
+                flex items-center cursor-pointer select-none transition-colors
+                active:border-4 border-black inline-block active:border-black
+                ${isAsk
+                  ? 'hover:bg-red-50 dark:hover:bg-red-900'
+                  : 'hover:bg-blue-50 dark:hover:bg-blue-900'
+                }
+              `}
+              style={{ height: ROW_HEIGHT }}
+            >
+              {/* 좌측: 매도 대기 수량 */}
+              <div className={`flex-1 text-left pl-2 text-xs sm:text-sm font-semibold
+                ${isAsk ? 'text-red-600 dark:text-red-200' : 'text-transparent'}`}>
+                {isAsk ? amount.toLocaleString() : '-'}
+              </div>
+              {/* 중앙: 가격 */}
+              <div className={`
+                flex-1 text-center text-base sm:text-lg font-mono
+                ${isAsk ? 'text-red-600' : 'text-blue-700'}
+                dark:text-white
+              `}>
+                {price.toLocaleString()}
+              </div>
+              {/* 우측: 매수 대기 수량 */}
+              <div className={`flex-1 text-right pr-2 text-xs sm:text-sm font-semibold
+                ${isBid ? 'text-blue-700 dark:text-blue-300' : 'text-transparent'}`}>
+                {isBid ? amount.toLocaleString() : '-'}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
