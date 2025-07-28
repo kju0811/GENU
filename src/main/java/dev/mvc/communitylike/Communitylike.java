@@ -18,7 +18,6 @@ import lombok.ToString;
 
 import java.time.LocalDateTime;
 
-import dev.mvc.coin.Coin;
 import dev.mvc.community.Community;
 import dev.mvc.member.Member;
 
@@ -41,7 +40,7 @@ public class Communitylike {
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "communitylike_seq")
   @SequenceGenerator(name = "communitylike_seq", sequenceName = "COMMUNITYLIKE_SEQ", allocationSize = 1)
   @Column(name = "communitylike_no")
-  private Long communitylike_no;
+  private Long communitylikeNo;
 
   /** 좋아요 누른 날짜 */
   @Column(name = "communitylike_date", nullable = false, columnDefinition = "DATE")
@@ -49,12 +48,14 @@ public class Communitylike {
 
   /** 회원번호 외래키 */
   @ManyToOne
-  @JoinColumn(name = "member_no", nullable = false)
+  @JoinColumn(name = "member_no", nullable = false, referencedColumnName = "member_no",
+      columnDefinition = "NUMBER(10)")
   private Member member;
   
   /** 커뮤니티번호 외래키 */
   @ManyToOne
-  @JoinColumn(name = "community_no", nullable = false)
+  @JoinColumn(name = "community_no", nullable = false, referencedColumnName = "community_no",
+      columnDefinition = "NUMBER(10)")
   private Community community;
   
   @PrePersist
