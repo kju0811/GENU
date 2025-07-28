@@ -137,6 +137,7 @@ export default function Login({ isOpen, onClose }) {
   };
 
   const test = () => { setId('minjun@noye.net'); setPassword('1234'); };
+  const nomal = () => { setId('you@naver.com'); setPassword('1234'); };
 
   if (!isOpen) return null;
 
@@ -222,6 +223,12 @@ export default function Login({ isOpen, onClose }) {
             className="w-full py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition"
           >
             로그인
+          </button>
+          <button
+            type="button"
+            className="w-full py-2 bg-green-400 text-white rounded-md hover:bg-green-700 transition"
+            onClick={nomal}>
+            테스트 일반계정
           </button>
           <button
             type="button"
