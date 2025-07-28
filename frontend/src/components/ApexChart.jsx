@@ -15,7 +15,7 @@ export default function ApexChart({ coin_no, days = 30 }) {
 
   const options = {
     chart: { type: 'candlestick', height: 350, toolbar: { show: true } },
-    title: { text: `${coin_no}번 코인 캔들스틱 (${days}일)`, align: 'left' },
+    title: { text: `코인 캔들스틱 (${days}일)`, align: 'left' },
     xaxis: { type: 'datetime' },
     yaxis: { 
       opposite: true, 
