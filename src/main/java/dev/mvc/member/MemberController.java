@@ -334,7 +334,7 @@ public class MemberController {
         if (optionalMember.isPresent()) {
         	Member member = optionalMember.get();
         	member.setMember_grade(dto.getGrade());
-            memberService.grade(member);
+            memberService.saveUpdate(member);
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.notFound().build();

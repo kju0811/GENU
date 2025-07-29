@@ -176,7 +176,7 @@ function Announce_read() {
             </button>
             <button
               type="button"
-              onClick={() => setUpdate(false)}
+              onClick={() =>{ setUpdate(false); window.location.reload();}}
               className="px-6 py-2 bg-gray-300 hover:bg-gray-400 text-gray-700 rounded-lg transition"
             >
               수정 취소
