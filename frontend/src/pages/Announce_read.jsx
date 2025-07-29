@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getIP } from "../components/Tool";
 import { useParams, useNavigate } from "react-router-dom";
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 function Announce_read() {
   const [data, setData] = useState(null);
