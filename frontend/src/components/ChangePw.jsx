@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { getIP } from "../components/Tool";
+import { jwtDecode } from "jwt-decode";
 
 export default function ChangePw() {
   const [oriPassword, setOriPassword] = useState("");
