@@ -459,4 +459,10 @@ public class DealService {
     return result;
 }
   
+  // 체결된 목록
+  public List<Deal> find_confirmed_deal_by_member_coin(Long member_no, Long coin_no) {
+    return dealRepository.findConfirmedDealsByMemberCoin(member_no, coin_no);
+  }
+
+  
 }

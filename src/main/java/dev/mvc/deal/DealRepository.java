@@ -118,4 +118,8 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
       + "AND d.deal_date > :last_zero_date")
   List<Object[]> getAVGprice(@Param("member_no") Long member_no, @Param("coin_no") Long coin_no, @Param("last_zero_date") LocalDateTime lastZeroDate);
   
+  // 체결된 목록
+  @Query("SELECT d FROM Deal d WHERE d.member.member_no = :member_no AND d.coin.coin_no = :coin_no AND d.deal_type IN (1, 2) ORDER BY deal_date DESC")
+  List<Deal> findConfirmedDealsByMemberCoin(@Param("member_no") Long member_no, @Param("coin_no") Long coin_no);
+
 }
