@@ -26,10 +26,15 @@ public class MemberService {
   private final MailTool mailTool;
   private final AuthRepository authRepository;
 
-  /** 회원 생성 또는 수정 */
+  /** 회원 생성*/
   public Member save(Member member) {
     String encodedPw = encode.encode(member.getMemberPw());
     member.setMemberPw(encodedPw);
+    return memberRepository.save(member);
+  }
+  
+  /** 암호화X 수정 */
+  public Member saveUpdate(Member member) {
     return memberRepository.save(member);
   }
   
@@ -77,22 +82,6 @@ public class MemberService {
   /** 회원 삭제 */
   public void deleteEntity(Long member_no) {
     memberRepository.deleteById(member_no);
-  }
-
-  // 마이페이지 정보 수정
-  public Member updateMyPage(Long member_no, Member update) {
-    Member member = memberRepository.findById(member_no).orElseThrow(() -> new MemberNotFoundException("회원 없음"));
-
-    // 수정 가능한 필드만 적용
-    member.setMember_tel(update.getMember_tel());
-    member.setZipcode(update.getZipcode());
-    member.setAddress1(update.getAddress1());
-    member.setAddress2(update.getAddress2());
-    member.setMember_nick(update.getMember_nick());
-    member.setMember_name(update.getMember_name());
-    // 필요시 생일 등 추가
-
-    return memberRepository.save(member);
   }
 
   // 프로필 이미지 변경 (파일 저장 경로 맞게 조정)

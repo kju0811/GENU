@@ -179,19 +179,23 @@ public class MemberController {
     /** 회원 수정 */
     @PutMapping("/{member_no}")
     public ResponseEntity<Member> update(
-        @PathVariable Long member_no,
+        @PathVariable("member_no") Long member_no,
         @RequestBody Member updated
     ) {
         return memberService.findByMemberNoOptional(member_no)
             .map(existing -> {
+                // 기존 Member 엔티티에서 수정할 필드만 골라 덮어쓰기
+                existing.setMemberId(updated.getMemberId());          // 아이디 수정 허용 시
                 existing.setMember_name(updated.getMember_name());
-                existing.setMemberPw(updated.getMemberPw());
+                existing.setMember_nick(updated.getMember_nick());
                 existing.setMember_tel(updated.getMember_tel());
                 existing.setZipcode(updated.getZipcode());
                 existing.setAddress1(updated.getAddress1());
                 existing.setAddress2(updated.getAddress2());
-                existing.setMember_nick(updated.getMember_nick());
-                Member saved = memberService.save(existing);
+                
+                // 비밀번호나 가입일 등은 건드리지 않음
+                
+                Member saved = memberService.saveUpdate(existing);
                 return ResponseEntity.ok(saved);
             })
             .orElseGet(() -> ResponseEntity.notFound().build());
@@ -224,13 +228,6 @@ public class MemberController {
     @GetMapping("/mypage")
     public ResponseEntity<Member> findByMemberNoOptional(Long member_no) {
       return ResponseEntity.ok().build();
-    }
-
-    // 마이페이지 정보 수정
-    @PostMapping("/mypage")
-    public ResponseEntity<?> updateMyPage(@PathVariable Long member_no, @RequestBody Member update) {
-      Member member = memberService.updateMyPage(member_no, update);
-        return ResponseEntity.ok(member);
     }
 
     // 프로필 이미지
