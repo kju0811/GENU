@@ -81,7 +81,6 @@ function App() {
           <Route index element={<Navigate to="order" replace />} />
         </Route>
         <Route path="/calendar" element={<Schedule />} />
-        <Route path="/coin/update/:coin_no" element={<CoinUpdate />} />
         <Route path="/coin/tickList/:coin_no" element={<OrderBook />} />
         <Route path="/announce_find" element={<Announce_find />} />
         <Route path="/mindfind" element={<Mindfind />} />
@@ -111,6 +110,7 @@ function App() {
             <Route path="/coin/create" element={<CoinCreate />} />
             <Route path="/announce" element={<Announce />} />
             <Route path="/member" element={<MemberList />} />
+            <Route path="/coin/update/:coin_no" element={<CoinUpdate />} />
           </>
         ) :
           (
@@ -119,6 +119,7 @@ function App() {
               <Route path="/coin/create" element={<Forbidden />} />
               <Route path="/announce" element={<Forbidden />} />
               <Route path="/member" element={<Forbidden />} />
+              <Route path="/coin/update/:coin_no" element={<Forbidden />} />
             </>
           )}
         <Route path="*" element={<NotFound />} />
