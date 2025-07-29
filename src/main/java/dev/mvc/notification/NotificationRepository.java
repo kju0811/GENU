@@ -16,6 +16,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
   
   /** 알림내역 */
   @Query("SELECT n FROM Notification n "
-      + "WHERE n.member.member_no = :member_no")
+      + "WHERE n.member.member_no = :member_no ORDER BY n.notification_date DESC")
   List<Notification> getMemberNotificationList(@Param("member_no") Long member_no);
+
 }

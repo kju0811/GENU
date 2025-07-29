@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, useNavigate, useLocation, useParams } from 'react-router-dom';
 import { getIP } from '../components/Tool';
-import OrderTab from "../components/OrderTab";
-import CoinInfo from "../components/CoinInfo";
-// import RelatedNews from "../components/RelatedNews";
-import CommunityFeed from "../components/CommunityFeed";
 import NoticeModal from '../components/NoticeModal'
 
 import { useLikeToggle } from '../components/useLikeToggle';
@@ -66,12 +62,10 @@ export default function CoinDetail() {
   const tabs = [
     { id: 'order', label: '차트 · 호가' },
     { id: 'info', label: '종목 정보' },
-    { id: 'coin', label: '보유수량' },
     { id: 'community', label: '커뮤니티' }
   ];
 
   return (
-    <div className="w-[100%] mx-auto p-4 bg-gray-100">
       <div className="w-[90%] mx-auto p-4">
         {/* 헤더 */}
         <header className="flex items-center justify-between mb-6">
@@ -96,6 +90,13 @@ export default function CoinDetail() {
           </div>
           {/* 헤더 우측 */}
           <div className="flex space-x-2">
+            {/* 코인수정 */}
+            <button
+              onClick={() => navigate(`/coin/update/${coin_no}`)}
+              className="mb-4 px-4 py-2 bg-yellow-400 text-black rounded hover:bg-yellow-500"
+            >
+              ✏️ 수정
+            </button>
             {/* 좋아요 버튼 - liked 상태에 따라 스타일과 텍스트 변경 */}
             <button
               onClick={toggleLike}
@@ -136,6 +137,5 @@ export default function CoinDetail() {
         {/* 탭 내용 */}
         <Outlet context={{ coin_price, coin_no }} />
       </div>
-    </div>
   );
 }
