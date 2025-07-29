@@ -2,6 +2,8 @@ package dev.mvc.communityreply;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,10 +23,20 @@ public class CommunityReplyCont {
         return ResponseEntity.ok(reply);
     }
 
-    /** 전체 댓글 목록 */
-    @GetMapping("/findall")
-    public List<CommunityReply> findAll() {
-        return service.findAll();
+    /** 게시글별 댓글 목록(ASC, 페이징) */
+    @GetMapping("/community/{communityNo}")
+    public Page<CommunityReply> listByCommunity(
+        @PathVariable("communityNo") Long communityNo,
+        @RequestParam(name = "page", defaultValue = "0") int page,
+        @RequestParam(name = "size", defaultValue = "10") int size
+    )  {
+        return service.findByCommunityNo(communityNo, PageRequest.of(page, size));
+    }
+    
+ // 댓글 개수 반환 API (⭐️ 프론트에서 이걸 fetch)
+    @GetMapping("/community/{communityNo}/count")
+    public long countByCommunity(@PathVariable("communityNo") Long communityNo) {
+        return service.countByCommunityNo(communityNo);
     }
 
     /** 댓글 삭제 */

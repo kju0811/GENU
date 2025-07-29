@@ -47,6 +47,8 @@ import OrderTab from "./components/OrderTab";
 import CommunityFeed from "./components/CommunityFeed";
 import { jwtDecode } from "jwt-decode";
 import Forbidden from "./pages/Forbidden";
+import MemberUpdate from "./components/MemberUpdate";
+import ChangePw from "./components/ChangePw";
 
 function App() {
   const { close, hideNavbar, hideChatbot } = useGlobal();
@@ -75,7 +77,6 @@ function App() {
         <Route path="/coin/:coin_no/*" element={<CoinDetail />}>
           <Route path="order" element={<OrderTab />} />
           <Route path="info" element={<CoinInfo />} />
-          <Route path="coin" element={<CoinList />} />
           <Route path="community" element={<CommunityFeed />} />
           <Route index element={<Navigate to="order" replace />} />
         </Route>
@@ -93,9 +94,9 @@ function App() {
         {role === "USER" || role === "ADMIN" ? (
           <Route path="/mypage/*" element={<MyPage />}>
             <Route path="portfolio" element={<Portfolio />} />
-            {/* <Route path="changeInfo" element={<ChangeInfo />} />
-            <Route path="changePw" element={<ChangePw />} /> */}
-            <Route path="memberMind" element={<Mind />} />
+            <Route path="memberupdate" element={<MemberUpdate />} />
+            <Route path="changepw" element={<ChangePw />} />
+            <Route path="membermind" element={<Mind />} />
             <Route path="coinlikelist" element={<CoinLikeList />} />
             <Route index element={<Navigate to="portfolio" replace />} />
           </Route>
