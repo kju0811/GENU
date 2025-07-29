@@ -1,7 +1,6 @@
 package dev.mvc.blocks;
 
 import dev.mvc.member.Member;
-import dev.mvc.reply.Reply;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
