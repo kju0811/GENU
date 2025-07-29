@@ -51,12 +51,8 @@ export default function Navbar() {
         {/* 좌측: 로고 */}
         <div className="col-start-1 flex items-center">
           <Link to="/" className="flex items-center" aria-label="홈으로 이동">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-orange-300" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2L2 7l10 5 10-5-10-5z" />
-              <path d="M2 17l10 5 10-5" />
-              <path d="M2 12l10 5 10-5" />
-            </svg>
-            <span className="ml-2 text-3xl font-bold text-orange-300">GENU</span>
+            <img src="/nurung.png" className='h-12 w-12' alt="누렁이" />
+            <span className="text-3xl font-bold text-orange-300">GENU</span>
           </Link>
         </div>
 
