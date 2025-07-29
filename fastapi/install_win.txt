@@ -216,7 +216,6 @@ tzdata
 unicodedata2
 urllib3==2.4.0
 uvicorn==0.34.2
-uvloop==0.21.0
 watchfiles==1.1.0
 wcwidth==0.2.13
 webdriver-manager==4.0.2
