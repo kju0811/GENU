@@ -25,15 +25,25 @@ export default function ChangePw() {
       setLoading(false);
       return;
     }
+  let userInfo = null;
+  if (jwt != null) {
+    try {
+      userInfo = jwtDecode(jwt);
+    } catch (err) {
+      console.error("JWT 디코딩 오류:", err);
+    }
+  }
+
+  const member_no = userInfo?.member_no
 
     try {
-      const res = await fetch(`http://${getIP()}:9093/member/change-pw`, {
+      const res = await fetch(`http://${getIP()}:9093/member/change-pw/${member_no}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           'Authorization': jwt
         },
-        body: JSON.stringify({ oriPassword, newPassword }),
+        body: JSON.stringify({ oriPassword, newPassword}),
       });
 
       if (!res.ok) {
