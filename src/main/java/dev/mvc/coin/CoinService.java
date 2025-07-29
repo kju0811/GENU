@@ -12,6 +12,7 @@ import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +40,6 @@ import lombok.RequiredArgsConstructor;
 public class CoinService {
   private final CoinRepository coinRepository;
   private final CoinlogRepository coinlogRepository;
-//  private final FluctuationRepository fluctuationRepository;
   private final NewsRepository newsRepository;
   private final FluctuationService fluctuationService;
   private final DealService dealService;
@@ -247,8 +247,7 @@ public class CoinService {
           // 천 단위 콤마 추가
           int price = getn.getNotice_price();
           String wp = String.format("%,d", price);
-//          String wp = String.valueOf(getn.getNotice_price());
-          
+//          String wp = String.valueOf(getn.getNotice_price()); 
           
           String msg = String.format("%s의 가격이 설정하신 %s누렁에 도달했습니다.", coin_name, wp);
           String[] args = {tel, msg};
@@ -348,10 +347,10 @@ public class CoinService {
       data.put(minp, cnt);
       minp += ts;
     }
-    System.out.println("기본 data 값 -> " + data);
+//    System.out.println("기본 data 값 -> " + data);
     
     List<DealDTO.OrderList> olist = dealService.getOrderList(coin_no);
-    System.out.println("olist 값 -> " + olist);
+//    System.out.println("olist 값 -> " + olist);
     
     minp = cp - ts * rangeCnt; // 값 초기화
     for (DealDTO.OrderList ol : olist) {
@@ -378,7 +377,7 @@ public class CoinService {
         data.put(maxp, pv + ol_cnt); // 키가 최고가인 값에 이전값+ol_cnt 
       }
     }
-    System.out.println("수정후 data 값 -> " + data);
+//    System.out.println("수정후 data 값 -> " + data);
     return data;
   }
 
