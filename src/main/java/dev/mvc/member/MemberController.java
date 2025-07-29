@@ -248,16 +248,16 @@ public class MemberController {
     }
 
     // 비밀번호 변경
-    @PostMapping("/change-pw")
+    @PostMapping("/change-pw/{member_no}")
     public ResponseEntity<?> changePassword(
-        @AuthenticationPrincipal Member member,
+        @PathVariable("member_no") Long member_no,
         @RequestBody Map<String, String> req // oriPassword, newPassword
     ) {
-        if (member == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 필요");
+        if (member_no == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 필요");
         String oriPassword = req.get("oriPassword");
         String newPassword = req.get("newPassword");
         
-        memberService.changePassword(member, oriPassword, newPassword);
+        memberService.changePassword(member_no, oriPassword, newPassword);
         return ResponseEntity.ok("비밀번호 변경 성공");
     }
     
