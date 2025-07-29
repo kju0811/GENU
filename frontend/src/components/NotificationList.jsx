@@ -118,7 +118,6 @@ export default function NotificationDropdown({ notifications: initialNotificatio
                   <div onClick={() => handleNotificationClick(item.notification_no)} className="flex w-full space-x-3 cursor-pointer">
                     <div className="flex-shrink-0">
                       <span className={`inline-flex items-center justify-center h-8 w-8 rounded-full ${item.bgColor}`}>
-                        <img src={item.img} alt={`${item.title} icon`} className="w-5 h-5" />
                       </span>
                     </div>
                     <div className="flex-1 text-left">
