@@ -6,9 +6,9 @@ import ProfileImageEdit from '../components/ProfileImageEdit';
 
 const TABS = [
   { key: "portfolio", label: "내 자산" },
-  { key: "changeInfo", label: "개인정보 수정" },
-  { key: "changePw", label: "비밀번호 변경" },
-  { key: "memberMind", label: "심리분석" },
+  { key: "memberupdate", label: "개인정보 수정" },
+  { key: "changepw", label: "비밀번호 변경" },
+  { key: "membermind", label: "심리분석" },
   { key: "coinlikelist", label: "좋아요목록" },
 ];
 
