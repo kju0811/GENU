@@ -88,7 +88,7 @@ export default function Login({ isOpen, onClose }) {
           }
         } 
 
-      let role = userInfo?.role;
+      const role = userInfo?.role;
 
       if (role == "USER" || role == "ADMIN") {
         setSw(true);
@@ -100,20 +100,18 @@ export default function Login({ isOpen, onClose }) {
       } else if ( role == "CANCEL") {
         const resignup =  window.confirm("탈퇴된 계정입니댜 다시 가입하시겠습니까?");
         if (resignup) {
-          let member_no = userInfo?.member_no;
-          fetch(`http://${getIP()}:9093/member/role/${member_no}`, {
-            method: 'PUT',
+          const member_no = userInfo?.member_no;
+          fetch(`http://${getIP()}:9093/member/update/grade`, {
+            method: 'PATCH',
             headers: {
               'Content-Type': 'application/json',
               'Authorization': jwt
             },
-            body: JSON.stringify({ "member_grade": 10 })
+            body: JSON.stringify({ "grade": 10,member_no })
           })
           .then(response => {
             if (response.ok) {
-              setSw(true);
-              onClose();
-              alert("재가입을 환영합니다!!");
+              alert("재가입을 환영합니다!! 다시 로그인후 이용해주시길 바랍니다!!");
             } else {
               alert('재가입에 실패하였습니다');
             }
