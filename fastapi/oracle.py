@@ -4,6 +4,11 @@ import pandas as pd
 # import mysql.connector
 from sqlalchemy import create_engine  # Pandas -> Oracle
 import numpy as np
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+SECRET_DB = os.getenv("db")
 
 def newsinsert(title, content, emotion,coin_cate,member_no):
     
@@ -13,7 +18,7 @@ def newsinsert(title, content, emotion,coin_cate,member_no):
         # 이미 초기화된 경우 무시
         pass
 
-    conn = cx_Oracle.connect('team4/69017000@1.201.18.85:1521/XE')
+    conn = cx_Oracle.connect(SECRET_DB)
     cursor = conn.cursor()
     
     cursor.execute("SELECT news_seq.NEXTVAL FROM dual")  # dual 테이블 사용, 시퀀스 2이상 증가 방지
@@ -79,7 +84,7 @@ def newssummary(summary,newsno):
     except cx_Oracle.ProgrammingError:
         # 이미 초기화된 경우 무시
         pass
-    conn = cx_Oracle.connect('team4/69017000@1.201.18.85:1521/XE')
+    conn = cx_Oracle.connect(SECRET_DB)
     cursor = conn.cursor()
     
     if newsno == 0:
@@ -115,7 +120,7 @@ def file (file1):
     except cx_Oracle.ProgrammingError:
         # 이미 초기화된 경우 무시
         pass
-    conn = cx_Oracle.connect('team4/69017000@1.201.18.85:1521/XE')
+    conn = cx_Oracle.connect(SECRET_DB)
     cursor = conn.cursor()
     
     cursor.execute("SELECT MAX(news_no) FROM news")
@@ -148,7 +153,7 @@ def mindinsert(mind_content, member_no):
         # 이미 초기화된 경우 무시
         pass
 
-    conn = cx_Oracle.connect('team4/69017000@1.201.18.85:1521/XE')
+    conn = cx_Oracle.connect(SECRET_DB)
     cursor = conn.cursor()
     
     cursor.execute("SELECT membermind_seq.NEXTVAL FROM dual")  # dual 테이블 사용, 시퀀스 2이상 증가 방지
