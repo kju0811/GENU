@@ -43,3 +43,5 @@ out/
 ### Node.js ###
 node_modules/
 
+### secret ###
+application.properties
