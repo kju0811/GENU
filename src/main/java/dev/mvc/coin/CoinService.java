@@ -46,6 +46,7 @@ public class CoinService {
   private final PayService payService;
   private final NoticeService noticeService;
   private final NotificationService notificationService;
+  private final SMS sms;
   
   private static final Logger logger = LoggerFactory.getLogger(DealService.class);
   
@@ -262,7 +263,7 @@ public class CoinService {
           if (getn.getNotice_type() == 1) { // 알림 금액이 변동된 현재가 보다 상승해야함
             if(getn.getNotice_price() >= coin.getCoin_price()) { // 알림 보내기
               try {
-                SMS.main(args);  // IOException 처리
+                sms.main(args);  // IOException 처리
               } catch (IOException e) {
                 logger.error("알림 처리 중 예외 발생: {}", e.getMessage());
                 throw new RuntimeException("알림 처리 중 문제가 발생했습니다.");
@@ -274,7 +275,7 @@ public class CoinService {
           } else if (getn.getNotice_type() == 0) { // 알림 금액이 변동된 현재가 보다 하락해야함
             if(getn.getNotice_price() <= coin.getCoin_price()) { // 알림 보내기
               try {
-                SMS.main(args);  // IOException 처리
+                sms.main(args);  // IOException 처리
               } catch (IOException e) {
                 logger.error("알림 처리 중 예외 발생: {}", e.getMessage());
                 throw new RuntimeException("알림 처리 중 문제가 발생했습니다.");
