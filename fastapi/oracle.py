@@ -114,7 +114,7 @@ def newssummary(summary,newsno):
     return update
 
 def file (file1):
-        #Oracle Connection 
+    #Oracle Connection 
     try:
         cx_Oracle.init_oracle_client(lib_dir="/Users/kimjiun/kd/instantclient_23_3")
     except cx_Oracle.ProgrammingError:
