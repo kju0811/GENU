@@ -15,6 +15,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,6 +35,12 @@ public class MailTool {
   
   private final AuthRepository authRepository;
 
+  @Value("${sms.user}")
+  private String user;
+  
+  @Value("${sms.password}")
+  private String password;
+  
   // 인증번호 생성
   public static String generateCode() {
     StringBuilder sb = new StringBuilder(CODE_LENGTH);
@@ -64,8 +71,6 @@ public class MailTool {
     // 3. SMTP 서버정보와 사용자 정보를 기반으로 Session 클래스의 인스턴스 생성
     Session session = Session.getInstance(props, new javax.mail.Authenticator() {
       protected PasswordAuthentication getPasswordAuthentication() {
-        String user = "junsu0115z@gmail.com"; // 자기꺼로 이메일, 비번 변경
-        String password = "dvof tspe spky chuc";
         return new PasswordAuthentication(user, password);
       }
     });
@@ -90,7 +95,7 @@ public class MailTool {
     
     Message message = new MimeMessage(session);
     try {
-      message.setFrom(new InternetAddress("junsu0115z@gmail.com"));
+      message.setFrom(new InternetAddress(user));
       message.addRecipient(Message.RecipientType.TO, new InternetAddress(receiver));
       message.setSubject(title);
       message.setContent(content, "text/html; charset=utf-8");
@@ -122,8 +127,8 @@ public class MailTool {
 //      // 3. SMTP 서버정보와 사용자 정보를 기반으로 Session 클래스의 인스턴스 생성
 //      Session session = Session.getInstance(props, new javax.mail.Authenticator() {
 //          protected PasswordAuthentication getPasswordAuthentication() {
-//              String user="junsu0115z@gmail.com"; // 자기꺼로 이메일, 비번 변경
-//              String password="dvof tspe spky chuc";
+//              String user=""; // 자기꺼로 이메일, 비번 변경
+//              String password="";
 //              return new PasswordAuthentication(user, password);
 //          }
 //      });
