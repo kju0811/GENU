@@ -6,6 +6,9 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Objects;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import com.google.gson.Gson;
 
 import okhttp3.MultipartBody;
@@ -14,13 +17,18 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+@Component
 public class Tool {
 
   public static final String SMS_OAUTH_TOKEN_URL = "https://sms.gabia.com/oauth/token"; // ACCESS TOKEN 발급 API URL 입니다.
 
-  public static String getSMSToken() throws IOException {
-    String smsId = "junsu0115zsms"; // SMS ID 를 입력해 주세요.
-    String apiKey = "c147ac7fb335a16b151b18c90aefabc2"; // SMS 관리툴에서 발급받은 API KEY 를 입력해 주세요.
+  @Value("${sms.id}")
+  private String smsId;
+  
+  @Value("${sms.apiKey}")
+  private String apiKey;
+  
+  public String getSMSToken() throws IOException {
     String authValue =
     Base64.getEncoder().encodeToString(String.format("%s:%s", smsId,
     apiKey).getBytes(StandardCharsets.UTF_8)); // Authorization Header 에 입력할 값입니다.
