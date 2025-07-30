@@ -211,18 +211,18 @@ public class MemberController {
         return ResponseEntity.notFound().build();
     }
     
-    /** 권한 수정 */
-    @PutMapping("/role/{member_no}")
-    public ResponseEntity<Member> role(@PathVariable("member_no") Long member_no,
-    								   @RequestBody Member updated) {
-    	return memberService.findByMemberNoOptional(member_no)
-    			.map(role -> {
-    				role.setMember_grade(updated.getMember_grade());
-    				Member saved = memberService.save(role);
-    				return ResponseEntity.ok(saved);
-    			})
-    			.orElseGet(() -> ResponseEntity.notFound().build());
-    }
+//    /** 권한 수정 */
+//    @PutMapping("/role/{member_no}")
+//    public ResponseEntity<Member> role(@PathVariable("member_no") Long member_no,
+//    								   @RequestBody Member updated) {
+//    	return memberService.findByMemberNoOptional(member_no)
+//    			.map(role -> {
+//    				role.setMember_grade(updated.getMember_grade());
+//    				Member saved = memberService.save(role);
+//    				return ResponseEntity.ok(saved);
+//    			})
+//    			.orElseGet(() -> ResponseEntity.notFound().build());
+//    }
     
     // 마이페이지 정보 조회 (JWT 인증 기반)
     @GetMapping("/mypage")
@@ -328,6 +328,12 @@ public class MemberController {
       }
     }
     
+    
+    /**
+     * 권한 수정
+     * @param dto
+     * @return
+     */
     @PatchMapping("/update/grade")
     public ResponseEntity<?> updateCnt(@RequestBody MemberDTO dto) {
         Optional<Member> optionalMember = memberService.findByMemberNoOptional(dto.getMember_no());
