@@ -120,7 +120,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT,
                 		"/newsreply/update/*"
                 		).hasAnyRole("ADMIN","USER")
-                
+              
                 // 2) 그 외 모든 요청은 인증 없이 허용
 //                .anyRequest().permitAll()
                 .anyRequest().permitAll()
