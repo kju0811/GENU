@@ -34,15 +34,14 @@ public class AuthenticationFilter extends OncePerRequestFilter {
       "/member/create",
       "/announce/read",
       "/calendar/read",
-      "/news/find",
+//      "/news/find",
       "/coin/find_all",
-      "/**",
-      "/news/find_all",
-      "/news/read/*",
+//      "/**",
+//      "/news/find_all",
+//      "/news/read/*",
       "/home/storage/*",
       "/member/page",
-      "/member/search",
-      "/member/create"
+      "/member/search"
   );
 
   @Override
