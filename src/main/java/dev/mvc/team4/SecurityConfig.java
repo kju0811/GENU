@@ -83,15 +83,53 @@ public class SecurityConfig {
                 // 1) 인증이 필요한 경로 추가
                 // 예) 
                 .requestMatchers(HttpMethod.GET,  "/admin/**", "/user/profile/**", "/find_by_readtype0/*").authenticated()
-
+//                .requestMatchers(HttpMethod.OPTIONS,"/**").permitAll()
+//                .requestMatchers(HttpMethod.POST,"/member/login","/member/logout").permitAll()
+                
+                // POST 매핑 관리자
+                .requestMatchers(HttpMethod.POST,
+                		"/news/create","/news/summary","/announce/create","/calendar/create"
+                		).hasRole("ADMIN")
+                 
+                // DELETE 매핑 관리자
+                .requestMatchers(HttpMethod.DELETE,
+                		"/news/delete/*","/announce/delete/*","/calendar/delete/*"
+                		).hasRole("ADMIN")
+                
+                // PUT 매핑 관리자
+                .requestMatchers(HttpMethod.PUT,
+                		"/announce/update/*","/calendar/update/*"
+                		).hasRole("ADMIN")
+                
+                // PATCH 매핑 관리자
+                .requestMatchers(HttpMethod.PATCH,
+                		"/update/grade"
+                		).hasRole("ADMIN")
+                
+                // POST 매핑 유저,관리자
+                .requestMatchers(HttpMethod.POST,
+                		"/newslike/create","/newsreply/create","/mind/create","/chatbot/talk"
+                		).hasAnyRole("ADMIN","USER")
+                
+                // DELETE 매핑 유저,관리자
+                .requestMatchers(HttpMethod.DELETE,
+                		"/newslike/delete/*","/newsreply/delete/*"
+                		).hasAnyRole("ADMIN","USER")
+                
+                // PUT 매핑 유저,관리자
+                .requestMatchers(HttpMethod.PUT,
+                		"/newsreply/update/*"
+                		).hasAnyRole("ADMIN","USER")
+                
                 // 2) 그 외 모든 요청은 인증 없이 허용
+//                .anyRequest().permitAll()
                 .anyRequest().permitAll()
             )
             // UserDetailsService + PasswordEncoder 를 사용하는 AuthenticationProvider 등록
             .authenticationProvider(daoAuthenticationProvider())
             
             // sns-------------------
-            .addFilterAfter(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterAfter(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .oauth2Login(oauth2 -> oauth2
                 .successHandler(oAuthSuccessHandler)
                 .failureUrl("http://localhost:3000") // 취소시 메인으로
@@ -103,7 +141,8 @@ public class SecurityConfig {
             // -------------------
             
             // JWT 토큰 필터 등록
-            .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            
             // 인증 실패 핸들러
             .exceptionHandling(ex -> ex.authenticationEntryPoint(authEntryPoint));
 
@@ -135,7 +174,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOriginPatterns(Collections.singletonList("*"));
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS","PATCH"));
         config.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
         config.setExposedHeaders(Collections.singletonList("Authorization"));
         config.setAllowCredentials(true);

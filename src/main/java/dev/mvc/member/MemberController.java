@@ -201,15 +201,15 @@ public class MemberController {
             .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    /** 회원 삭제 */
-    @DeleteMapping("/{member_no}")
-    public ResponseEntity<Void> delete(@PathVariable Long member_no) {
-        if (memberService.findByMemberNoOptional(member_no).isPresent()) {
-            memberService.deleteEntity(member_no);
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.notFound().build();
-    }
+//    /** 회원 삭제 */
+//    @DeleteMapping("/{member_no}")
+//    public ResponseEntity<Void> delete(@PathVariable Long member_no) {
+//        if (memberService.findByMemberNoOptional(member_no).isPresent()) {
+//            memberService.deleteEntity(member_no);
+//            return ResponseEntity.ok().build();
+//        }
+//        return ResponseEntity.notFound().build();
+//    }
     
 //    /** 권한 수정 */
 //    @PutMapping("/role/{member_no}")
