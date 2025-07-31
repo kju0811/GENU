@@ -142,7 +142,6 @@ public class SecurityConfig {
             
             // JWT 토큰 필터 등록
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-            
             // 인증 실패 핸들러
             .exceptionHandling(ex -> ex.authenticationEntryPoint(authEntryPoint));
 
