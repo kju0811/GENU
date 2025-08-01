@@ -2,19 +2,20 @@ package dev.mvc.team4;
 
 public class Home {
   public static String getUploadDir() {
+    String ci = System.getenv("CI");
+    if ("true".equals(ci)) {
+      return "build/uploads/";  // GitHub Actions용 상대경로 (쓰기 가능)
+    }
+
     String osName = System.getProperty("os.name").toLowerCase();
     String path = "";
 
-    if (osName.contains("win")) { // Windows
+    if (osName.contains("win")) {
       path = "C:\\kd\\deploy\\team4_v2sbm3c\\home\\storage\\";
-      // F:\kd8\\deploy\\issue_v1jpac\\home\\storage
-      // System.out.println("Windows: " + path);
-    } else if (osName.contains("mac")) { // MacOS
+    } else if (osName.contains("mac")) {
       path = "/Users/kimjiun/kd/deploy/team4_v2sbm3c/home/storage/";
-      // System.out.println("MacOS: " + path);
-    } else { // Linux
+    } else {
       path = "/home/ubuntu/deploy/team4_v2sbm3c/home/storage/";
-      // System.out.println("Linux: " + path);
     }
 
     return path;
