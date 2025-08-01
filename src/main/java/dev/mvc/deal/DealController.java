@@ -32,17 +32,17 @@ import lombok.RequiredArgsConstructor;
 public class DealController {
   private final DealService dealService;
   
-  /**
-   * 거래 생성
-   * @param deal
-   * @return
-   */
-  @PostMapping(value="/create")
-  @ResponseBody
-  public ResponseEntity<Deal> create(@RequestBody Deal deal) {
-    dealService.save(deal);
-    return ResponseEntity.ok().build();
-  }
+//  /**
+//   * 거래 생성
+//   * @param deal
+//   * @return
+//   */
+//  @PostMapping(value="/create")
+//  @ResponseBody
+//  public ResponseEntity<Deal> create(@RequestBody Deal deal) {
+//    dealService.save(deal);
+//    return ResponseEntity.ok().build();
+//  }
   
 //  /**
 //   * 전체 목록
