@@ -108,14 +108,14 @@ public class CoinController {
 //    return ResponseEntity.ok(savedEntity);
 //  }
   
-    /**
-     * 수동으로 변동하기
-     */
-  @PostMapping(value="/allchange")
-  public void allchange() {
-    coinService.updateAllCoinPrices();
-    System.out.println("수동 변경 ok");
-  }
+//    /**
+//     * 수동으로 변동하기
+//     */
+//  @PostMapping(value="/allchange")
+//  public void allchange() {
+//    coinService.updateAllCoinPrices();
+//    System.out.println("수동 변경 ok");
+//  }
   
   /**
    * 전체 목록
