@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getIP, getNowDate } from '../components/Tool';
-import { Dropdown } from './CoinComponents';
+import { CoinCategory } from './CoinCategory';
 import ImageUpload from './ImageUpload';
 
 export default function CoinCreate() {
   const [step, setStep] = useState(1);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [cateOpen, setCateOpen] = useState(false);
   const navigate = useNavigate();
 
   // Step1: 기본정보
@@ -98,7 +98,7 @@ export default function CoinCreate() {
               {/* 카테고리 드롭다운 */}
               <div>
                 <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">카테고리</label>
-                <Dropdown value={cate} onSelect={setCate} />
+                <CoinCategory value={cate} onSelect={setCate} />
               </div>
             </div>
             {/* 가격 */}
