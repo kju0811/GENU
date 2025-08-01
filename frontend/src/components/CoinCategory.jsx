@@ -2,10 +2,10 @@ import React, { useState, useRef, useEffect } from "react";
 
 const categories = [
   "NFT", "밈 코인", "AI 코인", "플랫폼 코인", "스테이블 코인",
-  "기모링 코인", "게이밍 코인", "의료 코인", "기타 코인"
+  "디파이(DeFi) 코인", "게이밍 코인", "스포츠 코인", "메타버스 코인", "의료 코인", "기타 코인"
 ];
 
-export function Dropdown({ value, onSelect, showNoneOption = false }) {
+export function CoinCategory({ value, onSelect, showNoneOption = false }) {
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef(null);
 

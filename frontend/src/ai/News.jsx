@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { getIP } from "../components/Tool";
-import { Dropdown } from "../components/CoinComponents";
+import { CoinCategory } from "../components/CoinCategory";
 import { useGlobal } from "../components/GlobalContext";
 
 export default function News() {
@@ -80,8 +80,9 @@ export default function News() {
           <div className="mb-4">
             <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">카테고리 선택</label>
             <div className="relative">
-              <Dropdown
-                onSelect={(cate) => setOption2(cate)}
+              <CoinCategory
+                value={option2}
+                onSelect={setOption2}
                 showNoneOption={true}
               />
             </div>
