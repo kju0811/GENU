@@ -90,14 +90,14 @@ jobs:
         security.secret-key=${{ secrets.SECRET_KEY }}
         EOF
 
-    - name: Install Node and Build Frontend
-      run: |
-        cd frontend
-        npm install
-        npm run build
-        cd ..
-        mkdir -p src/main/resources/static
-        cp -r frontend/dist/* src/main/resources/static/
+    # - name: Install Node and Build Frontend
+    #   run: |
+    #     cd frontend
+    #     npm install
+    #     npm run build
+    #     cd ..
+    #     mkdir -p src/main/resources/static
+    #     cp -r frontend/dist/* src/main/resources/static/
 
     - name: Build with Gradle Wrapper
       run: ./gradlew build
