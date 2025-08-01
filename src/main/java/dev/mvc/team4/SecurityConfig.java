@@ -89,7 +89,7 @@ public class SecurityConfig {
                 // POST 매핑 관리자
                 .requestMatchers(HttpMethod.POST,
                 		"/news/create","/news/summary","/announce/create","/calendar/create",
-                		"/coin/create","/coin/update/*","pay/create"
+                		"/coin/create","/coin/update/*"
                 		).hasRole("ADMIN")
                  
                 // DELETE 매핑 관리자
@@ -111,14 +111,15 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST,
                 		"/newslike/create","/newsreply/create","/mind/create","/chatbot/talk",
                 		"/coin/scheduledBuy","/coin/scheduledSell","/coinlike/create","/community/create",
-                		"/communitylike/create","/communityreply/create","/deal/create","/deal/buydeal",
-                		"/deal/selldeal","/deal/buydeal/cancel/*","/deal/selldeal/cancel/*"
+                		"/communitylike/create","/communityreply/create","/deal/buydeal",
+                		"/deal/selldeal","/deal/buydeal/cancel/*","/deal/selldeal/cancel/*","/notice/create"
                 		).hasAnyRole("ADMIN","USER")
                 
                 // DELETE 매핑 유저,관리자
                 .requestMatchers(HttpMethod.DELETE,
                 		"/newslike/delete/*","/newsreply/delete/*","/coinlike/deleteCoinlike/**",
-                		"/community/*","/communitylike/delete/*","/communitylike/delete/all/*","/communityreply/delete/*"
+                		"/community/*","/communitylike/delete/*","/communitylike/delete/all/*","/communityreply/delete/*",
+                		"/notice/*","/notification/*"
                 		).hasAnyRole("ADMIN","USER")
                 
                 // PUT 매핑 유저,관리자
@@ -130,7 +131,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET,
                 		"/coinlike/findByMemberCoinlikeList","/deal/get_total_cnt/**","/deal/find_deal_by_member_coin/**",
                 		"/deal/find_deal_by_member_coin_twoweek/*","/deal/get_one_asset/**","/deal/get_member_asset/*",
-                		"/pay/my/*"
+                		"/pay/my/*","/notice/member/**","/notification/find_by_MemberNotification/*","/notification/clickNotification/*"
                 		).hasAnyRole("ADMIN","USER")
               
                 // 2) 그 외 모든 요청은 인증 없이 허용
