@@ -5,7 +5,7 @@ import { getIP } from './Tool';
 import { jwtDecode } from 'jwt-decode';
 import MoreMenu from "./MoreMenu";
 import basic from "../images/profile.png";
-
+ 
 // 한 페이지에 보여줄 댓글 수
 const REPLIES_PAGE_SIZE = 10;
 
