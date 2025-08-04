@@ -105,7 +105,6 @@ jobs:
         key: ${{ secrets.SERVER_KEY }}
         source: "./frontend/frontend_build/**"
         target: "/home/ubuntu/deploy/frontend_build"
-        recursive: true
 
     - name: Build with Gradle Wrapper
       run: ./gradlew build
