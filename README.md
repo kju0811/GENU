@@ -1,4 +1,4 @@
-<H2>GENU</H2>
+<img width="1654" height="799" alt="image" src="https://github.com/user-attachments/assets/82301cf2-00cd-4988-bf0b-53e2ca1e2e11" /><H2>GENU</H2>
 <br><br>
 <div align="center">
 <span>BackEnd<span/><br>
@@ -22,3 +22,6 @@
 <img src="https://img.shields.io/badge/gcloud-4B0082?style=for-the-badge&logo=gcloud&logoColor=white">  
 <br>
 </div>
+
+
+<img width="1654" height="799" alt="genu_erd" src="https://github.com/user-attachments/assets/c103b3f0-858e-4ce6-8b5a-0f356eea25bc" />
