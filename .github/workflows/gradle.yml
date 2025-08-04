@@ -103,8 +103,8 @@ jobs:
         username: ${{ secrets.SERVER_USERNAME }}
         host: ${{ secrets.SERVER_HOST }}
         key: ${{ secrets.SERVER_KEY }}
-        source: "./frontend/frontend_build/**"
-        target: "/home/ubuntu/deploy/frontend_build"
+        source: "./frontend/frontend_build"
+        target: "/home/ubuntu/deploy"
 
     - name: Build with Gradle Wrapper
       run: ./gradlew build
