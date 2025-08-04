@@ -1,5 +1,8 @@
 <img width="1654" height="799" alt="image" src="https://github.com/user-attachments/assets/82301cf2-00cd-4988-bf0b-53e2ca1e2e11" /><H2>GENU</H2>
 <br><br>
+<span>🧑‍🏫PPT 발표자료: https://www.canva.com/design/DAGonzbCbXQ/jOmV6wkUEyeg8pjp0VeSmw/edit</span><br>
+<span>💬회의록 정리: https://www.notion.so/1e52b3fb793780df97b2e07db7ace539?source=copy_link</span>
+<br><br>
 <div align="center">
 <span>BackEnd<span/><br>
 <img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white">
@@ -22,6 +25,5 @@
 <img src="https://img.shields.io/badge/gcloud-4B0082?style=for-the-badge&logo=gcloud&logoColor=white">  
 <br>
 </div>
-
 
 <img width="1654" height="799" alt="genu_erd" src="https://github.com/user-attachments/assets/c103b3f0-858e-4ce6-8b5a-0f356eea25bc" />
