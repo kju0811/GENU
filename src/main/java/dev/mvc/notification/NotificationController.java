@@ -32,16 +32,16 @@ public class NotificationController {
 //    return ResponseEntity.ok().build();
 //  }
   
-  /**
-   * 전체 목록
-   * GET 요청을 처리하여 모든 Entity 객체의 리스트를 반환
-   * http://localhost:9093/notification/find_all
-   * @return
-   */
-  @GetMapping(value = "/find_all")
-  public List<Notification> find_all() {
-    return notificationService.find_all();
-  }
+//  /**
+//   * 전체 목록
+//   * GET 요청을 처리하여 모든 Entity 객체의 리스트를 반환
+//   * http://localhost:9093/notification/find_all
+//   * @return
+//   */
+//  @GetMapping(value = "/find_all")
+//  public List<Notification> find_all() {
+//    return notificationService.find_all();
+//  }
   
   /**
    * DELETE 요청을 처리하여 특정 ID를 가진 Entity 객체를 삭제
@@ -89,16 +89,16 @@ public class NotificationController {
     return notificationService.clickNotification(id);
   }
   
-  /**
-   * 알림 생성
-   * @param notice
-   * @return
-   */
-  @PostMapping(value="/create")
-  @ResponseBody
-  public ResponseEntity<Notification> notificationCreate(@RequestBody NotificationDTO dto) {
-    notificationService.notificationCreate(dto);
-    return ResponseEntity.ok().build();
-  }
+//  /**
+//   * 알림 생성
+//   * @param notice
+//   * @return
+//   */
+//  @PostMapping(value="/create")
+//  @ResponseBody
+//  public ResponseEntity<Notification> notificationCreate(@RequestBody NotificationDTO dto) {
+//    notificationService.notificationCreate(dto);
+//    return ResponseEntity.ok().build();
+//  }
   
 }
