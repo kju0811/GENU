@@ -27,66 +27,66 @@ import lombok.RequiredArgsConstructor;
 public class PayController {
   private final PayService payService;
   
-  /**
-   * 돈 생성
-   * @param pay
-   * @return
-   */
-  @PostMapping(value="/create")
-  @ResponseBody
-  public ResponseEntity<Pay> create(@RequestBody Pay pay) {
-   payService.save(pay);
-//    payService.additional(member, pay_pay);
-    return ResponseEntity.ok().build();
-  }
+//  /**
+//   * 돈 생성
+//   * @param pay
+//   * @return
+//   */
+//  @PostMapping(value="/create")
+//  @ResponseBody
+//  public ResponseEntity<Pay> create(@RequestBody Pay pay) {
+//   payService.save(pay);
+////    payService.additional(member, pay_pay);
+//    return ResponseEntity.ok().build();
+//  }
   
-  /**
-   * 전체 목록
-   * GET 요청을 처리하여 모든 Entity 객체의 리스트를 반환
-   * http://localhost:9093/pay/find_all
-   * @return
-   */
-  @GetMapping(value = "/find_all")
-  public List<Pay> find_all() {
-    return payService.find_all();
-  }
+//  /**
+//   * 전체 목록
+//   * GET 요청을 처리하여 모든 Entity 객체의 리스트를 반환
+//   * http://localhost:9093/pay/find_all
+//   * @return
+//   */
+//  @GetMapping(value = "/find_all")
+//  public List<Pay> find_all() {
+//    return payService.find_all();
+//  }
   
-  /**
-   * DELETE 요청을 처리하여 특정 ID를 가진 Entity 객체를 삭제
-   * http://localhost:9093/pay/21
-   * @param pay_no
-   * @return
-   */
-  @DeleteMapping(value = "/{pay_no}")
-  public ResponseEntity<Void> deleteEntity(@PathVariable("pay_no") Long id) {
-    if (payService.find_by_id(id).isPresent()) { // Entity가 존재하면
-      payService.deleteEntity(id); // 삭제
-      return ResponseEntity.ok().build(); // 성공적으로 삭제된 경우 200 반환
-    } else {
-      return ResponseEntity.notFound().build(); // 찾지 못한 경우 404 반환
-    }
-  }
+//  /**
+//   * DELETE 요청을 처리하여 특정 ID를 가진 Entity 객체를 삭제
+//   * http://localhost:9093/pay/21
+//   * @param pay_no
+//   * @return
+//   */
+//  @DeleteMapping(value = "/{pay_no}")
+//  public ResponseEntity<Void> deleteEntity(@PathVariable("pay_no") Long id) {
+//    if (payService.find_by_id(id).isPresent()) { // Entity가 존재하면
+//      payService.deleteEntity(id); // 삭제
+//      return ResponseEntity.ok().build(); // 성공적으로 삭제된 경우 200 반환
+//    } else {
+//      return ResponseEntity.notFound().build(); // 찾지 못한 경우 404 반환
+//    }
+//  }
   
-  /**
-   * 수정
-   * PUT 요청을 처리하여 특정 ID를 가진 Entity 객체를 업데이트
-   * http://localhost:9093/pay/21
-   * @param pay_no
-   * @param entity
-   * @return
-   */
-  @PutMapping(path = "/{pay_no}")
-  public ResponseEntity<Pay> updateEntity(@PathVariable("pay_no") Long id, 
-                                                                @RequestBody Pay pay) {
-    // id를 이용한 레코드 조회 -> existingEntity 객체에 할당 -> {} 실행 값 저장 -> DBMS 저장 -> 상태 코드 200 출력
-    return payService.find_by_id(id).<ResponseEntity<Pay>>map(existingPay -> {
-      existingPay.setPay_pay(pay.getPay_pay());
-      existingPay.setPay_type(pay.getPay_type());
-
-      payService.save(existingPay);
-      return ResponseEntity.ok().build(); // 200 반환
-    }).orElseGet(() -> ResponseEntity.notFound().build()); // 찾지 못한 경우 404 반환
-  }
+//  /**
+//   * 수정
+//   * PUT 요청을 처리하여 특정 ID를 가진 Entity 객체를 업데이트
+//   * http://localhost:9093/pay/21
+//   * @param pay_no
+//   * @param entity
+//   * @return
+//   */
+//  @PutMapping(path = "/{pay_no}")
+//  public ResponseEntity<Pay> updateEntity(@PathVariable("pay_no") Long id, 
+//                                                                @RequestBody Pay pay) {
+//    // id를 이용한 레코드 조회 -> existingEntity 객체에 할당 -> {} 실행 값 저장 -> DBMS 저장 -> 상태 코드 200 출력
+//    return payService.find_by_id(id).<ResponseEntity<Pay>>map(existingPay -> {
+//      existingPay.setPay_pay(pay.getPay_pay());
+//      existingPay.setPay_type(pay.getPay_type());
+//
+//      payService.save(existingPay);
+//      return ResponseEntity.ok().build(); // 200 반환
+//    }).orElseGet(() -> ResponseEntity.notFound().build()); // 찾지 못한 경우 404 반환
+//  }
   
   /**
    * 해당 멤버의 금액 가져오기

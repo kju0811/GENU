@@ -35,16 +35,16 @@ public class NoticeController {
     return ResponseEntity.ok(nt);
   }
   
-  /**
-   * 전체 목록
-   * GET 요청을 처리하여 모든 Entity 객체의 리스트를 반환
-   * http://localhost:9093/notice/find_all
-   * @return
-   */
-  @GetMapping(value = "/find_all")
-  public List<Notice> find_all() {
-    return noticeService.find_all();
-  }
+//  /**
+//   * 전체 목록
+//   * GET 요청을 처리하여 모든 Entity 객체의 리스트를 반환
+//   * http://localhost:9093/notice/find_all
+//   * @return
+//   */
+//  @GetMapping(value = "/find_all")
+//  public List<Notice> find_all() {
+//    return noticeService.find_all();
+//  }
   
   /**
    * DELETE 요청을 처리하여 특정 ID를 가진 Entity 객체를 삭제
@@ -62,36 +62,36 @@ public class NoticeController {
     }
   }
   
-  /**
-   * 수정
-   * PUT 요청을 처리하여 특정 ID를 가진 Entity 객체를 업데이트
-   * http://localhost:9093/notice/21
-   * @param id
-   * @param entity
-   * @return
-   */
-  @PutMapping(path = "/{notice_no}")
-  public ResponseEntity<Notice> updateEntity(@PathVariable("notice_no") Long id, 
-                                                                @RequestBody Notice notice) {
-    // id를 이용한 레코드 조회 -> existingEntity 객체에 할당 -> {} 실행 값 저장 -> DBMS 저장 -> 상태 코드 200 출력
-    return noticeService.find_by_id(id).<ResponseEntity<Notice>>map(existingNotice -> {
-      existingNotice.setNotice_price(notice.getNotice_price());
-      
-      noticeService.save(existingNotice);
-      return ResponseEntity.ok().build(); // 200 반환
-    }).orElseGet(() -> ResponseEntity.notFound().build()); // 찾지 못한 경우 404 반환
-  }
+//  /**
+//   * 수정
+//   * PUT 요청을 처리하여 특정 ID를 가진 Entity 객체를 업데이트
+//   * http://localhost:9093/notice/21
+//   * @param id
+//   * @param entity
+//   * @return
+//   */
+//  @PutMapping(path = "/{notice_no}")
+//  public ResponseEntity<Notice> updateEntity(@PathVariable("notice_no") Long id, 
+//                                                                @RequestBody Notice notice) {
+//    // id를 이용한 레코드 조회 -> existingEntity 객체에 할당 -> {} 실행 값 저장 -> DBMS 저장 -> 상태 코드 200 출력
+//    return noticeService.find_by_id(id).<ResponseEntity<Notice>>map(existingNotice -> {
+//      existingNotice.setNotice_price(notice.getNotice_price());
+//      
+//      noticeService.save(existingNotice);
+//      return ResponseEntity.ok().build(); // 200 반환
+//    }).orElseGet(() -> ResponseEntity.notFound().build()); // 찾지 못한 경우 404 반환
+//  }
   
-  /**
-   * 해당 멤버의 알림 반환
-   * @param member_no
-   * @return
-   */
-  @GetMapping(value = "/member/{member_no}")
-  public List<Notice> getMemberNotice(@PathVariable("member_no") Long member_no) {
-    
-    return noticeService.getMemberNotice(member_no);
-  }
+//  /**
+//   * 해당 멤버의 알림 반환
+//   * @param member_no
+//   * @return
+//   */
+//  @GetMapping(value = "/member/{member_no}")
+//  public List<Notice> getMemberNotice(@PathVariable("member_no") Long member_no) {
+//    
+//    return noticeService.getMemberNotice(member_no);
+//  }
   
   /**
    * 멤버가 코인에 설정한 알림 반환
@@ -105,15 +105,15 @@ public class NoticeController {
     return noticeService.getMemberCoinNotice(member_no, coin_no);
   }
   
-  /**
-   * coin_no에 해당 하고 발송되는 않은 알림 반환
-   * @param coin_no
-   * @return
-   */
-  @GetMapping(value = "/coin/{coin_no}")
-  public List<Notice> getPending(@PathVariable("coin_no") Long coin_no) {
-    
-    return noticeService.getPending(coin_no);
-  }
+//  /**
+//   * coin_no에 해당 하고 발송되는 않은 알림 반환
+//   * @param coin_no
+//   * @return
+//   */
+//  @GetMapping(value = "/coin/{coin_no}")
+//  public List<Notice> getPending(@PathVariable("coin_no") Long coin_no) {
+//    
+//    return noticeService.getPending(coin_no);
+//  }
   
 }

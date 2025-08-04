@@ -37,7 +37,7 @@ public class HomeCont {
     @GetMapping("/")
     @ResponseBody
     public String home() {
-      return "<h2>긴급 공지사항 version 1.0</h2>";
+      return "<h2>GENU Spring Boot server 작동중...</h2>";
     }
     
     /** 파일 업로드 */
