@@ -39,16 +39,27 @@ export function useLikeToggle(coin_no) {
   // 좋아요 토글 함수
   const toggleLike = async () => {
     if (!memberNo || !coin_no) return;
+    const jwt = sessionStorage.getItem("jwt");
 
     try {
       if (liked) {
-        await axios.delete(`http://${getIP()}:9093/coinlike/deleteCoinlike/${memberNo}/${coin_no}`);
+        await axios.delete(`http://${getIP()}:9093/coinlike/deleteCoinlike/${memberNo}/${coin_no}`, {
+          headers: {
+            Authorization: jwt,
+          }, 
+        });
         setLiked(false);
       } else {
         await axios.post(`http://${getIP()}:9093/coinlike/create`, {
           member: { member_no: memberNo },
-          coin: { coin_no }
-        });
+          coin: { coin_no },
+        },
+        {
+          headers: {
+            Authorization: jwt,
+          }, 
+        }
+        );
         setLiked(true);
       }
     } catch (err) {
