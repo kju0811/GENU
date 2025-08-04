@@ -144,6 +144,8 @@ jobs:
         script: |
           chmod +x /home/ubuntu/deploy/deploy.sh
           sh /home/ubuntu/deploy/deploy.sh
+          chmod +x /home/ubuntu/deploy/front-deploy.sh
+          sh /home/ubuntu/deploy/front-deploy.sh
 
   dependency-submission:
 
