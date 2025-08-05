@@ -22,11 +22,19 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
 
     - name: Run chmod to make gradlew executable
       run: chmod +x ./gradlew
@@ -90,37 +98,29 @@ jobs:
         security.secret-key=${{ secrets.SECRET_KEY }}
         EOF
 
-    - name: Install Node and Build Frontend
+    - name: Install Frontend Dependencies
       run: |
         cd frontend
-        npm install
+        npm ci
+
+    - name: Build Frontend
+      run: |
+        cd frontend
         npm run build
-        cd ..
 
-    - name: Copy frontend build to remote server
-      uses: appleboy/scp-action@master
-      with:
-        username: ${{ secrets.SERVER_USERNAME }}
-        host: ${{ secrets.SERVER_HOST }}
-        key: ${{ secrets.SERVER_KEY }}
-        source: "./frontend/frontend_build"
-        target: "/home/ubuntu/deploy"
+    - name: Verify Frontend Build
+      run: |
+        if [ ! -d "frontend/frontend_build" ]; then
+          echo "Error: frontend_build directory not found!"
+          exit 1
+        fi
+        echo "Frontend build completed successfully"
+        ls -la frontend/frontend_build
 
-    - name: Build with Gradle Wrapper
+    - name: Build Backend with Gradle
       run: ./gradlew build
 
-    # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
-    # If your project does not have the Gradle Wrapper configured, you can use the following configuration to run Gradle with a specified version.
-    #
-    # - name: Setup Gradle
-    #   uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
-    #   with:
-    #     gradle-version: '8.9'
-    #
-    # - name: Build with Gradle 8.9
-    #   run: gradle build
-
-    - name: executing remote ssh commands using ssh key
+    - name: Test SSH Connection
       uses: appleboy/ssh-action@v0.1.10
       with:
         host: ${{ secrets.SERVER_HOST }}
@@ -128,10 +128,21 @@ jobs:
         key: ${{ secrets.SERVER_KEY }}
         port: ${{ secrets.SERVER_PORT }}
         script: |
+          echo "SSH connection successful"
           whoami
-          ls -al
+          ls -al /home/ubuntu/deploy
 
-    - name: Copy war file to remote
+    - name: Copy Frontend Build to Server
+      uses: appleboy/scp-action@master
+      with:
+        username: ${{ secrets.SERVER_USERNAME }}
+        host: ${{ secrets.SERVER_HOST }}
+        key: ${{ secrets.SERVER_KEY }}
+        source: "./frontend/frontend_build"
+        target: "/home/ubuntu/deploy"
+        strip_components: 1
+
+    - name: Copy Backend WAR to Server
       uses: appleboy/scp-action@master
       with:
         username: ${{ secrets.SERVER_USERNAME }}
@@ -141,18 +152,38 @@ jobs:
         target: "/home/ubuntu/deploy"
         strip_components: 2
 
-    - name: Execute deploy script
+    - name: Deploy Backend and Frontend
       uses: appleboy/ssh-action@master
       with:
         username: ${{ secrets.SERVER_USERNAME }}
         host: ${{ secrets.SERVER_HOST }}
         key: ${{ secrets.SERVER_KEY }}
+        port: ${{ secrets.SERVER_PORT }}
         script_stop: true
         script: |
-          chmod +x /home/ubuntu/deploy/deploy.sh
-          sh /home/ubuntu/deploy/deploy.sh
-          chmod +x /home/ubuntu/deploy/front-deploy.sh
-          sh /home/ubuntu/deploy/front-deploy.sh
+          cd /home/ubuntu/deploy
+          echo "Current directory contents:"
+          ls -la
+          
+          # Backend deployment
+          if [ -f "deploy.sh" ]; then
+            chmod +x deploy.sh
+            echo "Executing backend deployment..."
+            ./deploy.sh
+          else
+            echo "Warning: deploy.sh not found"
+          fi
+          
+          # Frontend deployment
+          if [ -f "front-deploy.sh" ]; then
+            chmod +x front-deploy.sh
+            echo "Executing frontend deployment..."
+            ./front-deploy.sh
+          else
+            echo "Warning: front-deploy.sh not found"
+          fi
+          
+          echo "Deployment completed"
 
   dependency-submission:
 
@@ -172,4 +203,3 @@ jobs:
     # See: https://github.com/gradle/actions/blob/main/dependency-submission/README.md
     - name: Generate and submit dependency graph
       uses: gradle/actions/dependency-submission@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
- 
