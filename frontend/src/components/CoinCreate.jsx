@@ -38,8 +38,16 @@ export default function CoinCreate() {
     formData.append('coin', new Blob([JSON.stringify(coin)], { type: 'application/json' }));
     if (file) formData.append('file', file);
 
+    const jwt = sessionStorage.getItem("jwt");
+
     try {
-      const res = await fetch(`http://${getIP()}:9093/coin/create`, { method: 'POST', body: formData });
+      const res = await fetch(`http://${getIP()}:9093/coin/create`, { 
+        method: 'POST', 
+        body: formData,
+        headers: {
+          Authorization: jwt,
+        }, 
+      });
       const result = await res.json();
       if (result.coin_no > 0) {
         alert('코인생성이 완료되었습니다.');
