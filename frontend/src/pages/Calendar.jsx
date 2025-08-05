@@ -223,7 +223,6 @@ useEffect(() => {
 
   return (
     <>
-    <Link to="/ai/newsfind">기사 보러가기</Link><br />
     <div className="relative" onMouseMove={handleMouseMove}>
       <Calendar
         popup
