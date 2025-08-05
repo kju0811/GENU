@@ -218,10 +218,6 @@ useEffect(() => {
         },
         body: JSON.stringify(calendarno),
       })
-      .then(resonse => {
-        console.log(resonse);
-      })
-
       setEvents(updatedEvents);
       setShowUpdateModal(false);
       setSelectedEvent(null);
