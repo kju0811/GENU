@@ -72,11 +72,15 @@ export default function CoinDetail() {
       <header className="flex items-center justify-between mb-6">
         {/* 헤더 좌측 */}
         <div className="flex flex-row items-center gap-4">
+          {coin_img ? (
           <img
             src={`http://${getIP()}:9093/home/storage/${coin_img}`}
             alt={coin_name}
             className="w-16 h-16 rounded-full object-cover"
-          />
+          />)
+          :
+          (<img src='./nurung.png'></img>)
+          }
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
               {coin_name}
