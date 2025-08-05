@@ -71,7 +71,7 @@ def makeimg(content,title):
     )
     
     #Save the image to a file
-    with open(f"/Users/kimjiun/kd/deploy/team4_v2sbm3c/home/storage/{file1}.jpg", "wb") as f:
+    with open(f"/home/ubuntu/deploy/team4_v2sbm3c/home/storage/{file1}.jpg", "wb") as f:
         f.write(image_bytes)
 
     return file1
