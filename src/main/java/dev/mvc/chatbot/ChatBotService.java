@@ -22,7 +22,7 @@ public class ChatBotService {
 	  }
 	
 	public String talk(String message,String jwt)  {
-	   String url = "http://localhost:8000/chatbot";
+	   String url = "http://1.201.18.85:8000/chatbot";
 	    
 	    // HTTP 헤더 설정 (JSON)
 	    HttpHeaders headers = new HttpHeaders();
