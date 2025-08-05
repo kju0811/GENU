@@ -73,7 +73,6 @@ useEffect(() => {
         setResults(data); // ← 백엔드 응답 데이터로 검색 결과 설정
         setNoResults(data.length === 0);
         setLoading(false);
-        console.log("검색data -> ", data)
       })
       .catch(err => {
         console.error(err);
