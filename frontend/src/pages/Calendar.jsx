@@ -20,7 +20,6 @@ function Schedule() {
   const [newEventTitle, setNewEventTitle] = useState('');
   const [updateEventTitle, setUpdateEventTitle] = useState('');
   const [newEventBody, setNewEventBody] = useState('');
-  const [updateEventBody, setUpdateEventBody] = useState('');
   const [events, setEvents] = useState([]);
 
   const jwt = sessionStorage.getItem("jwt");
@@ -84,7 +83,6 @@ function Schedule() {
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);
     setUpdateEventTitle(event.title || ''); // ← 기존 제목 넣기
-    setUpdateEventBody(event.body || '');   // ← 기존 내용 넣기
     
     // 마우스 위치 기반으로 모달 위치 설정
     const mousePos = window.lastMousePosition || { x: 0, y: 0 };
@@ -113,7 +111,7 @@ function Schedule() {
     if (newEventTitle.trim() !== "") { 
       const calendar = {
         title: newEventTitle,
-        content: newEventBody,
+        member_no: userInfo?.member_no,
         labeldate: moment(selectedDate).format('YYYY-MM-DD'),
       };
 
@@ -144,7 +142,6 @@ useEffect(() => {
       const calendarEvents = calendarData.map(item => ({
         calendarno: item.calendar_no,
         title: item.title,
-        body: item.content,
         start: new Date(item.labeldate),
         end: new Date(item.labeldate),
       }));
@@ -166,14 +163,13 @@ useEffect(() => {
     if (newEventTitle.trim() !== "") {
       const updatedEvents = events.map(event => 
         event === selectedEvent 
-          ? { ...event, title: newEventTitle, body: newEventBody }
+          ? { ...event, title: newEventTitle}
           : event
       ); 
 
       const calendarno = selectedEvent?.calendarno;
       const calendar = {
         title: newEventTitle,
-        content: newEventBody
       };
 
       fetch(`http://${getIP()}:9093/calendar/update/${calendarno}`, {
@@ -262,13 +258,6 @@ useEffect(() => {
           placeholder="제목"
           value={newEventTitle}
           onChange={(e) => setNewEventTitle(e.target.value)}
-          className="w-full border px-2 py-1 mb-3"
-        />
-        <textarea
-          placeholder='내용'
-          value={newEventBody}
-          onChange={(e) => setNewEventBody(e.target.value)}
-          style={{ height: 200 }}
           className="w-full border px-2 py-1 mb-3"
         />
         <div className="flex justify-end gap-2">
