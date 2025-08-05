@@ -59,11 +59,6 @@ public class Calendar {
   @Column(name = "title",nullable = false, columnDefinition = "VARCHAR2(100)")
   private String title = "";
   
-  /** 글 내용 */
-  @Lob
-  @Column(name = "content",nullable = false, columnDefinition = "CLOB")
-  private String content = "";
-  
   /** 조회수 */
   @Column(name = "cnt", nullable = false, columnDefinition = "NUMBER(7)")
   private Integer cnt = 0;
