@@ -111,6 +111,7 @@ function Schedule() {
     if (newEventTitle.trim() !== "") { 
       const calendar = {
         title: newEventTitle,
+        member_no: userInfo?.member_no,
         labeldate: moment(selectedDate).format('YYYY-MM-DD'),
       };
 
