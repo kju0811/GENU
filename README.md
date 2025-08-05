@@ -1,5 +1,6 @@
 <H2>GENU</H2>
 <br><br>
+<span>🔗LINK : http://1.201.18.85:3000/</span><br>
 <span>🧑‍🏫PPT 발표자료: https://www.canva.com/design/DAGonzbCbXQ/jOmV6wkUEyeg8pjp0VeSmw/edit</span><br>
 <span>💬회의록 정리: https://www.notion.so/1e52b3fb793780df97b2e07db7ace539?source=copy_link</span>
 <br><br>
