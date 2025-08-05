@@ -32,7 +32,7 @@ public class MembermindService {
 	 * @param membermind
 	 */
 	 public String create(MembermindRequestDTO dto, String jwt) {
-	    String url = "http://localhost:8000/mind";
+	    String url = "http://1.201.18.85:8000/mind";
 	    
 	    // HTTP 헤더 설정 (JSON)
 	    HttpHeaders headers = new HttpHeaders();

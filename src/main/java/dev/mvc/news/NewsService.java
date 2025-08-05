@@ -39,7 +39,7 @@ public class NewsService {
   
   // 뉴스 생성
   public String create(NewsRequestDTO dto, String jwt) {
-    String url = "http://localhost:8000/news";
+    String url = "http://1.201.18.85:8000/news";
     
     // HTTP 헤더 설정 (JSON)
     HttpHeaders headers = new HttpHeaders();
@@ -65,7 +65,7 @@ public class NewsService {
   public String summary(NewsRequestDTO dto, String jwt) {
     JSONObject src = new JSONObject(dto); // String -> JSON
     
-    String url = "http://localhost:8000/summary";
+    String url = "http://1.201.18.85:8000/summary";
     
  // HTTP 헤더 설정 (JSON)
     HttpHeaders headers = new HttpHeaders();
