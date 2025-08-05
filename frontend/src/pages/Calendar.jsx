@@ -121,6 +121,7 @@ function Schedule() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: jwt,
         },
         body: JSON.stringify( calendar ),
       })
@@ -179,6 +180,7 @@ useEffect(() => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: jwt,
         },
         body: JSON.stringify(calendar),
       })
@@ -206,6 +208,7 @@ useEffect(() => {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: jwt,
         },
         body: JSON.stringify(calendarno),
       })
