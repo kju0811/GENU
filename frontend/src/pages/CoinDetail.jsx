@@ -79,7 +79,7 @@ export default function CoinDetail() {
             className="w-16 h-16 rounded-full object-cover"
           />)
           :
-          (<img src='./nurung.png'></img>)
+          (<img src='/nurung.png'></img>)
           }
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
