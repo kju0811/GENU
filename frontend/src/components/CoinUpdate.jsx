@@ -61,9 +61,14 @@ function CoinUpdate() {
     formData.append('coin', new Blob([JSON.stringify(coin)], { type: 'application/json' }));
     if (file) formData.append('file', file);
 
+    const jwt = sessionStorage.getItem("jwt");
+
     fetch(`http://${getIP()}:9093/coin/update/${coin_no}`, {
       method: 'POST',
       body: formData,
+      headers: {
+        Authorization: jwt,
+      }, 
     })
       .then(response => {
         if (!response.ok) throw new Error(`서버 응답 오류: ${response.status}`);

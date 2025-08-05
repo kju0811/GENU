@@ -25,7 +25,7 @@ import java.util.Optional;
 @Component
 public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-	private static final String LOCAL_REDIRECT_URL = "http://localhost:3000";
+	private static final String LOCAL_REDIRECT_URL = "http://1.201.18.85:3000";
 	
 	private final MemberRepository memberRepository;
 

@@ -20,7 +20,6 @@ function Schedule() {
   const [newEventTitle, setNewEventTitle] = useState('');
   const [updateEventTitle, setUpdateEventTitle] = useState('');
   const [newEventBody, setNewEventBody] = useState('');
-  const [updateEventBody, setUpdateEventBody] = useState('');
   const [events, setEvents] = useState([]);
 
   const jwt = sessionStorage.getItem("jwt");
@@ -36,6 +35,7 @@ function Schedule() {
       console.log("토큰없음");
     }
 
+  const member_no = userInfo?.member_no
   const formats = {
     monthHeaderFormat: 'YYYY년 MM월',
     dayFormat: 'MM월 DD일',
@@ -84,7 +84,6 @@ function Schedule() {
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);
     setUpdateEventTitle(event.title || ''); // ← 기존 제목 넣기
-    setUpdateEventBody(event.body || '');   // ← 기존 내용 넣기
     
     // 마우스 위치 기반으로 모달 위치 설정
     const mousePos = window.lastMousePosition || { x: 0, y: 0 };
@@ -113,7 +112,7 @@ function Schedule() {
     if (newEventTitle.trim() !== "") { 
       const calendar = {
         title: newEventTitle,
-        content: newEventBody,
+        member: member_no,
         labeldate: moment(selectedDate).format('YYYY-MM-DD'),
       };
 
@@ -121,8 +120,18 @@ function Schedule() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: jwt,
         },
-        body: JSON.stringify( calendar ),
+        body: JSON.stringify({ 
+        title: newEventTitle,
+        member: { member_no },
+        labeldate: moment(selectedDate).format('YYYY-MM-DD')
+      }),
+      })
+      .then((res) => {
+        if(res.ok) {
+          window.location.reload();
+        }
       })
 
       setEvents([...events, calendar]);
@@ -143,7 +152,6 @@ useEffect(() => {
       const calendarEvents = calendarData.map(item => ({
         calendarno: item.calendar_no,
         title: item.title,
-        body: item.content,
         start: new Date(item.labeldate),
         end: new Date(item.labeldate),
       }));
@@ -165,20 +173,20 @@ useEffect(() => {
     if (newEventTitle.trim() !== "") {
       const updatedEvents = events.map(event => 
         event === selectedEvent 
-          ? { ...event, title: newEventTitle, body: newEventBody }
+          ? { ...event, title: newEventTitle}
           : event
       ); 
 
       const calendarno = selectedEvent?.calendarno;
       const calendar = {
         title: newEventTitle,
-        content: newEventBody
       };
 
       fetch(`http://${getIP()}:9093/calendar/update/${calendarno}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: jwt,
         },
         body: JSON.stringify(calendar),
       })
@@ -206,13 +214,10 @@ useEffect(() => {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: jwt,
         },
         body: JSON.stringify(calendarno),
       })
-      .then(resonse => {
-        console.log(resonse);
-      })
-
       setEvents(updatedEvents);
       setShowUpdateModal(false);
       setSelectedEvent(null);
@@ -223,7 +228,6 @@ useEffect(() => {
 
   return (
     <>
-    <Link to="/ai/newsfind">기사 보러가기</Link><br />
     <div className="relative" onMouseMove={handleMouseMove}>
       <Calendar
         popup
@@ -260,13 +264,6 @@ useEffect(() => {
           placeholder="제목"
           value={newEventTitle}
           onChange={(e) => setNewEventTitle(e.target.value)}
-          className="w-full border px-2 py-1 mb-3"
-        />
-        <textarea
-          placeholder='내용'
-          value={newEventBody}
-          onChange={(e) => setNewEventBody(e.target.value)}
-          style={{ height: 200 }}
           className="w-full border px-2 py-1 mb-3"
         />
         <div className="flex justify-end gap-2">

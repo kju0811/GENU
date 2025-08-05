@@ -71,7 +71,7 @@ def makeimg(content,title):
     )
     
     #Save the image to a file
-    with open(f"/Users/kimjiun/kd/deploy/team4_v2sbm3c/home/storage/{file1}.jpg", "wb") as f:
+    with open(f"/home/ubuntu/deploy/team4_v2sbm3c/home/storage/{file1}.jpg", "wb") as f:
         f.write(image_bytes)
 
     return file1
@@ -109,6 +109,7 @@ async def news(request:Request):
         prompt = PromptTemplate.from_template(
             "{system}\n"
             '''{option1}과 카테고리 {coin_cate}, 그리고 추가 사항 {option3}조건에 맞는 경제 뉴스를 생성해줘, 내용은 1200글자이상 ~ 1500글자이하 사이에서 생성해줘, 호재는 1로 악재를 0으로 판별해줘.
+            코인이 상장되었다 폐지 되었다 이런내용은 빼줘 단 {option3}에 있다면 그때만 넣어줘 이외에는  절대 넣지마
             결과에 제목과 내용 분석은 / 로 무조건 분류해줘\n\n'''
             "{format_instructions}"
         )
@@ -375,8 +376,7 @@ async def mind(request:Request):
         oracle.mindinsert(
             mind_content,
             member_no
-        )
-        
+        ) 
         
     else:
         mind_content="잘못된 형식의 토큰입니다"
@@ -386,5 +386,5 @@ async def mind(request:Request):
 if __name__ == "__main__":
     # uvicorn.run("resort_auth:app", host="121.78.128.17", port=8000, reload=True) # Gabia 할당 불가
     # GENU.py
-    uvicorn.run("genu:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("genu:app", host="0.0.0.0", port=8000, reload=False)
     
