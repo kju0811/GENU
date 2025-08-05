@@ -13,7 +13,7 @@ SECRET_DB = os.getenv("db")
 def newsinsert(title, content, emotion,coin_cate,member_no):
     
     try:
-        cx_Oracle.init_oracle_client(lib_dir="/home/ubuntu/oracle_client/instantclient_23_9")
+        cx_Oracle.init_oracle_client(lib_dir=r"/home/ubuntu/oracle_client/instantclient_23_9")
     except cx_Oracle.ProgrammingError:
         # 이미 초기화된 경우 무시
         pass
@@ -80,7 +80,7 @@ def newssummary(summary,newsno):
     
     #Oracle Connection 
     try:
-        cx_Oracle.init_oracle_client(lib_dir="/home/ubuntu/oracle_client/instantclient_23_9")
+        cx_Oracle.init_oracle_client(lib_dir=r"/home/ubuntu/oracle_client/instantclient_23_9")
     except cx_Oracle.ProgrammingError:
         # 이미 초기화된 경우 무시
         pass
