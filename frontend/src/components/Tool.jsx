@@ -1,6 +1,7 @@
 const getIP = () => {
-  return "localhost";
+  // return "localhost";
   // return "192.168.12.158";
+  return "1.201.18.85";
 }
 
 const getNowDate = () => {
@@ -36,7 +37,7 @@ const socialLogin = (provider) => {
   // http://localhost:9103/oauth2/authorization/google?redirect_url=http://localhost:3000
   window.location.href =
     // "http://"+getIP()+":9093" +
-    "http://localhost:9093" + 
+    "http://1.201.18.85:9093" + 
     "/oauth2/authorization/" +
     provider +
     "?redirect_url=" +
