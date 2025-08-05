@@ -378,7 +378,6 @@ async def mind(request:Request):
             member_no
         )
         
-        
     else:
         mind_content="잘못된 형식의 토큰입니다"
         
