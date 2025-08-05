@@ -12,11 +12,11 @@ SECRET_DB = os.getenv("db")
 
 def newsinsert(title, content, emotion,coin_cate,member_no):
     
-    # try:
-    #     cx_Oracle.init_oracle_client(lib_dir="/Users/kimjiun/kd/instantclient_23_3")
-    # except cx_Oracle.ProgrammingError:
-    #     # 이미 초기화된 경우 무시
-    #     pass
+    try:
+        cx_Oracle.init_oracle_client(lib_dir="/home/ubuntu/oracle_client/instantclient_23_9")
+    except cx_Oracle.ProgrammingError:
+        # 이미 초기화된 경우 무시
+        pass
 
     conn = cx_Oracle.connect(SECRET_DB)
     cursor = conn.cursor()
@@ -78,12 +78,12 @@ def newsinsert(title, content, emotion,coin_cate,member_no):
     
 def newssummary(summary,newsno):
     
-    # #Oracle Connection 
-    # try:
-    #     cx_Oracle.init_oracle_client(lib_dir="/Users/kimjiun/kd/instantclient_23_3")
-    # except cx_Oracle.ProgrammingError:
-    #     # 이미 초기화된 경우 무시
-    #     pass
+    #Oracle Connection 
+    try:
+        cx_Oracle.init_oracle_client(lib_dir="/home/ubuntu/oracle_client/instantclient_23_9")
+    except cx_Oracle.ProgrammingError:
+        # 이미 초기화된 경우 무시
+        pass
     conn = cx_Oracle.connect(SECRET_DB)
     cursor = conn.cursor()
     
@@ -115,11 +115,11 @@ def newssummary(summary,newsno):
 
 def file (file1):
 
-    # try:
-    #     cx_Oracle.init_oracle_client(lib_dir="/Users/kimjiun/kd/instantclient_23_3")
-    # except cx_Oracle.ProgrammingError:
-    #     # 이미 초기화된 경우 무시
-    #     pass
+    try:
+        cx_Oracle.init_oracle_client(lib_dir="/home/ubuntu/oracle_client/instantclient_23_9")
+    except cx_Oracle.ProgrammingError:
+        # 이미 초기화된 경우 무시
+        pass
     conn = cx_Oracle.connect(SECRET_DB)
     cursor = conn.cursor()
     
@@ -147,11 +147,11 @@ def file (file1):
 
 def mindinsert(mind_content, member_no):
     
-    # try:
-    #     cx_Oracle.init_oracle_client(lib_dir="/Users/kimjiun/kd/instantclient_23_3")
-    # except cx_Oracle.ProgrammingError:
-    #     # 이미 초기화된 경우 무시
-    #     pass
+    try:
+        cx_Oracle.init_oracle_client(lib_dir="/home/ubuntu/oracle_client/instantclient_23_9")
+    except cx_Oracle.ProgrammingError:
+        # 이미 초기화된 경우 무시
+        pass
 
     conn = cx_Oracle.connect(SECRET_DB)
     cursor = conn.cursor()
