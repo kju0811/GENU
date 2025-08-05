@@ -4,6 +4,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -145,7 +146,7 @@ public class SecurityConfig {
             .addFilterAfter(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .oauth2Login(oauth2 -> oauth2
                 .successHandler(oAuthSuccessHandler)
-                .failureUrl("http://localhost:3000") // 취소시 메인으로
+                .failureUrl("http://1.201.18.85:3000") // 취소시 메인으로
             )
             .exceptionHandling(exception -> exception
                 .authenticationEntryPoint(new Http403ForbiddenEntryPoint())
@@ -185,7 +186,9 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOriginPatterns(Collections.singletonList("*"));
+//        config.setAllowedOriginPatterns(Collections.singletonList("*"));
+        config.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:9093"));
+        config.setAllowedOrigins(List.of("http://1.201.18.85:3000", "http://1.201.18.85:9093"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS","PATCH"));
         config.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
         config.setExposedHeaders(Collections.singletonList("Authorization"));
