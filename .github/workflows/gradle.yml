@@ -105,6 +105,7 @@ jobs:
         key: ${{ secrets.SERVER_KEY }}
         source: "./frontend/frontend_build"
         target: "/home/ubuntu/deploy"
+        strip_components: 2
 
     - name: Build with Gradle Wrapper
       run: ./gradlew build
