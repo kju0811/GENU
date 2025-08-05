@@ -42,7 +42,7 @@ export default function CoinDetail() {
           setError(err);
           setLoading(false);
         });
-    };
+    }; 
 
     fetchDetail();                         // 마운트 직후 1회 호출
 
