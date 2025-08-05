@@ -10,4 +10,7 @@ export default defineConfig({
       '/api': 'http://localhost:9093', // ← 백엔드서버에 맞게 변경
     },
   },
+  build: {
+    outDir: 'frontend_build',
+  },
 })
