@@ -386,5 +386,5 @@ async def mind(request:Request):
 if __name__ == "__main__":
     # uvicorn.run("resort_auth:app", host="121.78.128.17", port=8000, reload=True) # Gabia 할당 불가
     # GENU.py
-    uvicorn.run("genu:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("genu:app", host="0.0.0.0", port=8000, reload=False)
     
