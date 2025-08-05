@@ -402,40 +402,45 @@ public class DealService {
   
   /** 단일 자산내역 반환 */
   public DealDTO.AssetInfo one_asset(Long member_no, Long coin_no) {
-    
-    Coin coin = coinRepository.findById(coin_no)
-        .orElseThrow(() -> new EntityNotFoundException("해당 코인 정보를 찾을 수 없습니다."));
-    
-    List<Integer> getList = getAVGprice(member_no, coin_no); // 평단가, 갯수
-    int avgPrice = getList.get(0);
-    int totalCnt = getList.get(1);
-    
-    int currentPrice = coinRepository.getCoinPrice(coin_no); // 현재가
-    int totalPrice = currentPrice * totalCnt; // 현재 평가 금액
-    int previousTotalPrice = avgPrice * totalCnt; // 이전 총 금액
-    
-    // 이득, 퍼센트
-    int profitAmount = totalPrice - previousTotalPrice ;
-    double profitPercentage = 0.0;
-    if (previousTotalPrice != 0) {
-      profitPercentage = ((double) profitAmount / previousTotalPrice) * 100;
-      profitPercentage = Math.round(profitPercentage * 10) / 10.0;
+    try {
+      Coin coin = coinRepository.findById(coin_no)
+          .orElseThrow(() -> new EntityNotFoundException("해당 코인 정보를 찾을 수 없습니다."));
+      
+      List<Integer> getList = getAVGprice(member_no, coin_no); // 평단가, 갯수
+      int avgPrice = getList.get(0);
+      int totalCnt = getList.get(1);
+      
+      int currentPrice = coinRepository.getCoinPrice(coin_no); // 현재가
+      int totalPrice = currentPrice * totalCnt; // 현재 평가 금액
+      int previousTotalPrice = avgPrice * totalCnt; // 이전 총 금액
+      
+      // 이득, 퍼센트
+      int profitAmount = totalPrice - previousTotalPrice ;
+      double profitPercentage = 0.0;
+      if (previousTotalPrice != 0) {
+        profitPercentage = ((double) profitAmount / previousTotalPrice) * 100;
+        profitPercentage = Math.round(profitPercentage * 10) / 10.0;
+      }
+      
+      return new DealDTO.AssetInfo(
+          coin.getCoin_no(),
+          coin.getCoin_name(),
+          coin.getCoin_img(),
+          coin.getCoin_price(),
+          coin.getCoin_percentage(),
+          avgPrice,
+          totalPrice,
+          previousTotalPrice,
+          profitAmount,
+          profitPercentage,
+          totalCnt,
+          currentPrice
+      );
+      
+    } catch(Exception e) {
+      logger.error("one_asset 처리 중 에러 발생", e);
+      return null; // null 반환해서 컨트롤러에서 200 + null 처리하도록 유도
     }
-    
-    return new DealDTO.AssetInfo(
-        coin.getCoin_no(),
-        coin.getCoin_name(),
-        coin.getCoin_img(),
-        coin.getCoin_price(),
-        coin.getCoin_percentage(),
-        avgPrice,
-        totalPrice,
-        previousTotalPrice,
-        profitAmount,
-        profitPercentage,
-        totalCnt,
-        currentPrice
-    );
   }
   
   // 체결강도 + 순매수량 반환
