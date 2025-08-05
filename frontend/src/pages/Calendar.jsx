@@ -35,6 +35,7 @@ function Schedule() {
       console.log("토큰없음");
     }
 
+  const member_no = userInfo?.member_no
   const formats = {
     monthHeaderFormat: 'YYYY년 MM월',
     dayFormat: 'MM월 DD일',
@@ -111,7 +112,7 @@ function Schedule() {
     if (newEventTitle.trim() !== "") { 
       const calendar = {
         title: newEventTitle,
-        member_no: userInfo?.member_no,
+        member: member_no,
         labeldate: moment(selectedDate).format('YYYY-MM-DD'),
       };
 
@@ -121,7 +122,16 @@ function Schedule() {
           'Content-Type': 'application/json',
           Authorization: jwt,
         },
-        body: JSON.stringify( calendar ),
+        body: JSON.stringify({ 
+        title: newEventTitle,
+        member: { member_no },
+        labeldate: moment(selectedDate).format('YYYY-MM-DD')
+      }),
+      })
+      .then((res) => {
+        if(res.ok) {
+          window.location.reload();
+        }
       })
 
       setEvents([...events, calendar]);
@@ -208,10 +218,6 @@ useEffect(() => {
         },
         body: JSON.stringify(calendarno),
       })
-      .then(resonse => {
-        console.log(resonse);
-      })
-
       setEvents(updatedEvents);
       setShowUpdateModal(false);
       setSelectedEvent(null);
