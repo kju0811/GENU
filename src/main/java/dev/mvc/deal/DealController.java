@@ -248,6 +248,7 @@ public class DealController {
   public ResponseEntity<?> get_one_asset(@PathVariable(name="member_no") Long member_no, @PathVariable("coin_no") Long coin_no) {
     try {
       DealDTO.AssetInfo assets = dealService.one_asset(member_no, coin_no);
+      if (assets == null) return ResponseEntity.ok(null);
       return ResponseEntity.ok(assets);
     } catch (EntityNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
