@@ -96,8 +96,15 @@ jobs:
         npm install
         npm run build
         cd ..
-        mkdir -p src/main/resources/static
-        cp -r frontend/dist/* src/main/resources/static/
+
+    - name: Copy frontend build to remote server
+      uses: appleboy/scp-action@master
+      with:
+        username: ${{ secrets.SERVER_USERNAME }}
+        host: ${{ secrets.SERVER_HOST }}
+        key: ${{ secrets.SERVER_KEY }}
+        source: "./frontend/frontend_build"
+        target: "/home/ubuntu/deploy"
 
     - name: Build with Gradle Wrapper
       run: ./gradlew build
@@ -144,6 +151,8 @@ jobs:
         script: |
           chmod +x /home/ubuntu/deploy/deploy.sh
           sh /home/ubuntu/deploy/deploy.sh
+          chmod +x /home/ubuntu/deploy/front-deploy.sh
+          sh /home/ubuntu/deploy/front-deploy.sh
 
   dependency-submission:
 
