@@ -115,7 +115,7 @@ public class MemberService {
   /** 패스워드 찾기 메일로 임시번호 요청 */
   public Map<String, Object> findPw(String memberId) {
     Member member = memberRepository.findByLocalMemberId(memberId)
-        .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 아이디 입니다."));
+        .orElseThrow(() -> new MemberNotFoundException("로컬에서 존재하지 않는 아이디 입니다."));
 
     mailTool.send(member);
 

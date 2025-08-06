@@ -25,7 +25,14 @@ export default function FindPw() {
         method: "POST"
       });
 
-      const parsed = await res.json();
+      const contentType = res.headers.get("Content-Type") || "";  // 여기를 추가
+
+      let parsed;
+      if (contentType.includes("application/json")) {
+        parsed = await res.json();
+      } else {
+        parsed = { message: await res.text() };
+      }
 
       if (res.ok) {
         setMessage(parsed.message || "인증번호가 발송되었습니다.");
@@ -34,7 +41,8 @@ export default function FindPw() {
       } else {
         setError(parsed.message || "에러가 발생했습니다.");
       }
-    } catch {
+    } catch (e) {
+      console.error("메일 요청 중 오류:", e);
       setError("메일 요청 중 오류가 발생했습니다.");
     }
   };
