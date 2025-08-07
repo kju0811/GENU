@@ -62,7 +62,7 @@ export default function Portfolio() {
                 totalCount += item.cnt;
                 totalPrice += item.total_price;
                 totalProfit += item.profitAmount;
-                totalBuyPrice += item.buyPrice; // 각 코인 매수원금
+                totalBuyPrice += item.buyPrice; // 각 코인 매수원금!
             });
 
             // const totalProfitPercentage = totalPrice !== 0 ? (totalProfit / totalPrice) * 100 : 0; // 이전 수익률(버그)
