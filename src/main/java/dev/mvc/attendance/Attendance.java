@@ -11,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.SequenceGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,7 +35,7 @@ public class Attendance {
   
   /** 출석체크 기록 */
   @Column(name = "attendance_date", nullable = false)
-  private LocalDate attendance_date;
+  private LocalDateTime attendance_date;
   
   /** 누적 출석 */
   @Column(name = "attendance_cnt", nullable = false, columnDefinition = "NUMBER(5)")
@@ -46,4 +47,12 @@ public class Attendance {
   @ManyToOne
   @JoinColumn(name="member_no", referencedColumnName = "member_no", nullable = false)
   private Member member;
+  
+  /** 시간 자동으로 넣어준다. */
+  @PrePersist
+  public void prePersist() {
+      if (attendance_date == null) {
+        attendance_date = LocalDateTime.now();
+      }
+  }
 }

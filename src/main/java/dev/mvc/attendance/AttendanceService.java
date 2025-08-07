@@ -6,10 +6,12 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import dev.mvc.coinlike.CoinlikeRepository;
 import dev.mvc.member.Member;
 import dev.mvc.member.MemberService;
+import dev.mvc.pay.PayService;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -17,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 public class AttendanceService {
   private final AttendanceRepository attendanceRepository;
   private final MemberService memberService;
+  private final PayService payservice;
   
   /** Create, INSERT~, UPDATE~ */
   public void save(Attendance attendance) {
@@ -39,36 +42,46 @@ public class AttendanceService {
   }
   
   /** 출석 체크 메서드 */
+  @Transactional
   public void checkToDate(Long member_no) {
     Optional<Attendance> atd = attendanceRepository.lastCheckedAttendance(member_no);
-    System.out.println("atd -> "+ atd);
     LocalDate today = LocalDate.now();
     
     if (atd.isEmpty()) { // 처음 저장
-      saveAttendance(member_no, 1, today);
+      saveAttendance(member_no, 1);
       
-    } else if (atd.get().getAttendance_date().isEqual(today)) {
+    } else if (atd.get().getAttendance_date().toLocalDate().isEqual(today)) {
       System.out.println("이미 출석함");
       
     } else {
       int newCnt = atd.get().getAttendance_cnt() + 1;
-      saveAttendance(member_no, newCnt, today);
+      saveAttendance(member_no, newCnt);     
       System.out.println("이전 출석 있음, 오늘 안함");
       
     }
   }
   
-  /** 출석용 컬럼추가 */
-  private void saveAttendance(Long member_no, int cnt, LocalDate date) {
+  /** 출석용 레코드추가 */
+  private void saveAttendance(Long member_no, int cnt) {
     Member member = memberService.findByMember_no(member_no);
     Attendance attendance = new Attendance();
     attendance.setMember(member);
     attendance.setAttendance_cnt(cnt);
-    attendance.setAttendance_date(date);
     save(attendance);
-    System.out.println("save 완료 -> " + attendance);
+
+    payservice.firstadditional(member, 1000000); // 일일 백만누렁 지급
+
+    System.out.println("출석 처리 완료");
   }
 
+  /** 출석일 반환 */
+  public int attendanceCnt(Long member_no) {
+    // 없을 수 없지만 예외처리
+    Attendance atd = attendanceRepository.lastCheckedAttendance(member_no)
+        .orElseThrow(() -> new IllegalArgumentException("출석일 반환에 실패했습니다."));
+    
+    return atd.getAttendance_cnt();
+  }
   
   
   
