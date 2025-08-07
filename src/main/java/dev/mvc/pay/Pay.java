@@ -40,7 +40,7 @@ public class Pay {
   @Column(name = "pay_pay", nullable = false)
   private Integer pay_pay;
   
-  /** 0:+, 1:- */
+  /** 0:운영자 지급, 1:매수 체결, 2:매도 체결, 3:매수 주문, 5:매수 주문 취소*/
   @Column(name = "pay_type", nullable = false)
   private int pay_type = 0;
   
