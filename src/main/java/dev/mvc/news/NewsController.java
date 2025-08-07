@@ -12,6 +12,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -42,18 +43,36 @@ public class NewsController {
   private final NewsreplyService replyService;
   private final FluctuationService fluctuationService;
   
+  /**
+   * 뉴스 생성
+   * @param requestDTO
+   * @param jwt
+   * @return
+   */
   @PostMapping(value="/create")
   @ResponseBody
   public String create_Proc(@RequestBody NewsRequestDTO requestDTO, @RequestHeader("Authorization") String jwt) {
     return newsService.create(requestDTO,jwt);
   }
   
+  /**
+   * 뉴스 요약
+   * @param requestDTO
+   * @param jwt
+   * @return
+   */
   @PostMapping(value="/summary")
   @ResponseBody
   public String summary_Proc(@RequestBody NewsRequestDTO requestDTO,@RequestHeader("Authorization") String jwt) {  
     return newsService.summary(requestDTO,jwt);  
   }
   
+  /**
+   * 뉴스 전체 조회
+   * @param page
+   * @param size
+   * @return
+   */
   @GetMapping(value="/find_all")
   public List<News> find_all(@RequestParam(name="page", defaultValue = "0") Integer page,
 							 @RequestParam(name="size", defaultValue = "1000") Integer size) {
@@ -63,6 +82,13 @@ public class NewsController {
 	return list;
 	}
   
+  /**
+   * 뉴스 검색
+   * @param word
+   * @param page
+   * @param size
+   * @return
+   */
   @GetMapping(value="/find")
   public List<News> find(@RequestParam(name="word", defaultValue = "") String word,
 		  				@RequestParam(name="page", defaultValue = "0") Integer page,
@@ -74,11 +100,21 @@ public class NewsController {
     return list;
   }
   
+  /**
+   * 뉴스 단건 조회
+   * @param id
+   * @return
+   */
   @GetMapping(value="/read/{newsno}")
   public Optional<News> read(@PathVariable("newsno") Long id) {
     return newsService.find_by_id(id);
   }
   
+  /**
+   * 뉴스 삭제
+   * @param id
+   * @return
+   */
   @DeleteMapping(value="/delete/{newsno}") 
   public ResponseEntity<News> delete(@PathVariable("newsno") Long id) {
 	  if (newsService.find_by_id(id).isPresent()) { // Entity가 존재하면
@@ -96,6 +132,11 @@ public class NewsController {
 	      }
 	}
   
+  /**
+   * 조회수
+   * @param id
+   * @return
+   */
   @PatchMapping("/cnt/{newsno}")
   public ResponseEntity<?> updateCnt(@PathVariable("newsno") Long id) {
       Optional<News> optionalNews = newsService.find_by_id(id);
