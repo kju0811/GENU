@@ -20,6 +20,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import dev.mvc.attendance.AttendanceService;
 import dev.mvc.member.Member;
 import dev.mvc.member.MemberRepository;
 import dev.mvc.pay.PayService;
@@ -28,15 +29,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
-    
-	@Autowired
-	private MemberRepository memberRepository;
-	@Autowired
-	private PayService payService;
- @Autowired
+
+  @Autowired
+  private MemberRepository memberRepository;
+  @Autowired
+  private PayService payService;
+  @Autowired
   private PasswordEncoder encode;
-	
-    @Override
+  @Autowired
+  private AttendanceService attendanceService;
+
+  @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
     	log.info("loadUser");
     	
@@ -111,18 +114,21 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
           payService.firstadditional(memberEntity, 10000000); // 기본금 지급
       }
 
+        // 소셜 출석체크 기능
+        attendanceService.checkToDate(memberEntity.getMember_no());
+        
     		return new CustomUser(memberEntity.getMember_no(), email, name, authorities, attributes);
     }
 
-    /** 닉네임 생성 */
-    public String generateUniqueNickName(String baseName) {
-      // baseName이 없으면 기본 "user"
-      if (baseName == null || baseName.trim().isEmpty()) {
-          baseName = "user";
-      }
-      // UUID나 랜덤 숫자 붙이기
-      String uniqueSuffix = UUID.randomUUID().toString().substring(0, 8); // 8자리 랜덤 문자열
-      return baseName + uniqueSuffix;
+  /** 닉네임 생성 */
+  public String generateUniqueNickName(String baseName) {
+    // baseName이 없으면 기본 "user"
+    if (baseName == null || baseName.trim().isEmpty()) {
+      baseName = "user";
+    }
+    // UUID나 랜덤 숫자 붙이기
+    String uniqueSuffix = UUID.randomUUID().toString().substring(0, 8); // 8자리 랜덤 문자열
+    return baseName + uniqueSuffix;
   }
-   
+
 }
