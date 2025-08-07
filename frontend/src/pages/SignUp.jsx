@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getIP, getNowDate } from '../components/Tool';
 import ImageUpload from '../components/ImageUpload';
+import SMSModal from '../components/SMSModal';
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ export default function SignUp() {
   const [password, setPassword] = useState('');
   const [confirmPw, setConfirmPw] = useState('');
   const [agree, setAgree] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   // Step2: Profile Info
   const [name, setName] = useState('');
@@ -225,7 +227,18 @@ export default function SignUp() {
                     }
                   }}
                 />
-                <span className="text-sm">이용약관에 동의(필수)</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm">가격 알림 SMS 수신 동의(필수)</span>
+                  <span
+                    role="button"
+                    tabIndex={0}
+                    className="text-xs underline text-indigo-500 hover:text-indigo-700 cursor-pointer px-2 py-1 rounded focus:outline-none focus:ring-2 focus:ring-indigo-300 transition"
+                    onClick={() => setModalOpen(true)}
+                  >
+                    더보기
+                  </span>
+                </div>
+
               </div>
               <button
                 type="submit"
@@ -394,6 +407,7 @@ export default function SignUp() {
           )}
         </div>
       </div>
+      <SMSModal open={modalOpen} onClose={() => setModalOpen(false)} />
     </div>
   );
 }
