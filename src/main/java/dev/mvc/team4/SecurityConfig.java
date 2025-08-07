@@ -132,7 +132,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET,
                 		"/coinlike/findByMemberCoinlikeList","/deal/get_total_cnt/**","/deal/find_deal_by_member_coin/**",
                 		"/deal/find_deal_by_member_coin_twoweek/*","/deal/get_one_asset/**","/deal/get_member_asset/*",
-                		"/pay/my/*","/notice/member/**","/notification/find_by_MemberNotification/*","/notification/clickNotification/*"
+                		"/pay/my/*","/notice/member/**","/notification/find_by_MemberNotification/*","/notification/clickNotification/*",
+                		"/attendance/attendanceCnt/*"
                 		).hasAnyRole("ADMIN","USER")
               
                 // 2) 그 외 모든 요청은 인증 없이 허용
