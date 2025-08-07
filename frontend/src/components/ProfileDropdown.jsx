@@ -40,12 +40,9 @@ export default function ProfileDropdown({ menuItems = defaultMenu}) {
   if (jwt != null) {
     try {
       userInfo = jwtDecode(jwt);
-      console.log("토큰있음");
     } catch (err) {
       console.error("JWT 디코딩 오류:", err);
     }
-  } else {
-    console.log("토큰없음");
   }
   const member_no = userInfo?.member_no;
   const img = member.member_img;

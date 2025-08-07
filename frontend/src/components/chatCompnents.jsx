@@ -49,12 +49,9 @@ const ChatOpen = () => {
   if (jwt != null) {
     try {
       userInfo = jwtDecode(jwt);
-      console.log("토큰있음");
     } catch (err) {
       console.error("JWT 디코딩 오류:", err);
     }
-  } else {
-    console.log("토큰없음");
   }
   return(
     <>

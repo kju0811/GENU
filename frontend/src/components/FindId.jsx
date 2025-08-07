@@ -49,8 +49,7 @@ export default function FindId() {
         const data = await response.text(); // 아이디는 문자열
         setResult(`🔍 찾은 아이디: ${data}`);
       } else {
-        const errorMsg = await response.text();
-        setError(errorMsg || "아이디를 찾을 수 없습니다.");
+        setError("아이디를 찾을 수 없습니다.");
       }
     } catch {
       setError("서버 요청 중 오류가 발생했습니다.");
@@ -130,7 +129,7 @@ export default function FindId() {
           name="memberBirth"
           value={form.memberBirth}
           onChange={handleChange}
-          placeholder="YYYYMMDD"
+          placeholder="ex) 20250811"
           inputMode="numeric"
           maxLength={8}
           required
