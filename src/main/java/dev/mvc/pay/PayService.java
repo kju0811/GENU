@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import dev.mvc.coinlike.CoinlikeRepository;
 import dev.mvc.deal.Deal;
+import dev.mvc.deal.DealDTO;
 import dev.mvc.member.Member;
 import lombok.RequiredArgsConstructor;
 
@@ -105,6 +106,9 @@ public class PayService {
     return payRepository.getDeal_noPay(id);
   }
   
-
+  /** 멤버의 자금 내역 */
+  public List<Pay> get_member_pay_list(Long member_no) {
+    return payRepository.get_member_pay_list(member_no);
+  }
   
 }
