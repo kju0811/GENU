@@ -57,14 +57,16 @@ export default function Portfolio() {
             setAssetList(list);
 
             // 요약 계산 (보유 수량, 평가 금액, 손익 등)
-            let totalCount = 0, totalPrice = 0, totalProfit = 0;
+            let totalCount = 0, totalPrice = 0, totalProfit = 0, totalBuyPrice = 0; 
             list.forEach(item => {
                 totalCount += item.cnt;
                 totalPrice += item.total_price;
                 totalProfit += item.profitAmount;
+                totalBuyPrice += item.buyPrice; // 각 코인 매수원금
             });
 
-            const totalProfitPercentage = totalPrice !== 0 ? (totalProfit / totalPrice) * 100 : 0;
+            // const totalProfitPercentage = totalPrice !== 0 ? (totalProfit / totalPrice) * 100 : 0; // 이전 수익률(버그)
+            const totalProfitPercentage = totalBuyPrice !== 0 ? (totalProfit / totalBuyPrice) * 100 : 0;
             setAssetSummary({ totalCount, totalPrice, totalProfit, totalProfitPercentage });
 
             return list;
