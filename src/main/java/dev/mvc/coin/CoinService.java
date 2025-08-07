@@ -78,7 +78,7 @@ public class CoinService {
   /** 시뮬레이션 로직 */
   public double calculateFluctuation(int buyVolume, int sellVolume, int newsSentiment) {
     // (1) 정규분포 기반 기본 변화율
-    double stdDev = 8.0;
+    double stdDev = 4.0;
     double baseChange = rand.nextGaussian() * stdDev;
     
     // (2) 순매수량 보정
