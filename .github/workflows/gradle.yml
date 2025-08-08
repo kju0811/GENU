@@ -53,10 +53,13 @@ jobs:
         spring.jpa.generate-ddl=true
         spring.jpa.show-sql=false
         spring.jpa.properties.hibernate.format_sql=true
-        
-        spring.datasource.hikari.maximum-pool-size=10
-        spring.datasource.hikari.minimum-idle=5
-        spring.datasource.hikari.connection-timeout=5000
+
+        # HikariCP Connection Pool Tuning
+        spring.datasource.hikari.maximum-pool-size=30
+        spring.datasource.hikari.minimum-idle=10
+        spring.datasource.hikari.connection-timeout=20000
+        spring.datasource.hikari.idle-timeout=600000
+        spring.datasource.hikari.max-lifetime=1800000
         
         spring.servlet.multipart.maxFileSize=10MB
         spring.servlet.multipart.maxRequestSize=10MB
