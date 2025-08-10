@@ -13,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.SequenceGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,9 +41,13 @@ public class Pay {
   @Column(name = "pay_pay", nullable = false)
   private Integer pay_pay;
   
-  /** 0:+, 1:- */
+  /** 0:운영자 지급, 1:매수 체결, 2:매도 체결, 3:매수 주문, 5:매수 주문 취소*/
   @Column(name = "pay_type", nullable = false)
   private int pay_type = 0;
+  
+  /** 돈 이용 날짜 */
+  @Column(name = "pay_date")
+  private LocalDateTime pay_date;
   
   /**
    * member 테이블에 member_no를 참조
@@ -57,5 +62,13 @@ public class Pay {
   @ManyToOne
   @JoinColumn(name="deal_no", referencedColumnName = "deal_no")
   private Deal deal;
+  
+  /** 시간 자동으로 넣어준다. */
+  @PrePersist
+  public void prePersist() {
+      if (pay_date == null) {
+        pay_date = LocalDateTime.now();
+      }
+  }
   
 }

@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
+import dev.mvc.attendance.AttendanceService;
 import dev.mvc.exception.MemberNotFoundException;
 import dev.mvc.news.News;
 import dev.mvc.pay.PayService;
@@ -50,16 +51,19 @@ public class MemberController {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final PayService payService;
+    private final AttendanceService attendanceService;
     
     private final Path storageLocation = Paths.get(Home.getUploadDir());
 
     public MemberController(MemberService memberService, JwtService jwtService,
-        AuthenticationManager authenticationManager, PayService payService
+        AuthenticationManager authenticationManager, PayService payService,
+        AttendanceService attendanceService
     ) {
         this.memberService = memberService;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
         this.payService = payService;
+        this.attendanceService = attendanceService;
         try {
             Files.createDirectories(this.storageLocation);
         } catch (IOException e) {
@@ -145,7 +149,11 @@ public class MemberController {
                 );
         
         Member member = memberService.findByMemberId(credentials.memberId())
-            .orElseThrow(() -> new IllegalArgumentException("아이디가 존재하지 않습니다.")); // 이거뭐임
+            .orElseThrow(() -> new IllegalArgumentException("아이디가 존재하지 않습니다."));
+        
+        // 출석체크
+        attendanceService.checkToDate(member.getMember_no());
+        
         Authentication auth = authenticationManager.authenticate(token);
         // 토큰 생성
         String jwt = jwtService.getToken(auth.getName(), member.getRole(),member.getMember_no());
@@ -283,7 +291,7 @@ public class MemberController {
             Map<String, Object> result = memberService.findPw(memberId);
             return ResponseEntity.ok(result);
         } catch (MemberNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("로컬에서 존재하지 않는 아이디 입니다");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 에러가 발생했습니다.");
         }

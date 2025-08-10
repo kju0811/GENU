@@ -3,6 +3,7 @@ package dev.mvc.pay;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,7 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import dev.mvc.coin.Coin;
 import dev.mvc.coinlike.CoinlikeRepository;
+import dev.mvc.deal.DealDTO;
 import dev.mvc.member.Member;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @RequestMapping(value = "/pay")
@@ -97,6 +100,25 @@ public class PayController {
   public int getMemberPay(@PathVariable("member_no") Long member_no) {
     
     return payService.getMemberPay(member_no);
+  }
+  
+  /**
+   * 멤버의 자금 내역
+   * @param member_no
+   * @return
+   */
+  @GetMapping("/get_member_pay_list/{member_no}")
+  public ResponseEntity<?> get_member_pay_list(@PathVariable(name="member_no") Long member_no) {
+    try {
+      List<Pay> list = payService.get_member_pay_list(member_no);
+      return ResponseEntity.ok(list);
+    } catch (EntityNotFoundException e) {
+      e.printStackTrace();  // 에러 상세 로그 출력
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    } catch (Exception e) {
+      e.printStackTrace();  // 에러 상세 로그 출력
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 에러");
+    }
   }
   
 }

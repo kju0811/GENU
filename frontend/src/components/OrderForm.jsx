@@ -136,12 +136,26 @@ export default function OrderForm({ coin_no, defaultPrice }) {
         method: "GET",
         headers: { Authorization: jwt },
       })
-        .then(res => res.json())
+        .then(res => {
+          if (!res.ok) {
+            // 4xx / 5xx 응답 처리
+            return null;
+          }
+          return res.json();
+        })
         .then(data => {
-          setAvgPrice(data.avg_price ?? null);         // 평단가
-          setTotalPrice(data.total_price ?? null);     // 평가금액
-          setProfitAmount(data.profitAmount ?? null);  // 평가손익
-          setProfitPercentage(data.profitPercentage ?? null); // 수익률
+          if (data) {
+            setAvgPrice(data.avg_price ?? null);
+            setTotalPrice(data.total_price ?? null);
+            setProfitAmount(data.profitAmount ?? null);
+            setProfitPercentage(data.profitPercentage ?? null);
+          } else {
+            // 서버 에러 응답 등
+            setAvgPrice(null);
+            setTotalPrice(null);
+            setProfitAmount(null);
+            setProfitPercentage(null);
+          }
         })
         .catch(() => {
           setAvgPrice(null);
