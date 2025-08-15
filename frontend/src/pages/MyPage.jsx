@@ -6,6 +6,7 @@ import ProfileImageEdit from '../components/ProfileImageEdit';
 
 const TABS = [
   { key: "portfolio", label: "내 자산" },
+  { key: "balancelist", label: "자산내역" },
   { key: "memberupdate", label: "개인정보 수정" },
   { key: "changepw", label: "비밀번호 변경" },
   { key: "membermind", label: "심리분석" },
@@ -17,11 +18,12 @@ export default function MyPage() {
   const location = useLocation();
   const [modalOpen, setModalOpen] = useState(false);
   const [member, setMember] = useState(null);
+  const [attendanceCnt, setAttendanceCnt] = useState(null);
 
   const jwt = sessionStorage.getItem('jwt');
   let userInfo = null;
   if (jwt) {
-    try { userInfo = jwtDecode(jwt); } catch {}
+    try { userInfo = jwtDecode(jwt); } catch { }
   }
   const member_no = userInfo?.member_no;
 
@@ -33,6 +35,15 @@ export default function MyPage() {
       .then(res => res.json())
       .then(data => setMember(data))
       .catch(err => setMember(null));
+
+    fetch(`http://${getIP()}:9093/attendance/attendanceCnt/${member_no}`, {
+      headers: {
+        Authorization: jwt
+      }
+    })
+      .then(res => res.json())
+      .then(setAttendanceCnt)
+      .catch(() => setAttendanceCnt(null));
   }, [member_no]);
 
   if (!member) {
@@ -55,6 +66,9 @@ export default function MyPage() {
           />
           <div className="text-lg font-semibold mt-3">{member.member_nick}</div>
           <div className="text-gray-500 text-xs">{member.memberId}</div>
+          <div className="text-xs bg-amber-100 text-amber-700 px-3 py-1 rounded-full mt-1 mb-1 font-semibold shadow-sm">
+            출석일수: {attendanceCnt}일
+          </div>
         </div>
         <nav className="flex flex-col w-full gap-1">
           {TABS.map((tab) => (
