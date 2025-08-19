@@ -49,6 +49,7 @@ import { jwtDecode } from "jwt-decode";
 import Forbidden from "./pages/Forbidden";
 import MemberUpdate from "./components/MemberUpdate";
 import ChangePw from "./components/ChangePw";
+import MyBalanceList from "./components/MyBalanceList";
 
 function App() {
   const { close, hideNavbar, hideChatbot } = useGlobal();
@@ -93,6 +94,7 @@ function App() {
         {role === "USER" || role === "ADMIN" ? (
           <Route path="/mypage/*" element={<MyPage />}>
             <Route path="portfolio" element={<Portfolio />} />
+            <Route path="balancelist" element={<MyBalanceList />} />
             <Route path="memberupdate" element={<MemberUpdate />} />
             <Route path="changepw" element={<ChangePw />} />
             <Route path="membermind" element={<Mind />} />
